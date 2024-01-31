@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh_TW">
+<head>
+	<title>three.js - pointerlock controls</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		* { margin: 0; }
+		#blocker { position: absolute;width: 100%;height: 100%;background-color: rgba(0,0,0,0.5); }
+		#canvas { width: 100vw; height: 100vh; }
+		body { overflow: hidden; }
+	</style>
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.158.0/build/three.module.min.js",
+				"PointerLockControls": "https://unpkg.com/three@0.158.0/examples/jsm/controls/PointerLockControls.js"
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="blocker"></div>
+	<canvas id="canvas"></canvas>
+</body>
+<script type="module">
+
+// 導入 Three.js 的核心程式
+import * as THREE from 'three';
+
+// 導入 Three.js 的 PointerLockControls 模組，作為遊戲中的玩家控制器
+import { PointerLockControls } from 'PointerLockControls';
+
+// 用來渲染3D畫面的畫布
+const canvas = document.querySelector('#canvas');
+
+// 場景基本元件們
+//相機、場景、渲染器、玩家控制器
+let camera, scene, renderer, playerController;
+
+
+/* -------------------- 玩家屬性設定 ---------------------- */
+// 玩家身高
+const playerHight = 10;
+
+// 玩家移動速度
+const playerMoveSpeed = 400.0;
+
+// 玩家移動時的摩擦力 (越小則腳底越滑)
+const playerMoveFriction = 10.0;
+
+// 玩家跳躍高度
+const playerJumpHight = 250.0;
+
+// 玩家重量 (墜落速度)
+const playerWeight = 70.0;
+/* -------------------------------------------------------- */
+
+// 只要是放在這個陣列裡面的模型，玩家踩到時就可以站在上面
+const all_Cube = [];
+
+// 射線，用途: 不停向下發射射線來檢查腳下是否有方塊
+let raycaster;
+
+// 是否正在向前走
+let moveForward = false;
+
+// 是否正在向後走
+let moveBackward = false;
+
+// 是否正在向左走
+let moveLeft = false;
+
+// 是否正在右走
+let moveRight = false;
+
+// 是否能跳躍
+let canJump = false;
+
+// 上一次畫面更時的時間，用來計算每幀間隔差了多少時間
+let prevTime = performance.now();
+
+// 移動速度
+const velocity = new THREE.Vector3();
+
+// 移動方向
+const direction = new THREE.Vector3();
+
+// 初始化場景
+function initScene() {
+	scene = new THREE.Scene();
+	scene.background = new THREE.Color( 0xffffff );
+	scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
+}
+
+// 初始化鏡頭
+function initCamera() {
+	camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / canvas.clientHeight, 1, 1000 );
+	camera.position.y = playerHight;
+}
+
+// 初始化渲染器
+function initRenderer() {
+	renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } ); // antialias 開啟抗鋸齒效果
+	renderer.setPixelRatio( window.devicePixelRatio ); // 將設備的像素比設置給渲染器，這樣就能使用最適合這個設備的像素比來渲染
+	renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+}
+
+// 初始化玩家控制器
+function initPlayerController() {
+	playerController = new PointerLockControls( camera, canvas );
+	scene.add( playerController.getObject() );
+}
+
+// 設定暫停遊戲時的半透明黑色遮罩
+function setUpBlocker() {
+
+	const blocker = document.getElementById( 'blocker' );
+
+	blocker.addEventListener( 'click',  () =>  { playerController.lock(); } );
+
+	// 鎖定後隱藏鼠標
+	playerController.addEventListener( 'lock', () => { blocker.style.display = 'none'; });
+
+	// 解鎖後顯示鼠標
+	playerController.addEventListener( 'unlock', () => { blocker.style.display = 'block'; });
+	
+}
+
+// 設定玩家移動
+function setUpMovement() {
+
+	// 按下 WASD 做移動
+	function onKeyDown( event ) { 
+		switch ( event.code ) {
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = true;
+				break;
+
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = true;
+				break;
+
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = true;
+				break;
+
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = true;
+				break;
+
+			case 'Space':
+				if ( canJump === true ) velocity.y += playerJumpHight;
+				canJump = false;
+				break;
+		}
+	};
+
+	// 放開 WASD 停止移動
+	function onKeyUp( event ) { 
+		switch ( event.code ) {
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = false;
+				break;
+
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = false;
+				break;
+
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = false;
+				break;
+
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = false;
+				break;
+		}
+	};
+	document.addEventListener( 'keydown', onKeyDown );
+	document.addEventListener( 'keyup', onKeyUp );
+}
+
+//射線
+function initRaycaster() {
+	raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+}
+
+//地面
+function initFloor() {
+
+	const color = new THREE.Color();
+
+	// 地板
+	let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
+	floorGeometry.rotateX( -Math.PI / 2 ); // 讓地板平放 (原本是垂直擺放)
+
+	// vertex displacement
+	const vertex = new THREE.Vector3();
+	let position = floorGeometry.attributes.position;
+
+	for ( let i = 0, l = position.count; i < l; i ++ ) {
+		vertex.fromBufferAttribute( position, i );
+		vertex.x += Math.random() * 20 - 10;
+		vertex.y += Math.random() * 2;
+		vertex.z += Math.random() * 20 - 10;
+		position.setXYZ( i, vertex.x, vertex.y, vertex.z );
+
+	}
+	floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+	position = floorGeometry.attributes.position; // 讀取幾何形的頂點位置
+	const colorsFloor = [];
+
+	for ( let i = 0, l = position.count; i < l; i ++ ) { 
+		// 隨機設置顏色
+		color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+		// 把設定好的隨機顏色存到陣列
+		colorsFloor.push( color.r, color.g, color.b );
+	}
+
+	// 把設定好的隨機顏色陣列 設定 到地板幾何形 的顏色中
+	floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
+	const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } ); // 使用頂點顏色來渲染立方體
+	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
+	scene.add( floor );
+}
+
+function initCube() {
+
+	const color = new THREE.Color();
+
+	// toNonIndexed 會將 BoxGeometry 轉換成 BufferGeometry 包含轉換後的頂點數組
+	const boxGeometry = new THREE.BoxGeometry( 20, 20, 20 ).toNonIndexed();
+	const position_ = boxGeometry.attributes.position; // 讀取幾何形的頂點位置
+	const colorsBox = [];
+
+	for ( let i = 0, l = position_.count; i < l; i ++ ) {
+		color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+		colorsBox.push( color.r, color.g, color.b );
+	}
+	boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
+
+	for ( let i = 0; i < 500; i ++ ) {
+
+		const boxMaterial = new THREE.MeshPhongMaterial( { 
+			specular: 0xffffff, // 方塊反光要呈現的顏色
+			flatShading: true, // 是否使用平面著色 (所有三角形都會被渲染為平面，不考慮光照或反射等因素)
+			vertexColors: true // 是否使用頂點顏色來渲染材質
+		});
+		boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75 ); // 設置隨機顏色
+		const box = new THREE.Mesh( boxGeometry, boxMaterial );
+
+		// 隨機設定方塊的分佈位置
+		box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
+		box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
+		box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
+
+		scene.add( box );
+		all_Cube.push( box ); // 把放進場景的方塊全都放進 all_Cube 陣列中
+	}
+}
+
+//光
+function initLight() {
+	scene.add( new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 ) );
+}
+
+function isPlayerOnGround( PlayerPosition ) {
+
+	// 以玩家的位置偉起點
+	raycaster.ray.origin.copy( PlayerPosition );
+
+	// 向下10個單位發射一條射線
+	raycaster.ray.origin.y -= 10;
+
+	// 取得射線擊中的目標中，是 all_Cube 陣列裡面的所有目標
+	const intersections = raycaster.intersectObjects( all_Cube, false );
+
+	// 如果大於0，就表示腳下有方塊
+	const isPlayerOnGround = intersections.length > 0;
+
+	// 回傳腳下是否有方塊的結果
+	return isPlayerOnGround;
+}
+
+function init() {
+	initScene();
+	initCamera();
+	initRenderer();
+	initPlayerController();
+	setUpBlocker();
+	setUpMovement();
+	initRaycaster();
+	initFloor();
+	initCube();
+	initLight();
+	window.addEventListener( 'resize', resize );
+	window.addEventListener( 'fullscreenchange', resize )
+	animate();
+}
+
+function resize() {
+	camera.aspect = canvas.clientWidth / canvas.clientHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+}
+
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	// 取得目前這一幀所在的時間點
+	const time = performance.now();
+	
+	if ( playerController.isLocked ) {
+
+		// 玩家目前的位置
+		const PlayerPosition = playerController.getObject().position;
+
+		// 現在玩家是否站在方塊上
+		const isPlayerStandOnCube = isPlayerOnGround( PlayerPosition );
+
+		// 與上一幀的時間相減，算出每幀之間的隔了多久
+		const delta = ( time - prevTime ) / 1000;
+
+		// 計算速度
+		velocity.x -= velocity.x * playerMoveFriction * delta;
+		velocity.z -= velocity.z * playerMoveFriction * delta;
+		velocity.y -= 9.8 * playerWeight * delta;
+
+		// 計算方向
+		direction.z = Number( moveForward ) - Number( moveBackward );
+		direction.x = Number( moveRight ) - Number( moveLeft );
+		direction.normalize();
+
+		// 向玩家移動的方向施加力量
+		if ( moveForward || moveBackward ) velocity.z -= direction.z * playerMoveSpeed * delta;
+		if ( moveLeft || moveRight ) velocity.x -= direction.x * playerMoveSpeed * delta;
+
+		// 當玩家站在方塊上
+		if ( isPlayerStandOnCube ) {
+
+			// 如果現在是下墜:停止下墜，如果現在是上升: 繼續上升
+			velocity.y = Math.max( 0, velocity.y );
+
+			// 允許跳躍
+			canJump = true;
+		}
+
+		// 玩家移動
+		playerController.moveRight( - velocity.x * delta );
+		playerController.moveForward( - velocity.z * delta );
+
+		PlayerPosition.y += ( velocity.y * delta ); // new behavior
+
+		// 當玩家墜落到地板以下時
+		if ( PlayerPosition.y < playerHight ) {
+
+			// 將下墜速度改成 0，讓玩家停止下墜
+			velocity.y = 0;
+
+			// 將玩家的高度位置設回地板之上
+			PlayerPosition.y = playerHight;
+
+			// 恢復正常後再允許玩家跳躍
+			canJump = true;
+		}
+
+	}
+
+	prevTime = time;
+
+	renderer.render( scene, camera );
+
+}
+
+init();
+
+</script>
+</html>
