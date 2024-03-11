@@ -35,9 +35,10 @@ import { PointerLockControls } from 'PointerLockControls';
 const canvas = document.querySelector('#canvas');
 
 // 場景基本元件們
-//相機、場景、渲染器、玩家控制器
 let camera, scene, renderer, playerController;
 
+//滑鼠
+const pointer = new THREE.Vector2();
 
 /* -------------------- 玩家屬性設定 ---------------------- */
 // 玩家身高
@@ -58,6 +59,9 @@ const playerWeight = 70.0;
 
 // 只要是放在這個陣列裡面的模型，玩家踩到時就可以站在上面
 const all_Cube = [];
+
+// 交集點
+let INTERSECTED;
 
 // 射線，用途: 不停向下發射射線來檢查腳下是否有方塊
 let raycaster;
@@ -117,7 +121,7 @@ function setUpBlocker() {
 
 	const blocker = document.getElementById( 'blocker' );
 
-	blocker.addEventListener( 'click',  () =>  { playerController.lock(); } );
+	blocker.addEventListener( 'click', function () { playerController.lock(); } );
 
 	// 鎖定後隱藏鼠標
 	playerController.addEventListener( 'lock', () => { blocker.style.display = 'none'; });
@@ -188,12 +192,10 @@ function setUpMovement() {
 	document.addEventListener( 'keyup', onKeyUp );
 }
 
-//射線
 function initRaycaster() {
 	raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 }
 
-//地面
 function initFloor() {
 
 	const color = new THREE.Color();
@@ -267,7 +269,6 @@ function initCube() {
 	}
 }
 
-//光
 function initLight() {
 	scene.add( new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 ) );
 }
@@ -290,6 +291,14 @@ function isPlayerOnGround( PlayerPosition ) {
 	return isPlayerOnGround;
 }
 
+// 抓取鼠標位置
+function onPointerMove( event ) {
+
+	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+}
+
 function init() {
 	initScene();
 	initCamera();
@@ -303,7 +312,10 @@ function init() {
 	initLight();
 	window.addEventListener( 'resize', resize );
 	window.addEventListener( 'fullscreenchange', resize )
+	// 當鼠標移動會觸發事件
+	document.addEventListener( 'mousemove', onPointerMove );
 	animate();
+	
 }
 
 function resize() {
@@ -376,6 +388,31 @@ function animate() {
 	}
 
 	prevTime = time;
+
+	raycaster.setFromCamera( pointer, camera );
+		// 用射線檢測與物體的相交
+		const intersects = raycaster.intersectObjects( scene.children, false );
+
+		if ( intersects.length > 0 ) {
+			// 當你沒碰到新物件時，會執行下列程式
+			if ( INTERSECTED != intersects[ 0 ].object ) {
+				// 如果目前的 INTERSECTED 不為空（表示之前有相交的物體），則將之前相交的物體的發光顏色還原為原本的顏色。
+				if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+				INTERSECTED = intersects[ 0 ].object;
+				// 將新相交的物體的顏色保存到 currentHex 變數中，以便在未來還原顏色。
+				// INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+				INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+			}
+
+		} else {
+			// 如果之前有相交的物體，則將其發光顏色還原為原本的顏色。
+			// if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+			INTERSECTED = null;
+
+		}
 
 	renderer.render( scene, camera );
 
