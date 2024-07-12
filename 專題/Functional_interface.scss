@@ -1,0 +1,300 @@
+*{  
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family:'微軟正黑體';
+    letter-spacing: 1px;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* box-sizing: border-box; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 靠右對齊 */
+    justify-content: flex-start; /* 靠上對齊 */
+    height: 50vh;
+    background-color: #f2f2f2; /* 背景顏色 */
+}
+
+
+#content {
+    width: 50%;
+    text-align: left;
+    display:block;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+/*---------------------------最上排選擇欄位and滑鼠觸碰事件-------------------------------*/
+
+#menu {
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; 
+    position: fixed;
+    background-color: rgba(34, 34, 34, 0.682);
+    box-shadow:0 5px 5px #000000bf;/*左右,上下陰影位置,陰影模糊度*/
+    padding-left: 3%;
+    padding-right: 34%;
+    transition: .2s;
+    img {
+        box-shadow:0 5px 5px #000000bf;/*左右,上下陰影位置,陰影模糊度*/
+        background-color: #909090b4;
+        padding-bottom: 30px;
+        margin: -15px 100px 0px 100px;
+        transition: .2s;
+    }
+    .header {
+        font-weight: bold;
+        position: absolute;
+        display: inline-block;  
+        list-style:none ; /*列表樣式為空*/
+        transition: .2s;
+        .list { 
+            width: 100px;
+            height: 60px;
+            text-align: center; /* 水平置中 */
+            float: left;
+            padding: 10px;
+            margin: 20px 20px 20px 20px; /*上右下左邊距 */
+            transition: .2s;
+            &:hover{
+                transition: .2s;
+                height: 50px;
+                text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
+                background: linear-gradient(to top, #8d8c8c 20%, transparent 100%);/*background往上顯示顏色還有逐漸變透明位置和比例*/
+                transform: translatey(-3px);
+                font-size: 110%;
+            }
+        }
+    }
+    &:hover{
+        height: 90px;
+        background-color: rgb(33, 33, 33);
+        transition: .4s;
+        img {
+            background-color: #909090;
+            transition: .4s;
+            transform: translateY(8px);
+        }
+        .header {
+            transition: .4s;
+            transform: translateY(8px) ;
+        }
+    }
+}
+/*-------------登入-------------------*/
+.header__login {
+    display: flex;
+    justify-content: flex-end;/*將子項目在主軸上對齊到容器的末端*/
+    position: absolute;
+    top: 0;
+    right: 50px;
+    height: 100%;
+    white-space: nowrap;/*禁止文本換行，文本將在同一行內繼續排列，直到遇到 <br> 標籤或容器寬度不夠顯示整行文本為止。*/
+    font-size: 14px;
+    transition: all 0.2s ;
+    &:hover{
+        transition: 0.2s ;
+        .login__dropdown--menu{
+        display: block;
+        transition: 0.2s ;
+        }
+    }
+    /*單純只有下拉表會員名稱的觸碰效果*/
+    .login__dropdown {
+        position: relative;
+        padding: 0 30px 0 0;
+        height: 100%;
+        background: transparent ;/*背景完全透明*/
+        outline: none;
+        border: 0;
+        font-size: inherit;
+        color: #fff9f9;
+        cursor: pointer;/*鼠標碰到變點擊*/
+        transition: .2s;
+        &:hover{
+            height: 90px;
+            text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
+            transition: .2s;
+        }
+        /*這種是單純裝飾用，after是跟在後面，before是跟在前面。
+        這裡是下拉欄後面的倒三角形*/
+        ::after{
+            content: '';
+            position: absolute;
+            right: 0%;
+            top: 50%;
+            width: 0;
+            height: 0;
+            /*倒三角形*/
+            border-bottom: 6px solid #ffffffd7;
+            border-left: 6px solid transparent;/*透明度*/
+            border-right: 6px solid transparent;
+            transform: rotate(-180deg);
+            transition:  0.4s;
+        }  
+    }
+    /*下拉清單*/
+    .login__dropdown--menu {
+        background-color:rgba(34, 34, 34, 0.904);
+        box-shadow:5px 5px 3px #000000bf;/*左右,上下陰影位置,陰影模糊度*/
+        font-weight: bold;
+        position: absolute;
+        display: none;
+        list-style:none ; /*列表樣式為空*/
+        transition: .4s;
+        margin-top: 80px;
+        .dropdown {
+            text-align: center; /* 水平置中 */
+            padding: 10px;
+            margin: 20px 20px 20px 20px; /*上右左下邊距 */
+            transition: .4s;
+            right: 6px;
+            &:hover{
+                text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
+                transition: .4s;
+                right: 2px;
+                display: block;
+                transform: rotatez('-3px');
+                background: linear-gradient(to left, #8d8c8c 50%, transparent 100%);/*background往上顯示顏色還有逐漸變透明位置和比例*/
+            }
+
+        }
+    }
+}
+
+/*---上排連結文字----*/
+a {
+    text-decoration: none;
+    color: #ffffff;
+}
+#home-link {
+    color: #ffffff; /* 藍色 */
+}
+
+#info-link {
+    color: #ffffff; /* 橙色 */
+}
+
+#function-li a {
+    color: #ffffff; /* 綠色 */
+}
+#delete{
+    color:#ffffff
+}
+#logout{
+    color:#ffffff
+}
+/*------------------------------------聊天室-----------------------*/
+#chat_box ,#chat_box2{
+    width:100%;
+    padding: 10px 10px 30px 50px;
+}
+
+.message_container {
+    box-sizing: border-box;
+    width: 100%;
+    /* background-color: #ededed; */
+    margin: auto;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 垂直居中 */
+    overflow-y: auto; /* 当内容超出容器高度时，显示滚动条 */
+    padding: 10px 0px 10px 20px;
+    &::-webkit-scrollbar {
+        display: none; /* Chrome Safari 使聊天室滾輪消失 */
+    }
+}
+
+#message {
+    background-color: #d4dbcd;
+    padding: 6px 10px 8px 10px;
+    margin: auto;
+    word-wrap: break-word; /* 自动换行 */ 
+    display: inline-block;
+    border-radius: 7px;
+    max-width: 75%; /* 最大宽度 */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+#message_date {
+    padding:20px 10px;
+    margin-bottom: 10px; /* 设置消息间距 */
+    word-wrap: break-word; /* 自动换行 */ 
+    border-radius: 8px;
+    max-width: 75%; /* 最大宽度 */
+    font-size: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color:#999;
+    text-align: left;
+}
+
+#personal_message {
+    background-color: #b9d7ec;
+    padding: 6px 10px 8px 10px;
+    margin: auto;
+    word-wrap: break-word; /* 自动换行 */ 
+    display: inline-block;
+    border-radius: 7px;
+    max-width: 75%; /* 最大宽度 */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+#personal_message_date {
+    padding:20px 10px;
+    margin-bottom: 10px; /* 设置消息间距 */
+    word-wrap: break-word; /* 自动换行 */ 
+    border-radius: 8px;
+    max-width: 75%; /* 最大宽度 */
+    font-size: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color:#999;
+    text-align: left;
+}
+
+/*--------------------輸入框------------------------------------------------------*/
+#input_box{
+    justify-content: space-between; /* 按鈕和輸入框之間的間距 */
+    display: flex;
+    width: 70%;
+    position: sticky; /* 使用固定定位 */
+    bottom: 20px; /* 距离底部的距离 */
+    align-items: center; /* 垂直居中 */
+   }
+
+   #message_input{
+    height: 50px;
+    width: 450px;
+    padding: 20px 20px; /* 输入框內邊距 */
+    border: 3px solid #ccc; /* 輸入框邊框大小 */
+    border-radius: 20px; /* 输入框邊框原角 */
+    font-size: 16px; /* 输入框字體大小 */
+    outline: none; /* 去除输入框聚焦時的外邊框 */
+    transition:  0.2s; /* 邊框顏色過度效果 */
+    border-color: #d7d5d5; 
+    &:hover{
+        border-color: #7b7a7a99; /* 輸入框輸入時旁的顏色 */
+        transition:  0.2s; /* 邊框顏色過度效果 */
+    }
+    &:focus {
+        border-color: #d3e3fd; /* 輸入框聚焦石的顏色 */
+        box-shadow: 0px 0px 5px 1px #d3e3fd;  /* 輸入框聚焦時的陰影效果 */
+        transition:  0.2s; /* 邊框顏色過度效果 */
+    }
+    
+}
+
+#send_button{
+    display: none;
+        }
+

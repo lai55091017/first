@@ -1,0 +1,154 @@
+@charset "UTF-8";
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "微軟正黑體";
+  letter-spacing: 0.1em;
+}
+
+body {
+  background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #d0b991);
+  height: 100vh;
+  width: 100vh;
+  margin: 0;
+}
+body .box {
+  display: flex;
+  position: fixed;
+  width: 65%;
+  height: 500px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+body .box .left {
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  width: 65%;
+}
+body .box .left img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+body .box #login {
+  box-sizing: border-box;
+  width: 35%;
+  height: 100%;
+  padding: 0 20px;
+  background-color: rgba(54, 54, 54, 0.675);
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+}
+body .box #login h1 {
+  font-size: 36px;
+  text-align: center;
+  color: #ffffff;
+  margin-top: 0;
+  padding-top: 50px;
+  padding-bottom: 30px;
+  letter-spacing: 0.1em;
+}
+body .box #login .input_box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  margin-bottom: 10px;
+  width: 300px;
+}
+body .box #login .input_box label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #ffffff;
+}
+body .box #login .input_box input {
+  box-sizing: border-box;
+  padding: 10 10px;
+  color: #1b1b1b;
+  height: 40px;
+  width: 300px;
+  font-size: 14px;
+  transition: 0.2s; /* 邊框顏色過度效果 */
+  background-color: rgba(251, 251, 251, 0.5333333333);
+  border: 1px solid #808283; /* 輸入框邊框大小 */
+  border-radius: 5px;
+  outline: none;
+}
+body .box #login .input_box input:hover {
+  transition: 0.2s; /* 邊框顏色過度效果 */
+  background-color: #d3e3fd;
+}
+body .box #login .input_box input:focus {
+  border-color: #656565; /* 輸入框聚焦石的顏色 */
+  box-shadow: 0px 0px 0px 3px #a3c2f5; /* 輸入框聚焦時的陰影效果 */
+  transition: 0.2s; /* 邊框顏色過度效果 */
+  background-color: #ffffff;
+}
+body .box #login .btn_box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: start;
+  width: 300px;
+}
+body .box #login .btn_box .a {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin: 5px 0px;
+  width: 300px;
+}
+body .box #login .btn_box .a a {
+  margin-left: 20px;
+  font-size: 13px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: 0.2s;
+}
+body .box #login .btn_box .a a:hover {
+  color: hsl(0, 0%, 100%);
+  transition: 0.2s;
+  text-decoration: underline;
+  text-shadow: 0 0 10px #e3ffb9, 0 0 20px #e6fc8d, 0 0 10px #adf193;
+}
+body .box #login .btn_box .buttom {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: start;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+body .box #login .btn_box .buttom input {
+  font-weight: 600;
+  color: #494949;
+  width: 300px;
+  height: 40px;
+  background-color: hsla(0, 0%, 100%, 0.842);
+  border-radius: 5px;
+  transition: 0.2s;
+  letter-spacing: 1px;
+  border: 1px solid #808283; /* 輸入框邊框大小 */
+}
+body .box #login .btn_box .buttom input:nth-of-type(2) {
+  margin-left: 10px;
+}
+body .box #login .btn_box .buttom input:hover {
+  border: 3px solid #a3c2f5;
+  background-color: #a3c2f5;
+  transition: 0.2s;
+}
+body .box #login .email {
+  margin-left: 100px;
+}
+body .box #login .email h3 {
+  color: #ffffff;
+  margin-bottom: 10px;
+  margin-left: -10px;
+}/*# sourceMappingURL=login1.css.map */

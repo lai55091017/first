@@ -1,0 +1,158 @@
+*{  
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family:'微軟正黑體';
+    letter-spacing: 0.1em;
+}
+
+body {
+    background: linear-gradient(0.25turn, #3f87a6, #ebf8e1,#d0b991);
+    // background: url(/img/4.jpg) no-repeat;
+    height: 100vh;
+    width:100vh;
+    margin:0;
+    .box{
+        display: flex;
+        position: fixed;
+        width:65%;
+        height:500px;
+        box-shadow :0px 5px 15px rgba(0,0,0,.8);
+        border-radius:20px;
+        // backdrop-filter: blur(5px);
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%);
+        .left{
+            border-bottom-left-radius:20px ;
+            border-top-left-radius:20px ;
+            width:65%;
+            img{
+                display: block;
+                width: 100%;
+                height:100%;
+                object-fit: cover;
+            }
+        }
+        #login {
+            box-sizing: border-box;
+            width: 35%;
+            height: 100%;
+            padding: 0 20px;
+            background-color: rgba(54, 54, 54, 0.675);
+            border-bottom-right-radius:20px ;
+            border-top-right-radius:20px ;
+            h1{ 
+                font-size: 36px;
+                text-align: center;
+                color: #ffffff;
+                margin-top: 0;
+                padding-top:50px;
+                padding-bottom:30px;
+                letter-spacing:0.1em;
+            }
+            .input_box{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                margin-bottom: 10px;
+                width: 300px;
+                label{  
+                    margin-bottom: 5px;
+                    font-weight: 600;
+                    font-size:13px;
+                    color: #ffffff;
+                }
+                input{
+                    box-sizing: border-box;
+                    padding:10 10px;
+                    color: #1b1b1b;
+                    height: 40px;
+                    width: 300px;
+                    font-size: 14px;
+                    transition: 0.2s; /* 邊框顏色過度效果 */
+                    background-color: #fbfbfb88;
+                    border: 1px solid #808283; /* 輸入框邊框大小 */
+                    border-radius: 5px;
+                    outline: none;
+                    &:hover{
+                        // box-shadow: 0px 0px 0px 3px #d3e3fd;  /* 輸入框聚焦時的陰影效果 */
+                        transition: 0.2s; /* 邊框顏色過度效果 */
+                        background-color: #d3e3fd;
+                    }
+                    &:focus{
+                        border-color: #656565; /* 輸入框聚焦石的顏色 */
+                        box-shadow: 0px 0px 0px 3px #a3c2f5;  /* 輸入框聚焦時的陰影效果 */
+                        transition: 0.2s; /* 邊框顏色過度效果 */
+                        background-color: #ffffff;
+                    }
+                }
+            }
+            .btn_box{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: start;
+                width: 300px;
+                .a{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: end;
+                    margin:5px 0px;
+                    width: 300px;
+                    a{  
+                        margin-left: 20px;
+                        font-size: 13px;
+                        color: #ffffff;
+                        text-decoration:none;
+                        transition: 0.2s;
+                        &:hover{
+                            color: hsl(0, 0%, 100%);
+                            transition: 0.2s;
+                            text-decoration:underline;
+                            text-shadow: 0 0 10px #e3ffb9, 0 0 20px #e6fc8d, 0 0 10px #adf193;
+                        }
+                    }
+                }
+                .buttom{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    text-align: start;
+                    margin-top: 5px;
+                    margin-bottom: 20px;
+                    input{
+                        font-weight: 600;
+                        color: #494949;
+                        width: 300px;
+                        height: 40px;
+                        background-color: hsla(0, 0%, 100%, 0.842);
+                        border-radius: 5px;
+                        transition: 0.2s;
+                        letter-spacing: 1px;
+                        border: 1px solid #808283; /* 輸入框邊框大小 */
+                        &:nth-of-type(2){
+                            margin-left:10px;
+                        }
+                        &:hover{
+                            border:3px solid #a3c2f5;
+                            background-color: #a3c2f5;
+                            transition: 0.2s;
+                        }
+                    }
+                }
+            }
+            .email{
+                margin-left:100px;
+                h3{
+                    color: #ffffff;
+                    margin-bottom:10px;
+                    margin-left:-10px;
+                }
+
+            }
+        
+        }
+    }
+}
