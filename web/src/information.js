@@ -19,7 +19,7 @@ function addMusicCard(musicName, audioUrl, imageUrl) {
     const cardList = document.getElementById('cardList');
     const newCardId = `audio${cardList.children.length + 1}`;
     const newButtonId = `button${cardList.children.length + 1}`;
-    
+
     const newCard = document.createElement('li');
     newCard.innerHTML = `
         <div class="card">
@@ -33,9 +33,9 @@ function addMusicCard(musicName, audioUrl, imageUrl) {
             </button>
         </div>
     `;
-    
+
     cardList.appendChild(newCard);
-    
+
     const newImageCard = document.createElement('li');
     newImageCard.innerHTML = `
         <div class="card">
@@ -44,10 +44,10 @@ function addMusicCard(musicName, audioUrl, imageUrl) {
             </a>
         </div>
     `;
-    
+
     cardList.appendChild(newImageCard);
 
-    document.getElementById(newButtonId).addEventListener('click', function() {
+    document.getElementById(newButtonId).addEventListener('click', function () {
         toggleAudio(newCardId, newButtonId);
     });
 }
@@ -57,14 +57,14 @@ addMusicCard("賴的歌", "audio.mp3", "/img/aaa.jpg");
 addMusicCard("賴的歌", "audio.mp3", "/img/aaa.jpg");
 
 
-// document.getElementById('newCardForm').addEventListener('submit', function(event) {
+// document.getElementById('newCardForm').addEventListener('submit', function (event) {
 //     event.preventDefault();
-    
+
 //     const musicName = document.getElementById('musicName').value;
 //     const audioUrl = document.getElementById('audioUrl').value;
 //     const imageUrl = document.getElementById('imageUrl').value;
-    
+
 //     addMusicCard(musicName, audioUrl, imageUrl);
-    
+
 //     document.getElementById('newCardForm').reset();
 // });
