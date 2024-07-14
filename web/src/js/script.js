@@ -10,8 +10,8 @@ const renderer = new THREE.WebGLRenderer( { antialias: true } );
 
 const controller = new Controller( scene, camera, renderer.domElement);
 const characterManager = new CharacterManager( scene, camera );
-// const connect = new Connect( 'ws://localhost:8080' );
-const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
+const connect = new Connect( 'ws://localhost:8080' );
+// const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
 // init();
 
 function init_scene () {
