@@ -166,6 +166,7 @@ class Controller {
         chatBox2.style.display = isGameActive ? 'block' : 'none';
     }
 
+    // 聊天室
     __chatroom = (event) => {
         if (event.key === 'Enter') {
             const messageInput = document.querySelector('#message_input');

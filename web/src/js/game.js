@@ -466,6 +466,10 @@ function animate() {
         gameData.rotation.z = PlayerRotation.z;
 
 		getGameData()
+
+		// 計算速度並儲存到 playerctroller(玩家控制器)
+		const speed = Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+		playerController.speed = speed;
     }
     renderer.render(scene, camera);
 }
