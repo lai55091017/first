@@ -65,7 +65,7 @@ function currentTime(){
 // 聊天室
 const messageInput = document.getElementById('message_input');  //聊天室輸入框
 const sendButton = document.getElementById('send_button');      //聊天室按鈕
-
+auth.onAuthStateChanged()
 //聊天室訊息加入到資料庫
 if(messageInput && sendButton){
     sendButton.addEventListener('click', () => {
@@ -186,21 +186,6 @@ function new_message(messageElement, MessageDateElement) {
             messageElement.remove(); // 消息淡出後移除元素
             MessageDateElement.remove();
         }, 4000);
-}
-
-
-
-//登入表單
-const user_login = document.getElementById('login')
-if(user_login){
-    user_login.addEventListener('submit', async (event) => {
-        event.preventDefault(); // 阻止默认提交行为
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        auth.login(email, password);
-    });
 }
 
 //刪除帳號

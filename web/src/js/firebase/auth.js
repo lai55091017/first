@@ -48,37 +48,30 @@ class Auth{
     }
 
     // 登入設定
-    login(email, password) {
-        return signInWithEmailAndPassword(this.auth, email, password)
-        .then((userCredential) => {
-            // 登入成功
+    async login(email, password) {
+        try {
+            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
             const user = userCredential.user;
             console.log("使用者登入成功.");
             // 跳转到指定页面
             window.location.href = "Functional_interface.html";
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.error("登入時出錯:", errorMessage);
-            return errorMessage
-        });
+        } catch (error) {
+            console.error("登入時出錯:", error.message);
+        }
     }
 
     // 登出設定
-    Sign_out() {  
-        signOut(this.auth).then(() => {
-            // 登出成功，可以在这里执行相关操作，比如跳转到登录页面或者刷新页面
+    async Sign_out() {
+        try {
+            await signOut(this.auth);
             console.log("用户已登出");
             window.location.href = "index.html"; // 跳转到登录页面
-        }).catch((error) => {
-            // 登出失败，输出错误信息
+        } catch (error) {
             console.error("登出失败:", error.message);
-        });
+        }
     }
 
-    
-    //監聽資料
+    // 監聽資料
     onAuthStateChanged() {
         onAuthStateChanged(this.auth, (user) => {
             if (user) {
@@ -88,33 +81,44 @@ class Auth{
                 console.log('使用者建立和登入時間的其他元資料：', user.metadata);
                 console.log('每個提供者的附加信息，例如顯示名稱和個人資料資訊：', user.providerData);
                 console.log('使用者的電子郵件地址：', user.email);
-            }else {
-            console.log('用戶未登入');
+            } else {
+                console.log('用戶未登入');
             }
         });
     }
 
-    //刪除帳號設定
-    delete_account() {
-        onAuthStateChanged(this.auth, (user) => {
+    // 刪除帳號設定
+    async delete_account() {
+        onAuthStateChanged(this.auth, async (user) => {
             if (user) {
-                user.delete().then(() => {
-                    console.log('開始刪除用戶');
-                    user.delete()
-                    .then(() => {
-                        console.log('用戶已刪除');
-                        window.location.href = "index.html"
-                    })
-                    .catch((error) => {
-                        console.error('刪除用戶失敗:', error.message);
-                    });
-                })
-                .catch((error) => {
-                    console.error('開始刪除用戶時發生錯誤:', error.message);
-                });
+                try {
+                    await user.delete();
+                    console.log('用戶已刪除');
+                    window.location.href = "index.html";
+                } catch (error) {
+                    console.error('刪除用戶失敗:', error.message);
+                }
             } else {
                 console.log('用戶未登入');
-                window.location.href = "index.html"
+                window.location.href = "index.html";
+            }
+        });
+    }
+
+    // 更改密碼設定
+    async change_password(old_password, new_password) {
+        onAuthStateChanged(this.auth, async (user) => {
+            if (user) {
+                try {
+                    await user.updatePassword(new_password);
+                    console.log('密碼已更改');
+                    window.location.href = "Functional_interface.html";
+                } catch (error) {
+                    console.error('更改密碼失敗:', error.message);
+                }
+            } else {
+                console.log('用戶未登入');
+                window.location.href = "index.html";
             }
         });
     }
