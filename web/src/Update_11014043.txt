@@ -21,3 +21,23 @@ CharacterManager.js
 	__getSpeed(meshContainer) {
     	return meshContainer.userData.speed || 0;
     }
+
+8月上中旬:處理搬家事務和跑後續相關程序，所以比較沒時間處理專題，抱歉。
+
+8月下旬:
+Script.js
+> 導入ImportCharacterAndScene.js的ICAS並將其const+初始化
+> 新增function loadModels和init function loadModels
+
+更新public/mesh內容，結構如下：
+public/
+├── mesh/
+    ├── glb/
+    │   └── lilbray.glb
+	│	└── Xbot.glb
+    ├── fbx/
+    │   └── lilbray.fbx
+    ├── obj/
+    │   └── lilbray2.obj
+    └── mtl/
+        └── lilbray2.mtl

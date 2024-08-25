@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Controller from './Controller.js';
 import Connect from './Connect.js';
 import CharacterManager from './CharacterManager.js';
+import ICAS from './ImportCharacterAndScene.js'; 
 
 let prevTime = performance.now();
 const scene = new THREE.Scene();
@@ -13,6 +14,7 @@ const characterManager = new CharacterManager(scene, camera);
 const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
 // init();
+const icas = new ICAS(scene, camera);
 
 function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
@@ -43,6 +45,40 @@ function init_other() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
+
+// 導入場景模型
+async function loadModels() {
+    const models = [
+        { type: 'glb', path: './mesh/glb/lilbrary.glb' },
+        { type: 'fbx', path: './mesh/fbx/lilbray.fbx' },
+        { type: 'obj', path: './mesh/obj/lilbray2.obj' }
+    ];
+
+    for (const model of models) {
+        let loadedModel;
+        try {
+            switch (model.type) {
+                case 'glb':
+                    loadedModel = await icas.loadGLTF(model.path);
+                    scene.add(loadedModel.scene);
+                    break;
+                case 'fbx':
+                    loadedModel = await icas.loadFBX(model.path);
+                    scene.add(loadedModel);
+                    break;
+                case 'obj':
+                    loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+                    scene.add(loadedModel);
+                    break;
+                default:
+                    console.error('Unknown model type:', model.type);
+            }
+        } catch (error) {
+            console.error('Error loading model:', model.path, error);
+        }
+    }
+}
+
 export function init() {
     init_scene();
     init_camera();
@@ -52,6 +88,9 @@ export function init() {
     connect.onLeave = onPlayerLeave;
     connect.onMove = onPlayerMove;
     controller.setupBlocker(document.getElementById('blocker'));
+
+    // 導入(載入)模型
+    loadModels();
 }
 function animate() {
 
