@@ -2,10 +2,12 @@ import "./scss/information.scss";
 
 
 
-/*-----------------------loading--------------------*/
+
+//----------------------loading動畫--------------
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
+;
 
 
 /*------------------------------------新增卡片功能-----------------------------------------*/
@@ -42,11 +44,16 @@ document.getElementById('card-form').addEventListener('submit', function (event)
         dialogContent.innerHTML = `
         <a>${englishText}</a>
         <a>${chineseText}</a>
-        <button id="close" onclick="closedialog()">X</button>
+        <button id="close">X</button>
         <audio id="audio" src="audio.mp3" controls></audio>
     `;
         // 顯示 dialog
         dialog.showModal();
+
+        // 綁定關閉 dialog 的按鈕事件
+        document.getElementById('close').addEventListener('click', function () {
+            dialog.close();
+        });
 
     });
     // 清空表單
@@ -78,8 +85,3 @@ document.querySelectorAll('button').forEach(button => {
     });
 });
 
-
-/*------------------跳窗--------------------*/
-function closedialog() {
-    dialog.close();
-}

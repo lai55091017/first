@@ -442,11 +442,9 @@ dialog {
     }
 }
 
-/*--------------------------------------------------------------------------*/
-// Here is where the magic happens
-
+/*------------------------------載入畫面--------------------------------------------*/
 .loading_wrapper {
-    background-color: #83838392;
+    background-color: #0c0c0c;
     width: 100%;
     height: 100%;
     top: 0;
@@ -455,86 +453,130 @@ dialog {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10009;
+    z-index: 100000;
 
     .title__div {
-        height: 60%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        height: 40%;
 
         .title {
             color: rgb(255, 255, 255);
-            font-weight: bold;
             font-size: 5rem;
+            font-family: 'Impact';
         }
     }
 }
 
-$offset: 187;
-$duration: 1.4s;
 
-.spinner {
-    animation: rotator $duration linear infinite;
-    padding: 60px;
-    z-index: 10009;
-
+.load {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*change these sizes to fit into your project*/
+    width: 100px;
+    height: 100px;
 }
 
-@keyframes rotator {
-    0% {
-        transform: rotate(0deg);
-    }
+.load hr {
+    border: 0;
+    margin: 0;
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    border-radius: 50%;
+    animation: spin 2s ease infinite
+}
 
+.load :first-child {
+    background: #19A68C;
+    animation-delay: -1.5s
+}
+
+.load :nth-child(2) {
+    background: #F63D3A;
+    animation-delay: -1s
+}
+
+.load :nth-child(3) {
+    background: #FDA543;
+    animation-delay: -0.5s
+}
+
+.load :last-child {
+    background: #193B48
+}
+
+@keyframes spin {
+
+    0%,
     100% {
-        transform: rotate(270deg);
-    }
-}
-
-.path {
-    stroke-dasharray: $offset;
-    stroke-dashoffset: 0;
-    transform-origin: center;
-    animation:
-        dash $duration ease-in-out infinite,
-        colors ($duration*4) ease-in-out infinite;
-}
-
-@keyframes colors {
-    0% {
-        stroke: #4285F4;
+        transform: translate(0)
     }
 
     25% {
-        stroke: #DE3E35;
+        transform: translate(160%)
     }
 
     50% {
-        stroke: #F7C223;
+        transform: translate(160%, 160%)
     }
 
     75% {
-        stroke: #1B9A59;
-    }
-
-    100% {
-        stroke: #4285F4;
+        transform: translate(0, 160%)
     }
 }
 
-@keyframes dash {
-    0% {
-        stroke-dashoffset: $offset;
+/*------------------------------------------------文字動畫----------------------------------------------------------------*/
+.animated {
+    animation-duration: 0.7s;
+    animation-fill-mode: both;
+}
+
+/*貝塞爾曲線是由四個點控制的：起點、終點和兩個控制點。在 CSS 中，起點和終點固定在 (0,0) 和 (1,1)，這代表動畫的開始和結束。
+參數 (0.215, 0.61, 0.355, 1 )分別代表兩個控制點的坐標：
+第一個控制點 (0.215, 0.61)
+第二個控制點 (0.355, 1)
+這些參數如何影響動畫：
+第一個控制點主要影響動畫開始階段的加速度。例如，若第一個控制點的第二個坐標（y值）大於 0.5，則動畫在開始時會快速加速。
+第二個控制點主要影響動畫結束階段的加速度。如果第二個控制點的 y 值等於 1，這意味著動畫在接近結束時達到其最終狀態之前的速度會加快。*/
+
+@keyframes bounce {
+
+    //from, 20%, 53%, to: 這些幀將元素的位置設置在原點，並設定動畫時間函數。
+    from,
+    20%,
+    53%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translate3d(0, 0, 0);
     }
 
-    50% {
-        stroke-dashoffset: $offset/4;
-        transform: rotate(135deg);
+    //40%, 43%: 在這些幀中，元素向上移動 30px 並稍微放大（scaleY(1.1)），模擬彈跳向上的動作。
+
+    40%,
+    43% {
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        transform: translate3d(0, -20px, 0) scaleY(1.1);
     }
 
-    100% {
-        stroke-dashoffset: $offset;
-        transform: rotate(450deg);
+    //70%: 元素再次向上移動 15px 並稍微放大（scaleY(1.05)）。
+
+    70% {
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        transform: translate3d(0, -15px, 0) scaleY(1.05);
     }
+
+    80% {
+        transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translate3d(0, 0, 0) scaleY(0.95);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0) scaleY(1.02);
+    }
+}
+
+.bounce {
+    animation-name: bounce;
+    transform-origin: center bottom;
 }
