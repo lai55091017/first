@@ -188,21 +188,6 @@ function new_message(messageElement, MessageDateElement) {
     }, 4000);
 }
 
-
-
-//登入表單
-const user_login = document.getElementById('login')
-if(user_login){
-    user_login.addEventListener('submit', async (event) => {
-        event.preventDefault(); // 阻止默认提交行为
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        auth.login(email, password);
-    });
-}
-
 //刪除帳號
 const Delete_account = document.getElementById('delete');
 if (Delete_account) {

@@ -32,26 +32,24 @@ class Auth{
     }
 
     // 註冊設定
-    register(email, password) {
-        return createUserWithEmailAndPassword(this.auth, email, password)
-        .then((userCredential) => {
+    async register(email, password) {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
             // 注册成功
             const user = userCredential.user;
             console.log("使用者創建成功.");
-        })
-        .catch((error) => {
+        } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.error("建立使用者時出錯:", errorMessage);
-            return errorMessage
-        });
+            return errorMessage;
+        }
     }
 
     // 登入設定
     async login(email, password) {
         try {
-            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-            const user = userCredential.user;
+            await signInWithEmailAndPassword(this.auth, email, password);
             console.log("使用者登入成功.");
             // 跳转到指定页面
             window.location.href = "Functional_interface.html";
@@ -122,7 +120,6 @@ class Auth{
             }
         });
     }
-
     
 }
 export default Auth;
