@@ -52,7 +52,28 @@ function newCard(englishText, chineseText) {
         `;
         // 將新卡片添加到容器
         document.querySelector('.contair').appendChild(newCard);
-    
+        
+        const editBtn = newCard.querySelector('.edit-btn');
+        const deleteBtn = newCard.querySelector('.delete-btn');
+        //編輯卡片
+        editBtn.addEventListener('click', function (event) {
+            event.stopPropagation(); // 阻止事件冒泡
+            const newEnglishText = prompt("Enter new English text:", englishText);
+            const newChineseText = prompt("Enter new Chinese text:", chineseText);
+
+            if (newEnglishText !== null && newChineseText !== null) {
+                newCard.querySelector('h1').textContent = newEnglishText;
+                newCard.querySelector('p').textContent = newChineseText;
+            }
+            console.log("卡片內容已編輯");
+        })
+        //刪除卡片
+        deleteBtn.addEventListener('click', function (event) {
+            event.stopPropagation(); // 阻止事件冒泡
+            newCard.remove();
+            console.log("卡片已刪除");
+        })
+
         // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
         newCard.addEventListener('click', function () {
             const dialog = document.getElementById('dialog');
@@ -91,7 +112,7 @@ function toggleAudio(audioId, buttonId) {
     }
 }
 
-// 為所有按鈕添加事件監聽器
+// 音樂播放控制
 document.querySelectorAll('button').forEach(button => {
     button.addEventListener('click', function () {
         let audioId = this.previousElementSibling.id;
