@@ -30,7 +30,7 @@ const db = new FirebaseDB;
 const username_element = document.getElementById('username');
 if (username_element) {
     db.read_username_once().then(username => {
-        username_element.textContent = `歡迎${username}玩家請點擊開始遊戲`;
+        username_element.textContent = `歡迎${username}玩家`;
     })
 }
 

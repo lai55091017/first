@@ -1,7 +1,8 @@
 import "./scss/information.scss";
+import FirebaseDB from './js/firebase/Realtime Database';
 
 
-
+const db = new FirebaseDB;
 
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -18,47 +19,61 @@ document.getElementById('card-form').addEventListener('submit', function (event)
     const englishText = document.getElementById('english-text').value;
     const chineseText = document.getElementById('chinese-text').value;
 
-    // 創建新卡片
-    const newCard = document.createElement('div');
-    newCard.className = 'contantbox';
+    newCard(englishText, chineseText)
 
-    // 設置卡片內容
-    newCard.innerHTML = `
-        <h1>${englishText}</h1>
-        <p>${chineseText}</p>
-        <button class="edit-btn">
-        <svg class="feather feather-edit" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg></button>
-        <button class="delete-btn">刪除</button>
-        
-    `;
-    // 將新卡片添加到容器
-    document.querySelector('.contair').appendChild(newCard);
-
-    // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
-    newCard.addEventListener('click', function () {
-        const dialog = document.getElementById('dialog');
-        const dialogContent = document.querySelector('#dialog');
-        // 將點擊的卡片內容顯示在 dialog 中
-        dialogContent.innerHTML = `
-        <a>${englishText}</a>
-        <a>${chineseText}</a>
-        <button id="close">X</button>
-        <audio id="audio" src="audio.mp3" controls></audio>
-    `;
-        // 顯示 dialog
-        dialog.showModal();
-
-        // 綁定關閉 dialog 的按鈕事件
-        document.getElementById('close').addEventListener('click', function () {
-            dialog.close();
-        });
-
-    });
     // 清空表單
     document.getElementById('card-form').reset();
+
+
+    // 將卡片寫入資料庫
+    db.Add_word_card_information("word_cards", { 
+        "words": [englishText],
+        "translate": [chineseText]
+    })
+
 });
+
+// 創建新卡片
+function newCard(englishText, chineseText) {
+
+        const newCard = document.createElement('div');
+        newCard.className = 'contantbox';
+    
+        // 設置卡片內容
+        newCard.innerHTML = `
+            <h1>${englishText}</h1>
+            <p>${chineseText}</p>
+            <button class="edit-btn">
+            <svg class="feather feather-edit" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg></button>
+            <button class="delete-btn">刪除</button>
+        
+        `;
+        // 將新卡片添加到容器
+        document.querySelector('.contair').appendChild(newCard);
+    
+        // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
+        newCard.addEventListener('click', function () {
+            const dialog = document.getElementById('dialog');
+            const dialogContent = document.querySelector('#dialog');
+            // 將點擊的卡片內容顯示在 dialog 中
+            dialogContent.innerHTML = `
+            <a>${englishText}</a>
+            <a>${chineseText}</a>
+            <button id="close">X</button>
+            <audio id="audio" src="audio.mp3" controls></audio>
+        `;
+            // 顯示 dialog
+            dialog.showModal();
+    
+            // 綁定關閉 dialog 的按鈕事件
+            document.getElementById('close').addEventListener('click', function () {
+                dialog.close();
+            });
+    
+        });
+}
 
 /*------------------------------------音訊卡片功能-----------------------------------------*/
 function toggleAudio(audioId, buttonId) {
@@ -85,3 +100,20 @@ document.querySelectorAll('button').forEach(button => {
     });
 });
 
+
+//---------------------玩家資料顯示區----------------------
+
+
+const username_element = document.getElementById('username');
+if (username_element) {
+    db.read_username_once().then(username => {
+        username_element.textContent = `歡迎${username}玩家`;
+    })
+}
+
+// 顯示資料庫中的卡片
+db.read_data_list("word_cards").then(data => {
+    for (let i = 0; i < data.length; i++) {
+        newCard(data[i].words[0], data[i].translate[0])
+    }
+})
