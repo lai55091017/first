@@ -8,9 +8,10 @@ const auth = new Auth;
 const db = new FirebaseDB;
 
 //註冊表單
-const user_register = document.getElementById('register')
-if(user_register){
-    user_register.addEventListener('submit', async (event) => {
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    document.getElementById('register').addEventListener('submit', async (event) => {
         event.preventDefault(); // 阻止默認提交行為
 
         const username = document.getElementById('username').value;
@@ -48,4 +49,5 @@ if(user_register){
             console.error("注册过程中出错：", error);
         }
     });
-}
+})
+

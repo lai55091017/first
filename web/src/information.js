@@ -163,12 +163,13 @@ document.querySelectorAll('button').forEach(button => {
 //---------------------玩家資料顯示區----------------------
 
 
-const username_element = document.getElementById('username');
-if (username_element) {
+document.addEventListener('DOMContentLoaded', () => {
     db.read_username_once().then(username => {
-        username_element.textContent = `歡迎${username}玩家`;
+        document.getElementById('username').textContent = `歡迎${username}玩家`;
     })
-}
+
+})
+    
 
 // 顯示資料庫中的卡片
 db.read_data_list("word_cards").then(data => {

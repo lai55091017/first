@@ -8,6 +8,8 @@ import {
     EmailAuthProvider,
     GoogleAuthProvider,
     FacebookAuthProvider,
+    setPersistence,
+    browserLocalPersistence,
     signOut
 } from 'firebase/auth';
 import * as firebaseui from 'firebaseui';
@@ -28,7 +30,16 @@ class Auth{
         // 初始化 Firebase 应用
         this.app = firebase.initializeApp(this.firebaseConfig);
         this.auth = getAuth(this.app);
-        this.ui = new firebaseui.auth.AuthUI(this.auth);
+        // this.ui = new firebaseui.auth.AuthUI(this.auth);
+
+         // 设置持久化类型为本地持久化
+         setPersistence(this.auth, browserLocalPersistence)
+         .then(() => {
+             console.log("持久化类型已设置为本地持久化");
+         })
+         .catch((error) => {
+             console.error("设置持久化类型时出错:", error.message);
+         });
     }
 
     // 註冊設定
@@ -74,11 +85,23 @@ class Auth{
         onAuthStateChanged(this.auth, (user) => {
             if (user) {
                 console.log('用戶已登入：', user.uid);
-                console.log('電子郵件是否進行驗證：', user.emailVerified);
-                console.log('其他登入驗證：', user.isAnonymous);
-                console.log('使用者建立和登入時間的其他元資料：', user.metadata);
-                console.log('每個提供者的附加信息，例如顯示名稱和個人資料資訊：', user.providerData);
-                console.log('使用者的電子郵件地址：', user.email);
+                // 其他資料
+                // console.log('電子郵件是否進行驗證：', user.emailVerified);
+                // console.log('其他登入驗證：', user.isAnonymous);
+                // console.log('使用者建立和登入時間的其他元資料：', user.metadata);
+                // console.log('每個提供者的附加信息，例如顯示名稱和個人資料資訊：', user.providerData);
+                // console.log('使用者的電子郵件地址：', user.email);
+            } else {
+                console.log('用戶未登入');
+            }
+        });
+    }
+
+    //自動登入
+    auto_login() {
+        onAuthStateChanged(this.auth, (user) => {
+            if (user) {
+                window.location.href = "Functional_interface.html";  // 用户已登录，自动跳转
             } else {
                 console.log('用戶未登入');
             }
