@@ -108,6 +108,17 @@ class Auth{
         });
     }
 
+    //切換頁面
+    switch_page(page) {
+        onAuthStateChanged(this.auth, (user) => {
+            if (user) {
+                window.location.href = page;  // 用户已登录，自动跳转
+            } else {
+                console.log('用戶未登入');
+            }
+        });
+    }
+
     // 刪除帳號設定
     async delete_account() {
         onAuthStateChanged(this.auth, async (user) => {

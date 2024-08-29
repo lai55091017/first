@@ -131,6 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
         auth.Sign_out()
     })
 
+    //切換頁面
+    document.getElementById('info_link').addEventListener('click', async () => {
+        auth.switch_page('information.html');
+    })
     //遊戲內容載入
     gamefunctions.init()
 })
