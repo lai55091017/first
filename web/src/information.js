@@ -12,21 +12,21 @@ $(window).on("load", function () {
 
 
 /*------------------------------------新增卡片功能-----------------------------------------*/
-document.getElementById('card-form').addEventListener('submit', function (event) {
+document.getElementById('card_form').addEventListener('submit', function (event) {
     event.preventDefault(); // 阻止表單的默認提交行為
 
     // 獲取輸入的英文和中文
-    const englishText = document.getElementById('english-text').value;
-    const chineseText = document.getElementById('chinese-text').value;
+    const englishText = document.getElementById('english_text').value;
+    const chineseText = document.getElementById('chinese_text').value;
 
     newCard(englishText, chineseText)
 
     // 清空表單
-    document.getElementById('card-form').reset();
+    document.getElementById('card_form').reset();
 
 
     // 將卡片寫入資料庫
-    db.Add_word_card_information("word_cards", { 
+    db.Add_word_card_information("word_cards", {
         "words": [englishText],
         "translate": [chineseText]
     })
@@ -36,7 +36,7 @@ document.getElementById('card-form').addEventListener('submit', function (event)
 function newCard(englishText, chineseText) {// 創建新卡片
     const newCard = document.createElement('div');
     newCard.className = 'contantbox';
-    
+
     // 將新卡片添加到容器
     document.querySelector('.contair').appendChild(newCard);
 
@@ -45,48 +45,48 @@ function newCard(englishText, chineseText) {// 創建新卡片
         <div id="card">
             <h1>${englishText}</h1>
             <p>${chineseText}</p>
-            <button class="edit-btn">
+            <button class="edit_btn">
             <svg class="feather feather-edit" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg></button>
-            <button class="delete-btn">
+            <button class="delete_btn">
             <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 24 24">
             <path d="M 10 2 L 9 3 L 4 3 L 4 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 22 L 19 22 L 19 7 L 5 7 z M 8 9 L 10 9 L 10 20 L 8 20 L 8 9 z M 14 9 L 16 9 L 16 20 L 14 20 L 14 9 z"></path>
             </svg>
             </button>
         </div>
         
-        <div id="edit-form">
-            <label for="english-text">英文</label>
-            <input type="text" id="edit-english-text" value="${englishText}" required><br>
-            <label for="chinese-text">中文</label>
-            <input type="text" id="edit-chinese-text" value="${chineseText}" required><br>
-            <button id="save-btn">保存</button>
+        <div id="edit_form">
+            <label for="english_text">英文</label>
+            <input type="text" id="edit_english_text" value="${englishText}" required><br>
+            <label for="chinese_text">中文</label>
+            <input type="text" id="edit_chinese_text" value="${chineseText}" required><br>
+            <button id="save_btn">保存</button>
         </div>
     `;
-    // 隱藏edit-form
-    newCard.querySelector('#edit-form').style.display = 'none';
+    // 隱藏edit_form
+    newCard.querySelector('#edit_form').style.display = 'none';
 
     const cardbody = newCard.querySelector('#card');
-    const editBtn = newCard.querySelector('.edit-btn');
-    const deleteButton = newCard.querySelector('.delete-btn');
+    const editBtn = newCard.querySelector('.edit_btn');
+    const deleteButton = newCard.querySelector('.delete_btn');
 
-        
+
     // 編輯按鈕
     editBtn.addEventListener('click', function (event) {
         event.stopPropagation();//避免dialog跳出
         // 隱藏卡片
         cardbody.style.display = 'none';
         // 顯示編輯表單
-        newCard.querySelector('#edit-form').style.display = 'block';
+        newCard.querySelector('#edit_form').style.display = 'block';
     })
 
     // 編輯表單
-    newCard.querySelector('#save-btn').addEventListener('click', function (event) {
+    newCard.querySelector('#save_btn').addEventListener('click', function (event) {
         event.stopPropagation();//避免dialog跳出
 
-        const newEnglishText = document.getElementById('edit-english-text').value;
-        const newChineseText = document.getElementById('edit-chinese-text').value;
+        const newEnglishText = document.getElementById('edit_english_text').value;
+        const newChineseText = document.getElementById('edit_chinese_text').value;
 
         newCard.querySelector('h1').textContent = newEnglishText;
         newCard.querySelector('p').textContent = newChineseText;
@@ -94,9 +94,9 @@ function newCard(englishText, chineseText) {// 創建新卡片
         //顯示卡片
         cardbody.style.display = 'block';
         // 隱藏編輯表單
-        newCard.querySelector('#edit-form').style.display = 'none';
+        newCard.querySelector('#edit_form').style.display = 'none';
     })
-       
+
 
     // 刪除按鈕
     deleteButton.addEventListener('click', function (event) {
@@ -106,7 +106,7 @@ function newCard(englishText, chineseText) {// 創建新卡片
 
 
     // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
-    if(cardbody.style.display !== 'none'){
+    if (cardbody.style.display !== 'none') {
         cardbody.addEventListener('click', function () {
             const dialog = document.getElementById('dialog');
             const dialogContent = document.querySelector('#dialog');
@@ -123,14 +123,14 @@ function newCard(englishText, chineseText) {// 創建新卡片
                 `;
             // 顯示 dialog
             dialog.showModal();
-    
+
             // 綁定關閉 dialog 的按鈕事件
             document.getElementById('close').addEventListener('click', function () {
                 dialog.close();
             });
         });
     }
-    
+
 
 }
 
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
 })
-    
+
 
 // 顯示資料庫中的卡片
 db.read_data_list("word_cards").then(data => {

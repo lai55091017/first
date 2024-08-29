@@ -264,7 +264,7 @@ body {
     &:hover {
         transition: 0.2s;
 
-        .login__dropdown--menu {
+        .login__dropdown_menu {
             display: block;
             transition: 0.2s;
         }
@@ -311,7 +311,7 @@ body {
     }
 
     /*下拉清單*/
-    .login__dropdown--menu {
+    .login__dropdown_menu {
         background-color: rgba(34, 34, 34, 0.904);
         box-shadow: 5px 5px 3px #000000bf;
         /*左右,上下陰影位置,陰影模糊度*/
@@ -352,17 +352,17 @@ a {
     color: #ffffff;
 }
 
-#home-link {
+#home_link {
     color: #ffffff;
     /* 藍色 */
 }
 
-#info-link {
+#info_link {
     color: #ffffff;
     /* 橙色 */
 }
 
-#function-li a {
+#function_li a {
     color: #ffffff;
     /* 綠色 */
 }
@@ -376,7 +376,7 @@ a {
 }
 
 /*------------------------------------聊天室-----------------------*/
-#chat_box{
+#chat_box {
     width: 100%;
     padding: 10px 10px 30px 50px;
 }

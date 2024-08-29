@@ -113,7 +113,7 @@ body {
     &:hover {
         transition: 0.2s;
 
-        .login__dropdown--menu {
+        .login__dropdown_menu {
             display: block;
             transition: 0.2s;
         }
@@ -160,7 +160,7 @@ body {
     }
 
     /*--------------下拉清單------------------------------------------*/
-    .login__dropdown--menu {
+    .login__dropdown_menu {
         background-color: rgba(34, 34, 34, 0.904);
         box-shadow: 5px 5px 3px #000000bf;
         /*左右,上下陰影位置,陰影模糊度*/
@@ -201,17 +201,17 @@ a {
     color: #151414;
 }
 
-#home-link {
+#home_link {
     color: #ffffff;
     /* 藍色 */
 }
 
-#info-link {
+#info_link {
     color: #ffffff;
     /* 橙色 */
 }
 
-#function-li {
+#function_li {
     color: #ffffff;
     /* 綠色 */
 }
@@ -233,7 +233,7 @@ a {
     width: 100%;
     padding-top: 80px;
 
-    .form-container {
+    .form_container {
         border-radius: 10px;
         display: flex;
         justify-content: center;
@@ -242,7 +242,7 @@ a {
         flex-wrap: wrap;
         width: 100%;
 
-        .button-container {
+        .button_container {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -275,7 +275,7 @@ a {
             letter-spacing: 0.1em;
         }
 
-        #card-form {
+        #card_form {
             display: flex;
             flex-direction: column;
             justify-content: center;
