@@ -22,7 +22,7 @@ CharacterManager.js
     	return meshContainer.userData.speed || 0;
     }
 
-8月上中旬:處理搬家事務和跑後續相關程序，所以比較沒時間處理專題，抱歉。
+8月上中旬:處理搬家事務和跑後續相關程序，所以比較沒時間處理專題。
 
 8月下旬:
 Script.js
@@ -41,3 +41,20 @@ public/
     │   └── lilbray2.obj
     └── mtl/
         └── lilbray2.mtl
+
+ImportCharacterAndScene.js
+> 新增導入JSON格式的方法
+
+更新public/mesh內容，結構如下：
+public/
+├── mesh/
+    ├── glb/
+    │   └── lilbray.glb
+	│	└── Xbot.glb
+    ├── fbx/
+    │   └── lilbray.fbx
+    ├── obj/
+    │   └── lilbray2.obj
+    └── mtl/
+    │   └── lilbray2.mtl
+	└── json/

@@ -14,6 +14,7 @@ class ICAS {
         this.objLoader = new OBJLoader();
         this.mtlLoader = new MTLLoader();
         this.gltfLoader = new GLTFLoader();
+        this.jsonLoader = new THREE.ObjectLoader();
     }
 
     // 新增FBX載入方法
@@ -39,6 +40,13 @@ class ICAS {
     loadGLTF(path) {
         return new Promise((resolve, reject) => {
             this.gltfLoader.load(path, resolve, undefined, reject);
+        });
+    }
+
+    // 新增JOSN載入方法
+    loadJSON(path) {
+        return new Promise((resolve, reject) => {
+            this.jsonLoader.load(path, resolve, undefined, reject);
         });
     }
 }
