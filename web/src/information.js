@@ -106,7 +106,7 @@ function newCard(englishText, chineseText) {// 創建新卡片
 
 
     // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
-    if (cardbody.style.display !== 'none') {
+    if (cardbody.style.display != 'none') {
         cardbody.addEventListener('click', function () {
             const dialog = document.getElementById('dialog');
             const dialogContent = document.querySelector('#dialog');
