@@ -110,7 +110,8 @@ function userLeave() {
 
 }
 
-//伺服器監聽
+//根據請求的 URL 來構建檔案路徑，然後進行處理。
+//它會檢查檔案是否存在、檔案類型等，並根據檔案類型返回相應的內容給用戶。
 function onRequest( request, response ) {
 
     let filePath = '.' + request.url;
@@ -153,4 +154,4 @@ function onRequest( request, response ) {
 
 server.on('request', onRequest);
 
-server.listen(8080, () => { console.log('伺服器已經啟動，網址為: http://localhost:8080/'); });
+server.listen(8080, () => { console.log('伺服器已經啟動，伺服器網址為: http://localhost:8080/'); });

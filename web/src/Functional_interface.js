@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 聊天室
     const messageInput = document.getElementById('message_input');  //聊天室輸入框
     const sendButton = document.getElementById('send_button');      //聊天室按鈕
-
     //聊天室訊息加入到資料庫
     sendButton.addEventListener('click', () => {
 
@@ -69,35 +68,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
 
         })
-            .catch((error) => {
-                console.error(error);
-            })
+        .catch((error) => {
+            console.error(error);
+        })
 
-            .catch(error => {
-                console.error('取得用戶姓名失敗', error);
-            });
+        .catch(error => {
+            console.error('取得用戶姓名失敗', error);
+        });
 
 
     });
 
     // 聊天室資料庫並輸出到畫面
     const chatBox = document.getElementById('chat_box');
-    const chatBox2 = document.getElementById('chat_box2');
-    let first_message = false;
     db.GetRef('messages')
     .then(messagesref => {
         onValue(messagesref, (snapshot) => {
-            //第一個訊息不顯示
-            if (!first_message) {
-                first_message = true;
-                return
-            }
             db.read_username_once()
                 .then(username => {
                     // 獲取訊息資料
                     const message_val = snapshot.val();
 
-                    //舊訊息
                     const message_element = document.createElement('div');
                     const message_date_element = document.createElement('div');
 
@@ -114,30 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     chatBox.appendChild(message_element);
                     chatBox.appendChild(message_date_element);
-
-                    //新訊息
-                    const new_message_element = document.createElement('div');
-                    const new_message_date_element = document.createElement('div');
-
-                    new_message_element.id = 'message';
-                    new_message_date_element.id = 'message_date';
-
-                    if (message_val.username === username) {
-                        new_message_element.id = 'personal_message';
-                        new_message_date_element.id = 'personal_message_date';
-                    }
-
-                    new_message_element.textContent = `${message_val.username}:${message_val.text} `;
-                    new_message_date_element.textContent = ` 時間:${message_val.timestamp}`;
-
-                    //新增淡化消失動畫
-                    new_message_element.classList.add('fade_in_out');
-                    new_message_date_element.classList.add('fade_in_out');
-
-                    chatBox2.appendChild(new_message_element);
-                    chatBox2.appendChild(new_message_date_element);
-
-                    new_message(new_message_element, new_message_date_element)
 
                     // 将聊天室滚动条移动到底部函数
                     const messageContainer = document.querySelector('.message_container');
@@ -167,16 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //遊戲內容載入
     gamefunctions.init()
 })
-
-let timer
-//新增訊息後計時結束時消失
-function new_message(messageElement, MessageDateElement) {
-    // 啟動計時器(4000毫秒 = 4秒)
-    timer = setTimeout(() => {
-        messageElement.remove(); // 消息淡出後移除元素
-        MessageDateElement.remove();
-    }, 4000);
-}
 
 //當前時間
 function currentTime() {

@@ -13,8 +13,6 @@ class Controller {
         this.__setupActions();
         this.isGameStarted = false;  // 游戏是否开始
         this.chatmode = false;  // 初始化聊天模式為關閉
-        camera.position.y = this.playerHight;
-        this.scene.add( camera );
     }
 
     //設置移動參數
@@ -109,7 +107,7 @@ class Controller {
         this.direction.z = Number( this.movingForward ) - Number( this.movingBackward );
         this.direction.x = Number( this.movingRight ) - Number( this.movingLeft );
         this.direction.normalize();
-
+        
         if ( this.movingForward || this.movingBackward ) this.velocity.z -= this.direction.z * this.moveDistance * delta;
         if ( this.movingLeft || this.movingRight ) this.velocity.x -= this.direction.x * this.moveDistance * delta;
 
@@ -144,35 +142,29 @@ class Controller {
              this.__resetState();
              this.__toggleGameUI(false);
              this.isGameStarted = false;
-             document.removeEventListener('keydown', this.__chatroom);
              
         });
     }
 
     //切換遊戲介面
     __toggleGameUI(isGameActive) {
-        const blocker = document.getElementById('blocker');             // 黑色遮罩
-        const crosshair = document.getElementById('crosshair');         // 十字准心
-        const menu = document.getElementById('menu');                   // 菜单
-        const messageInput = document.querySelector('#message_input');  // 输入框
-        const chatBox = document.querySelector('#chat_box');            // 聊天框
-        const chatBox2 = document.querySelector('#chat_box2');          // 备用聊天框
-
-        blocker.style.display = isGameActive ? 'none' : 'block';
-        crosshair.style.display = isGameActive ? 'block' : 'none';
-        menu.style.display = isGameActive ? 'none' : 'block';
-        messageInput.style.display = 'none';
-        chatBox.style.display = 'none';
-        chatBox2.style.display = isGameActive ? 'block' : 'none';
+        if(this.chatmode) return;
+        document.getElementById('blocker').style.display = isGameActive ? 'none' : 'block'; // 黑色遮罩
+        document.getElementById('crosshair').style.display = isGameActive ? 'block' : 'none'; // 十字准心
+        document.getElementById('menu').style.display = isGameActive ? 'none' : 'block'; // 菜单
+        document.querySelector('#message_input').style.display = 'none'; // 输入框
     }
 
     __chatroom = (event) => {
         if (event.key === 'Enter') {
             const messageInput = document.querySelector('#message_input');
+            const chatBox = document.querySelector('#chat_box');            // 聊天框
             if (!this.chatmode) {
                 // 進入聊天模式
                 this.chatmode = true;
+                this.controls.unlock();
                 messageInput.style.display = 'block';
+                chatBox.style.display = 'block';
                 messageInput.focus();
             } else {
                 // 發送消息
@@ -181,9 +173,13 @@ class Controller {
                     document.querySelector('#send_button').click();
                 }
                 this.chatmode = false;
+                this.controls.lock();
+                document.removeEventListener('keydown', this.__chatroom);
                 messageInput.style.display = 'none';
+                chatBox.style.display = 'none';
             }
         }
+        // return message;
     }
 
 

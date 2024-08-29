@@ -376,8 +376,7 @@ a {
 }
 
 /*------------------------------------聊天室-----------------------*/
-#chat_box,
-#chat_box2 {
+#chat_box{
     width: 100%;
     padding: 10px 10px 30px 50px;
 }
@@ -458,31 +457,8 @@ a {
     font-size: 12px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    color: #e2dddd;
+    color: #181818;
     text-align: left;
-}
-
-// 淡入淡出效果
-.fade_in_out {
-    animation: fadeInOut 4s forwards;
-}
-
-@keyframes fadeInOut {
-    0% {
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    90% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
 }
 
 /*--------------------輸入框------------------------------------------------------*/

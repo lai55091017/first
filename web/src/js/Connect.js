@@ -22,6 +22,8 @@ class Connect {
         console.log('WebSocket 連接已經關閉');
     }
 
+    // 這是一個接收到從伺服器傳來的訊息的方法
+    // 它會先試圖將訊息轉換為 json 物件，然後根據訊息的 context 屬性，對應到不同的方法來處理訊息，
     __handleWebSocketMessage( res ) {
         try {
             const data = JSON.parse( res.data );
@@ -30,7 +32,7 @@ class Connect {
                 'join': this.onJoin,
                 'leave': this.onLeave
             }[ data.context ];
-            if ( handler ) { handler(data); }
+            if ( handler ) { handler(data);}
             else { console.error(`接收到從伺服器傳來的未知的 context: ${data.context}`); }
 
         } catch ( error ) {

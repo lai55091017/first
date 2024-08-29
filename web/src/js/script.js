@@ -68,8 +68,11 @@ function animate() {
 
 }
 
+
+
 /*********************************** Websocket Event *********************************************/
 
+//玩家加入
 async function onPlayerJoin(data) {
 
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -87,7 +90,6 @@ async function onPlayerJoin(data) {
             characterManager.hiddenMesh(character.getMesh());
             camera.add(character);
             animate();
-            // document.getElementById('instructions').remove();
 
         } else {
             scene.add(character);
@@ -95,6 +97,7 @@ async function onPlayerJoin(data) {
 
     }
 }
+//玩家離開
 function onPlayerLeave(data) {
 
     const uuid = data.disconnectedUUID;
@@ -106,6 +109,7 @@ function onPlayerLeave(data) {
         connect.playerList.splice(index, 1);
     }
 }
+//玩家移動
 function onPlayerMove(data) {
 
     const meshContainer = connect.playerList.find(player => player.uuid === data.uuid);
@@ -118,3 +122,12 @@ function onPlayerMove(data) {
         characterData.previousActionName = data.previousActionName;
     }
 }
+// function onplayermessage(data) {
+
+//     const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
+
+//     if (playermessage) {
+//         const playermessageData = playermessage.children[0].userData;
+
+//     }
+// }
