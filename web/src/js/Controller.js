@@ -99,32 +99,33 @@ class Controller {
         
         const player = this.camera;
         const playerPosition = player.position;
-    
+        // 随着时间速度会因摩擦力减小
         this.velocity.x -= this.velocity.x * this.moveFriction * delta;
         this.velocity.z -= this.velocity.z * this.moveFriction * delta;
         this.velocity.y -= 9.8 * this.gravity * delta;
-
+        // 玩家移动方向
         this.direction.z = Number( this.movingForward ) - Number( this.movingBackward );
         this.direction.x = Number( this.movingRight ) - Number( this.movingLeft );
         this.direction.normalize();
-        
+        // 更新玩家的移动速度
         if ( this.movingForward || this.movingBackward ) this.velocity.z -= this.direction.z * this.moveDistance * delta;
         if ( this.movingLeft || this.movingRight ) this.velocity.x -= this.direction.x * this.moveDistance * delta;
-
+        // 玩家移动
         this.controls.moveRight( - this.velocity.x * delta );
         this.controls.moveForward( - this.velocity.z * delta );
         playerPosition.y += this.velocity.y * delta;
-
+        // 跳躍
         if ( playerPosition.y < this.playerHight ) { 
             this.velocity.y = 0; 
             playerPosition.y = this.playerHight; 
             this.canJump = true; 
         }
-
+        // 玩家旋轉
         const characterData = player.children[0].children[0].userData;
         const { currentActionName, previousActionName } = characterData;
         const rotation = this.__getRotationShaveXZ( player );
         const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
+
         return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
 
     }
@@ -168,8 +169,7 @@ class Controller {
                 messageInput.focus();
             } else {
                 // 發送消息
-                const message = messageInput.value;
-                if (message.trim() !== "") {
+                if (messageInput.value.trim() !== "") {
                     document.querySelector('#send_button').click();
                 }
                 this.chatmode = false;
@@ -179,7 +179,6 @@ class Controller {
                 chatBox.style.display = 'none';
             }
         }
-        // return message;
     }
 
 

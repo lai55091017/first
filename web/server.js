@@ -46,6 +46,12 @@ function connect( ws ) {
                 sendToAllUser( messageForUser ); 
                 break; 
             }
+            case 'message': {
+                const context = 'message';
+                const messageForUser = { context, uuid, message: data.message };
+                sendToAllUser( messageForUser );
+                break;
+            }
         }
     }
 }

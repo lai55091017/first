@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         db.write_data("messages", messagedata)
 
                         // 清空输入框
-                        messageInput.value = '';
+                        messageText = '';
                     }
                 })
 
