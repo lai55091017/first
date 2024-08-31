@@ -51,7 +51,8 @@ async function loadModels() {
     const models = [
         { type: 'glb', path: './mesh/glb/lilbrary.glb' },
         { type: 'fbx', path: './mesh/fbx/lilbray.fbx' },
-        { type: 'obj', path: './mesh/obj/lilbray2.obj' }
+        { type: 'obj', path: './mesh/obj/lilbray2.obj' },
+        { type: 'json', path: './mesh/json/Test_Library.json' }
     ];
 
     for (const model of models) {
@@ -68,6 +69,10 @@ async function loadModels() {
                     break;
                 case 'obj':
                     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+                    scene.add(loadedModel);
+                    break;
+                case 'json':
+                    loadedModel = await icas.loadJSON(model.path);
                     scene.add(loadedModel);
                     break;
                 default:
