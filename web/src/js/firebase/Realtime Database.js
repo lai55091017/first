@@ -228,19 +228,13 @@ class FirebaseDB {
     return new Promise((resolve, reject) => {
       this.GetRef("users")
         .then(UserRef => {
-          onAuthStateChanged(this.auth, (user) => {
+          onAuthStateChanged(this.auth, user => {
             if (user) {
-              onValue(UserRef, (snapshot) => {
-
-                const username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-                // 回傳username
+              onValue(UserRef, snapshot => {
+                const username = snapshot.val()?.username || 'Anonymous';
                 resolve(username);
-              }, {
-                //執行一次
-                onlyOnce: true
-              });
-            }
-            else {
+              }, { onlyOnce: true });
+            } else {
               reject("用户未登录");
             }
           });

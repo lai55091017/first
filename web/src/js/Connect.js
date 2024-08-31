@@ -11,6 +11,7 @@ class Connect {
         this.onJoin = () => {};
         this.onLeave = () => {};
         this.onMove = () => {};
+        this.onMessage = () => {};
     }
 
 
@@ -30,7 +31,8 @@ class Connect {
             const handler = {
                 'move': this.onMove,
                 'join': this.onJoin,
-                'leave': this.onLeave
+                'leave': this.onLeave,
+                'message': this.onMessage
             }[ data.context ];
             if ( handler ) { handler(data);}
             else { console.error(`接收到從伺服器傳來的未知的 context: ${data.context}`); }

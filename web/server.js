@@ -46,9 +46,14 @@ function connect( ws ) {
                 sendToAllUser( messageForUser ); 
                 break; 
             }
-            case 'message': {
+            case 'sendMessage': {
                 const context = 'message';
-                const messageForUser = { context, uuid, message: data.message };
+                const messageForUser = { 
+                    context, uuid, 
+                    message: data.message,
+                    timestamp: data.timestamp,
+                    username: data.username
+                };
                 sendToAllUser( messageForUser );
                 break;
             }
@@ -72,6 +77,7 @@ function sendToAllUser ( data ) {
         data.uuid = client.uuid; 
         const message = JSON.stringify( data );
         client.send( message );
+
     });
 
 }

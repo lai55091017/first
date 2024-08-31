@@ -48,7 +48,6 @@ $(window).on("load", function () {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    //取得用戶名稱
     db.read_username_once().then(username => {
         document.getElementById('username').textContent = `歡迎${username}玩家`;
     })
@@ -56,80 +55,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // 聊天室
     const messageInput = document.getElementById('message_input');  //聊天室輸入框
     const sendButton = document.getElementById('send_button');      //聊天室按鈕
-    //聊天室訊息加入到資料庫
     sendButton.addEventListener('click', () => {
 
         currentTime().then(formattedDateTime => {
 
             const messageText = messageInput.value;
-            db.read_username_once()
-                .then(username => {
-                    if (messageText.trim() !== '') {
+            db.read_username_once().then(username => {
+                if (messageText.trim() !== '') {
 
-                        const messagedata = {
-                            text: messageText,
-                            username: username,
-                            timestamp: formattedDateTime,   //时间戳
-                        }
-                        // 将消息寫入数据库
-                        db.write_data("messages", messagedata)
-
-                        // 清空输入框
-                        messageInput.value = '';
-                    }
-                })
-
-        })
-        .catch((error) => {
-            console.error(error);
-        })
-
-        .catch(error => {
-            console.error('取得用戶姓名失敗', error);
-        });
-
-
-    });
-
-    // 聊天室資料庫並輸出到畫面
-    const chatBox = document.getElementById('chat_box');
-    db.GetRef('messages')
-    .then(messagesref => {
-        onValue(messagesref, (snapshot) => {
-            db.read_username_once()
-                .then(username => {
-                    // 獲取訊息資料
-                    const message_val = snapshot.val();
-
-                    const message_element = document.createElement('div');
-                    const message_date_element = document.createElement('div');
-
-                    message_element.id = 'message';
-                    message_date_element.id = 'message_date';
-
-                    if (message_val.username === username) {
-                        message_element.id = 'personal_message';
-                        message_date_element.id = 'personal_message_date';
+                    const messagedata = {
+                        context: 'sendMessage',
+                        message: messageText,
+                        username: username,
+                        timestamp: formattedDateTime,   //时间戳
                     }
 
-                    message_element.textContent = `${message_val.username}:${message_val.text} `;
-                    message_date_element.textContent = ` 時間:${message_val.timestamp}`;
+                    connect.socket.send(JSON.stringify(messagedata));
 
-                    chatBox.appendChild(message_element);
-                    chatBox.appendChild(message_date_element);
+                    // 清空输入框
+                    messageInput.value = '';
+                }
+            })
 
-                    // 将聊天室滚动条移动到底部函数
-                    const messageContainer = document.querySelector('.message_container');
-                    messageContainer.scrollTop = messageContainer.scrollHeight;
-                })
-                .catch(error => {
-                    console.error('取得用戶姓名失敗', error);
-                });
-
-        });
-    })
-    .catch((error) => {
-        console.error(error);
+        })
+        .catch((error) => {console.error(error);})
     });
 
     
@@ -181,6 +130,7 @@ function init() {
     connect.onJoin = onPlayerJoin;
     connect.onLeave = onPlayerLeave;
     connect.onMove = onPlayerMove;
+    connect.onMessage = onPlayerMessage;
     controller.setupBlocker(document.getElementById('blocker'));
 }
 
@@ -194,7 +144,6 @@ function animate() {
     const playerData = controller.update(delta);
     characterManager.updateCharactersAnimation(delta, connect.playerList);
     connect.socket.send(JSON.stringify(playerData));
-
     renderer.render(scene, camera);
 
 }
@@ -251,15 +200,36 @@ function onPlayerMove(data) {
         characterData.previousActionName = data.previousActionName;
     }
 }
-// function onplayermessage(data) {
+//玩家聊天室
+function onPlayerMessage(data) {
 
-//     const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
+    // 聊天室資料庫並輸出到畫面
+    const chatBox = document.getElementById('chat_box');
+    const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
 
-//     if (playermessage) {
-//         const playermessageData = playermessage.children[0].userData;
+    if (playermessage) {
+        const message_element = document.createElement('div');
+        const message_date_element = document.createElement('div');
 
-//     }
-// }
+        message_element.id = 'message';
+        message_date_element.id = 'message_date';
+
+        // if (message_val.username === username) {
+        //     message_element.id = 'personal_message';
+        //     message_date_element.id = 'personal_message_date';
+        // }
+        
+        message_element.textContent = `${data.username}:${data.message}`;
+        message_date_element.textContent = ` 時間:${data.timestamp}`;
+
+        chatBox.appendChild(message_element);
+        chatBox.appendChild(message_date_element);
+
+        // 将聊天室滚动条移动到底部函数
+        const messageContainer = document.querySelector('.message_container');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+}
 
 /*********************************** Three.js *********************************************/
 function init_scene() {
