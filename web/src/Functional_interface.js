@@ -22,9 +22,11 @@ import * as THREE from 'three';
 import Controller from './js/Controller.js';
 import Connect from './js/Connect.js';
 import CharacterManager from './js/CharacterManager.js';
+import ICAS from './js/ImportCharacterAndScene.js'; 
 
 import Auth from './js/firebase/auth';
 import FirebaseDB from './js/firebase/Realtime Database';
+
 
 
 const auth = new Auth;
@@ -40,6 +42,7 @@ const characterManager = new CharacterManager(scene, camera);
 const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
 // init();
+const icas = new ICAS(scene, camera);
 
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -132,6 +135,9 @@ function init() {
     connect.onMove = onPlayerMove;
     connect.onMessage = onPlayerMessage;
     controller.setupBlocker(document.getElementById('blocker'));
+
+    // 導入(載入)模型
+    loadModels();
 }
 
 function animate() {
@@ -259,5 +265,42 @@ function init_other() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+}
+// 導入場景模型
+async function loadModels() {
+    const models = [
+        { type: 'glb', path: './mesh/glb/lilbrary.glb' },
+        { type: 'fbx', path: './mesh/fbx/lilbray.fbx' },
+        { type: 'obj', path: './mesh/obj/lilbray2.obj' },
+        { type: 'json', path: './mesh/json/Test_Library.json' }
+    ];
+
+    for (const model of models) {
+        let loadedModel;
+        try {
+            switch (model.type) {
+                case 'glb':
+                    loadedModel = await icas.loadGLTF(model.path);
+                    scene.add(loadedModel.scene);
+                    break;
+                case 'fbx':
+                    loadedModel = await icas.loadFBX(model.path);
+                    scene.add(loadedModel);
+                    break;
+                case 'obj':
+                    loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+                    scene.add(loadedModel);
+                    break;
+                case 'json':
+                    loadedModel = await icas.loadJSON(model.path);
+                    scene.add(loadedModel);
+                    break;
+                default:
+                    console.error('Unknown model type:', model.type);
+            }
+        } catch (error) {
+            console.error('Error loading model:', model.path, error);
+        }
     }
 }
