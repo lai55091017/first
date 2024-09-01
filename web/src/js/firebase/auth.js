@@ -8,6 +8,8 @@ import {
     EmailAuthProvider,
     GoogleAuthProvider,
     FacebookAuthProvider,
+    setPersistence,
+    browserLocalPersistence,
     signOut
 } from 'firebase/auth';
 import * as firebaseui from 'firebaseui';
@@ -28,97 +30,130 @@ class Auth{
         // 初始化 Firebase 应用
         this.app = firebase.initializeApp(this.firebaseConfig);
         this.auth = getAuth(this.app);
-        this.ui = new firebaseui.auth.AuthUI(this.auth);
+        // this.ui = new firebaseui.auth.AuthUI(this.auth);
+
+         // 设置持久化类型为本地持久化
+         setPersistence(this.auth, browserLocalPersistence)
+         .then(() => {
+             console.log("持久化类型已设置为本地持久化");
+         })
+         .catch((error) => {
+             console.error("设置持久化类型时出错:", error.message);
+         });
     }
 
     // 註冊設定
-    register(email, password) {
-        return createUserWithEmailAndPassword(this.auth, email, password)
-        .then((userCredential) => {
+    async register(email, password) {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
             // 注册成功
             const user = userCredential.user;
             console.log("使用者創建成功.");
-        })
-        .catch((error) => {
+        } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.error("建立使用者時出錯:", errorMessage);
-            return errorMessage
-        });
+            return errorMessage;
+        }
     }
 
     // 登入設定
-    login(email, password) {
-        return signInWithEmailAndPassword(this.auth, email, password)
-        .then((userCredential) => {
-            // 登入成功
-            const user = userCredential.user;
+    async login(email, password) {
+        try {
+            await signInWithEmailAndPassword(this.auth, email, password);
             console.log("使用者登入成功.");
             // 跳转到指定页面
             window.location.href = "Functional_interface.html";
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.error("登入時出錯:", errorMessage);
-            return errorMessage
-        });
+        } catch (error) {
+            console.error("登入時出錯:", error.message);
+        }
     }
 
     // 登出設定
-    Sign_out() {  
-        signOut(this.auth).then(() => {
-            // 登出成功，可以在这里执行相关操作，比如跳转到登录页面或者刷新页面
+    async Sign_out() {
+        try {
+            await signOut(this.auth);
             console.log("用户已登出");
             window.location.href = "index.html"; // 跳转到登录页面
-        }).catch((error) => {
-            // 登出失败，输出错误信息
+        } catch (error) {
             console.error("登出失败:", error.message);
-        });
+        }
     }
 
-    
-    //監聽資料
+    // 監聽資料
     onAuthStateChanged() {
         onAuthStateChanged(this.auth, (user) => {
             if (user) {
                 console.log('用戶已登入：', user.uid);
-                console.log('電子郵件是否進行驗證：', user.emailVerified);
-                console.log('其他登入驗證：', user.isAnonymous);
-                console.log('使用者建立和登入時間的其他元資料：', user.metadata);
-                console.log('每個提供者的附加信息，例如顯示名稱和個人資料資訊：', user.providerData);
-                console.log('使用者的電子郵件地址：', user.email);
-            }else {
-            console.log('用戶未登入');
-            }
-        });
-    }
-
-    //刪除帳號設定
-    delete_account() {
-        onAuthStateChanged(this.auth, (user) => {
-            if (user) {
-                user.delete().then(() => {
-                    console.log('開始刪除用戶');
-                    user.delete()
-                    .then(() => {
-                        console.log('用戶已刪除');
-                        window.location.href = "index.html"
-                    })
-                    .catch((error) => {
-                        console.error('刪除用戶失敗:', error.message);
-                    });
-                })
-                .catch((error) => {
-                    console.error('開始刪除用戶時發生錯誤:', error.message);
-                });
+                // 其他資料
+                // console.log('電子郵件是否進行驗證：', user.emailVerified);
+                // console.log('其他登入驗證：', user.isAnonymous);
+                // console.log('使用者建立和登入時間的其他元資料：', user.metadata);
+                // console.log('每個提供者的附加信息，例如顯示名稱和個人資料資訊：', user.providerData);
+                // console.log('使用者的電子郵件地址：', user.email);
             } else {
                 console.log('用戶未登入');
-                window.location.href = "index.html"
             }
         });
     }
 
+    //自動登入
+    auto_login() {
+        onAuthStateChanged(this.auth, (user) => {
+            if (user) {
+                window.location.href = "Functional_interface.html";  // 用户已登录，自动跳转
+            } else {
+                console.log('用戶未登入');
+            }
+        });
+    }
+
+    //切換頁面
+    switch_page(page) {
+        onAuthStateChanged(this.auth, (user) => {
+            if (user) {
+                window.location.href = page;  // 用户已登录，自动跳转
+            } else {
+                console.log('用戶未登入');
+            }
+        });
+    }
+
+    // 刪除帳號設定
+    async delete_account() {
+        onAuthStateChanged(this.auth, async (user) => {
+            if (user) {
+                try {
+                    await user.delete();
+                    console.log('用戶已刪除');
+                    window.location.href = "index.html";
+                } catch (error) {
+                    console.error('刪除用戶失敗:', error.message);
+                }
+            } else {
+                console.log('用戶未登入');
+                window.location.href = "index.html";
+            }
+        });
+    }
+
+    // 更改密碼設定
+    async change_password(old_password, new_password) {
+        onAuthStateChanged(this.auth, async (user) => {
+            if (user) {
+                try {
+                    await user.updatePassword(new_password);
+                    console.log('密碼已更改');
+                    window.location.href = "Functional_interface.html";
+                } catch (error) {
+                    console.error('更改密碼失敗:', error.message);
+                }
+            } else {
+                console.log('用戶未登入');
+                window.location.href = "index.html";
+            }
+        });
+    }
     
 }
 export default Auth;

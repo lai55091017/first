@@ -61,6 +61,9 @@ class FirebaseDB {
             case "online_users":
               resolve(ref(this.db, 'online_users')); //線上玩家路徑
               break;
+            case "word_cards":
+              resolve(ref(this.db, 'word_cards/' + user.uid)); //單字卡路徑
+              break;
           }
         } else {
           reject("用戶未登入");
@@ -77,8 +80,8 @@ class FirebaseDB {
         .then(() => {
           console.log(`訊息${ref}資料更新成功`);
         })
-        .catch((updateError) => {
-          console.error(`更新${ref}訊息資料時出錯: `, updateError);
+        .catch((error) => {
+          console.error(`更新${ref}訊息資料時出錯: `, error);
         });
       })
       .catch((error) => {console.error(error);});
@@ -92,11 +95,28 @@ class FirebaseDB {
         .then(() => {
           console.log(`訊息${ref}資料更新成功`);
         })
-        .catch((updateError) => {
-          console.error(`更新${ref}訊息資料時出錯: `, updateError);
+        .catch((error) => {
+          console.error(`更新${ref}訊息資料時出錯: `, error);
         });
       })
       .catch((error) => {console.error(error);});
+  }
+
+  // 增加單字卡資料
+  Add_word_card_information(ref, data) {
+    this.GetRef(ref)
+    .then(target_ref => {
+      push(target_ref, data)
+          .then(() => {
+              console.log('New data added successfully.');
+          })
+          .catch((error) => {
+              console.error('Error adding new data:', error);
+          });
+    })
+    .catch((error) => {
+        console.error('Error getting data reference:', error);
+    })
   }
 
   // 寫入用戶資料
@@ -116,6 +136,35 @@ class FirebaseDB {
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  // 讀取列表資料
+  read_data_list(ref) {
+    return new Promise((resolve, reject) => {
+      this.GetRef(ref)
+        .then(target_ref => {
+          onAuthStateChanged(this.auth, (user) => {
+            if (user) {
+              onValue(target_ref, (snapshot) => {
+                const dataList = [];
+                snapshot.forEach((childSnapshot) => {
+                  const item = childSnapshot.val();
+                  dataList.push(item);
+                });
+                resolve(dataList);
+              }, {
+                //執行一次
+                onlyOnce: true
+              });
+            } else {
+              reject("用户未登录");
+            }
+          });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   // 讀取資料
@@ -179,19 +228,13 @@ class FirebaseDB {
     return new Promise((resolve, reject) => {
       this.GetRef("users")
         .then(UserRef => {
-          onAuthStateChanged(this.auth, (user) => {
+          onAuthStateChanged(this.auth, user => {
             if (user) {
-              onValue(UserRef, (snapshot) => {
-
-                const username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-                // 回傳username
+              onValue(UserRef, snapshot => {
+                const username = snapshot.val()?.username || 'Anonymous';
                 resolve(username);
-              }, {
-                //執行一次
-                onlyOnce: true
-              });
-            }
-            else {
+              }, { onlyOnce: true });
+            } else {
               reject("用户未登录");
             }
           });

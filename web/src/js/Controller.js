@@ -102,22 +102,22 @@ class Controller {
         
         const player = this.camera;
         const playerPosition = player.position;
-    
+        // 随着时间速度会因摩擦力减小
         this.velocity.x -= this.velocity.x * this.moveFriction * delta;
         this.velocity.z -= this.velocity.z * this.moveFriction * delta;
         this.velocity.y -= 9.8 * this.gravity * delta;
-
+        // 玩家移动方向
         this.direction.z = Number( this.movingForward ) - Number( this.movingBackward );
         this.direction.x = Number( this.movingRight ) - Number( this.movingLeft );
         this.direction.normalize();
-
+        // 更新玩家的移动速度
         if ( this.movingForward || this.movingBackward ) this.velocity.z -= this.direction.z * this.moveDistance * delta;
         if ( this.movingLeft || this.movingRight ) this.velocity.x -= this.direction.x * this.moveDistance * delta;
-
+        // 玩家移动
         this.controls.moveRight( - this.velocity.x * delta );
         this.controls.moveForward( - this.velocity.z * delta );
         playerPosition.y += this.velocity.y * delta;
-
+        // 跳躍
         if ( playerPosition.y < this.playerHight ) { 
             this.velocity.y = 0; 
             playerPosition.y = this.playerHight; 
@@ -132,7 +132,8 @@ class Controller {
         const { currentActionName, previousActionName } = characterData;
         const rotation = this.__getRotationShaveXZ( player );
         const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
-        return { context: 'playerMove', position, rotation, currentActionName, previousActionName, speed }; // 裡面多加一個速度詞條
+        return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
+
     }
 
     //設置畫面鎖定控制
@@ -148,45 +149,41 @@ class Controller {
              this.__resetState();
              this.__toggleGameUI(false);
              this.isGameStarted = false;
-             document.removeEventListener('keydown', this.__chatroom);
              
         });
     }
 
     //切換遊戲介面
     __toggleGameUI(isGameActive) {
-        const blocker = document.getElementById('blocker');             // 黑色遮罩
-        const crosshair = document.getElementById('crosshair');         // 十字准心
-        const menu = document.getElementById('menu');                   // 菜单
-        const messageInput = document.querySelector('#message_input');  // 输入框
-        const chatBox = document.querySelector('#chat_box');            // 聊天框
-        const chatBox2 = document.querySelector('#chat_box2');          // 备用聊天框
-
-        blocker.style.display = isGameActive ? 'none' : 'block';
-        crosshair.style.display = isGameActive ? 'block' : 'none';
-        menu.style.display = isGameActive ? 'none' : 'block';
-        messageInput.style.display = 'none';
-        chatBox.style.display = 'none';
-        chatBox2.style.display = isGameActive ? 'block' : 'none';
+        if(this.chatmode) return;
+        document.getElementById('blocker').style.display = isGameActive ? 'none' : 'block'; // 黑色遮罩
+        document.getElementById('crosshair').style.display = isGameActive ? 'block' : 'none'; // 十字准心
+        document.getElementById('menu').style.display = isGameActive ? 'none' : 'block'; // 菜单
+        document.querySelector('#message_input').style.display = 'none'; // 输入框
     }
 
     // 聊天室
     __chatroom = (event) => {
         if (event.key === 'Enter') {
             const messageInput = document.querySelector('#message_input');
+            const chatBox = document.querySelector('#chat_box');            // 聊天框
             if (!this.chatmode) {
                 // 進入聊天模式
                 this.chatmode = true;
+                this.controls.unlock();
                 messageInput.style.display = 'block';
+                chatBox.style.display = 'block';
                 messageInput.focus();
             } else {
                 // 發送消息
-                const message = messageInput.value;
-                if (message.trim() !== "") {
+                if (messageInput.value.trim() !== "") {
                     document.querySelector('#send_button').click();
                 }
                 this.chatmode = false;
+                this.controls.lock();
+                document.removeEventListener('keydown', this.__chatroom);
                 messageInput.style.display = 'none';
+                chatBox.style.display = 'none';
             }
         }
     }

@@ -7,9 +7,11 @@ import "./scss/index.scss";
 const auth = new Auth;
 
 //登入表單
-const user_login = document.getElementById('login')
-if(user_login){
-    user_login.addEventListener('submit', async (event) => {
+document.addEventListener('DOMContentLoaded', () => {
+
+    auth.auto_login();
+
+    document.getElementById('login').addEventListener('submit', async (event) => {
         event.preventDefault(); // 阻止默认提交行为
 
         const email = document.getElementById('email').value;
@@ -17,7 +19,9 @@ if(user_login){
 
         auth.login(email, password);
     });
-}
+})
+    
+
 
 
 // 獲取圖片元素

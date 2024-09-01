@@ -8,21 +8,34 @@
 </head>
 
 <body>
+    <div class="loading_wrapper">
+        <div class="title__div">
+            <div class="animated bounce">
+                <div class="title">English Teaching</div>
+            </div>
+            <div class="load">
+                <hr />
+                <hr />
+                <hr />
+                <hr />
+            </div>
+        </div>
+    </div>
     <!-- <div>
         <h1>聊天室</h1>
     </div> -->
     <div>
         <nav id="menu">
-            <img src="img/6.png" alt="logo" style="width: 200px;">
+            <img src="img/6.png" alt="logo" style="width: 160px;">
             <ul class="header">
                 <li class="list">
-                    <a id="home-link" href="#">首頁</a>
+                    <a id="home_link" href="Functional_interface.html">首頁</a>
                 </li>
                 <li class="list">
-                    <a id="info-link" href="information.html">資訊</a>
+                    <a id="info_link" href="information.html">資訊</a>
                 </li>
                 <li class="list">
-                    <a id="function-li">功能</a>
+                    <a id="function_li">功能</a>
                 </li>
                 <li class="list">
                     <a id="logout" href="index.html">登出</a>
@@ -33,10 +46,10 @@
             </ul>
             <div class="header__login">
                 <button class="login__dropdown">
-                    <strong>l****17</strong>
+                    <strong id="username"></strong>
                 </button>
-                <ul class="login__dropdown--menu">
-                    <li class="dropdown"><a href="sign_up.html">註冊</a> </li>
+                <ul class="login__dropdown_menu">
+                    <li class="dropdown"><a id="logout" href="sign_up.html">註冊</a> </li>
                     <li class="dropdown"><a id="logout" href="index.html">登出</a></li>
                 </ul>
             </div>
@@ -45,7 +58,6 @@
     <div id="content">
         <div class="message_container">
             <div id="chat_box"></div>
-            <div id="chat_box2"></div>
             <div id="input_box">
                 <input type="text" id="message_input" maxlength="50" placeholder="請輸入訊息...">
                 <button id="send_button"></button>
@@ -54,8 +66,6 @@
     </div>
     <div id="blocker">
         <div id="instructions">
-            <span style="font-size:40px" id="username"></span>
-            <br />
             <br />
             WASD 控制方向
             <br />
@@ -69,7 +79,7 @@
         </div>
     </div>
     <div id="crosshair"></div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

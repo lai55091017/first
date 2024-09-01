@@ -1,5 +1,5 @@
 // 引入 Firebase 模块
-import { 
+import {
     getDatabase,
     ref,
     set,
@@ -18,32 +18,92 @@ import {
 
 import "./scss/Functional_interface.scss";
 
-//引入自訂函式檔案
+import * as THREE from 'three';
+import Controller from './js/Controller.js';
+import Connect from './js/Connect.js';
+import CharacterManager from './js/CharacterManager.js';
+
 import Auth from './js/firebase/auth';
 import FirebaseDB from './js/firebase/Realtime Database';
-import * as gamefunctions from './js/script';
-  
-// 初始化 Firebase 应用
+
+
 const auth = new Auth;
 const db = new FirebaseDB;
 
-const username_element = document.getElementById('username');
-if(username_element){
+let prevTime = performance.now();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+const controller = new Controller(scene, camera, renderer.domElement);
+const characterManager = new CharacterManager(scene, camera);
+const connect = new Connect('ws://localhost:8080');
+// const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
+// init();
+
+//----------------------loading動畫--------------
+$(window).on("load", function () {
+    $(".loading_wrapper").fadeOut("slow");
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
     db.read_username_once().then(username => {
-        username_element.textContent = `歡迎${username}玩家請點擊開始遊戲`;
+        document.getElementById('username').textContent = `歡迎${username}玩家`;
     })
-}
 
-//遊戲內容載入
-const blocker = document.getElementById('blocker');
-if(blocker){
-    gamefunctions.init()
-}
+    // 聊天室
+    const messageInput = document.getElementById('message_input');  //聊天室輸入框
+    const sendButton = document.getElementById('send_button');      //聊天室按鈕
+    sendButton.addEventListener('click', () => {
 
-//當前時間
-function currentTime(){
-    return new Promise((resolve, reject)=>{
-            // 获取当前时间
+        currentTime().then(formattedDateTime => {
+
+            const messageText = messageInput.value;
+            db.read_username_once().then(username => {
+                if (messageText.trim() !== '') {
+
+                    const messagedata = {
+                        context: 'sendMessage',
+                        message: messageText,
+                        username: username,
+                        timestamp: formattedDateTime,   //时间戳
+                    }
+
+                    connect.socket.send(JSON.stringify(messagedata));
+
+                    // 清空输入框
+                    messageInput.value = '';
+                }
+            })
+
+        })
+        .catch((error) => {console.error(error);})
+    });
+
+    
+    //刪除帳號
+    document.getElementById('delete').addEventListener('click', async () => {
+        auth.delete_account();
+    })
+
+    //登出帳號
+    document.getElementById('logout').addEventListener('click', async () => {
+        auth.Sign_out()
+    })
+
+    //切換頁面
+    document.getElementById('info_link').addEventListener('click', async () => {
+        auth.switch_page('information.html');
+    })
+    //遊戲內容載入
+    init()
+})
+
+//格式化當前時間
+function currentTime() {
+    return new Promise((resolve, reject) => {
+        // 获取当前时间
         const currentTime = new Date();
         // 获取年月日时分秒
         const year = currentTime.getFullYear();
@@ -59,183 +119,145 @@ function currentTime(){
         reject('日期格式化失敗')
     })
 
-    
+
 }
 
-// 聊天室
-const messageInput = document.getElementById('message_input');  //聊天室輸入框
-const sendButton = document.getElementById('send_button');      //聊天室按鈕
+function init() {
+    init_scene();
+    init_camera();
+    init_renderer();
+    init_other();
+    connect.onJoin = onPlayerJoin;
+    connect.onLeave = onPlayerLeave;
+    connect.onMove = onPlayerMove;
+    connect.onMessage = onPlayerMessage;
+    controller.setupBlocker(document.getElementById('blocker'));
+}
 
-//聊天室訊息加入到資料庫
-if(messageInput && sendButton){
-    sendButton.addEventListener('click', () => {
+function animate() {
+
+    requestAnimationFrame(animate);
+    const time = performance.now();
+    const delta = (time - prevTime) / 1000;
+    prevTime = time;
+
+    const playerData = controller.update(delta);
+    characterManager.updateCharactersAnimation(delta, connect.playerList);
+    connect.socket.send(JSON.stringify(playerData));
+    renderer.render(scene, camera);
+
+}
+
+/*********************************** Websocket Event *********************************************/
+
+//玩家加入
+async function onPlayerJoin(data) {
+
+    const players = new Set(connect.playerList.map(player => player.uuid));
+
+    for (const uuid of data.userList) {
+
+        if (players.has(uuid)) continue;
+
+        const character = await characterManager.loadCharacter();
+        character.uuid = uuid;
+        connect.playerList.push(character);
+
+        if (uuid === data.uuid) {
+            characterManager.bindAction(controller, character.getMesh());
+            characterManager.hiddenMesh(character.getMesh());
+            camera.add(character);
+            animate();
+
+        } else {
+            scene.add(character);
+        }
+
+    }
+}
+//玩家離開
+function onPlayerLeave(data) {
+
+    const uuid = data.disconnectedUUID;
+    const index = connect.playerList.findIndex(player => player.uuid === uuid);
+
+    const isFoundResult = index !== -1;
+    if (isFoundResult) {
+        scene.remove(connect.playerList[index]);
+        connect.playerList.splice(index, 1);
+    }
+}
+//玩家移動
+function onPlayerMove(data) {
+
+    const meshContainer = connect.playerList.find(player => player.uuid === data.uuid);
+
+    if (meshContainer) {
+        const characterData = meshContainer.children[0].userData;
+        meshContainer.position.copy(data.position);
+        meshContainer.rotation.copy(data.rotation);
+        characterData.currentActionName = data.currentActionName;
+        characterData.previousActionName = data.previousActionName;
+    }
+}
+//玩家聊天室
+function onPlayerMessage(data) {
+
+    // 聊天室資料庫並輸出到畫面
+    const chatBox = document.getElementById('chat_box');
+    const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
+
+    if (playermessage) {
+        const message_element = document.createElement('div');
+        const message_date_element = document.createElement('div');
+
+        message_element.id = 'message';
+        message_date_element.id = 'message_date';
+
+        // if (message_val.username === username) {
+        //     message_element.id = 'personal_message';
+        //     message_date_element.id = 'personal_message_date';
+        // }
         
-        currentTime().then(formattedDateTime =>{
-            
-            const messageText = messageInput.value;
-            db.read_username_once()
-            .then(username => {
-                if (messageText.trim() !== '') {
-                    
-                    const messagedata = {
-                        text: messageText,
-                        username: username,
-                        timestamp: formattedDateTime,   //时间戳
-                    }
-                    // 将消息寫入数据库
-                    db.write_data("messages", messagedata)
-    
-                    // 清空输入框
-                    messageInput.value = '';
-                }
-            })
+        message_element.textContent = `${data.username}:${data.message}`;
+        message_date_element.textContent = ` 時間:${data.timestamp}`;
 
-        })
-        .catch((error) => {
-            console.error(error);
-        })
+        chatBox.appendChild(message_element);
+        chatBox.appendChild(message_date_element);
 
-        .catch(error => {
-            console.error('取得用戶姓名失敗', error);
-        });
-
-
-    });
+        // 将聊天室滚动条移动到底部函数
+        const messageContainer = document.querySelector('.message_container');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
 }
 
-// 聊天室資料庫並輸出到畫面
-const chatBox = document.getElementById('chat_box');
-const chatBox2 = document.getElementById('chat_box2');
-let first_message = false;
-if(chatBox){
-    db.GetRef('messages')
-    .then(messagesref =>{
-        onValue(messagesref, (snapshot) => {
-            //第一個訊息不顯示
-            if(!first_message){
-                first_message = true;
-                return
-            }
-            db.read_username_once()
-            .then(username => {
-                // 獲取訊息資料
-                const message_val = snapshot.val();
-
-                //舊訊息
-                const message_element = document.createElement('div');
-                const message_date_element = document.createElement('div');
-
-                message_element.id = 'message';
-                message_date_element.id = 'message_date';
-
-                if (message_val.username === username) {
-                    message_element.id = 'personal_message';
-                    message_date_element.id = 'personal_message_date';
-                }
-                
-                message_element.textContent = `${message_val.username}:${message_val.text} `;
-                message_date_element.textContent =` 時間:${message_val.timestamp}`;
-
-                chatBox.appendChild(message_element);
-                chatBox.appendChild(message_date_element);
-
-                //新訊息
-                const new_message_element = document.createElement('div');
-                const new_message_date_element = document.createElement('div');
-    
-                new_message_element.id = 'message';
-                new_message_date_element.id = 'message_date';
-
-                if (message_val.username === username) {
-                    new_message_element.id = 'personal_message';
-                    new_message_date_element.id = 'personal_message_date';
-                }
-    
-                new_message_element.textContent = `${message_val.username}:${message_val.text} `;
-                new_message_date_element.textContent =` 時間:${message_val.timestamp}`;
-                
-                //新增淡化消失動畫
-                new_message_element.classList.add('fade_in_out');
-                new_message_date_element.classList.add('fade_in_out');
-
-                chatBox2.appendChild(new_message_element);
-                chatBox2.appendChild(new_message_date_element);
-
-                new_message(new_message_element, new_message_date_element)
-                
-                // 将聊天室滚动条移动到底部函数
-                const messageContainer = document.querySelector('.message_container');
-                messageContainer.scrollTop = messageContainer.scrollHeight;
-            })
-            .catch(error => {
-                console.error('取得用戶姓名失敗', error);
-            });
-
-        });
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+/*********************************** Three.js *********************************************/
+function init_scene() {
+    scene.background = new THREE.Color(0xa0a0a0);
+    scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
 }
-
-let timer
-//新增訊息後計時結束時消失
-function new_message(messageElement, MessageDateElement) {
-        // 啟動計時器(4000毫秒 = 4秒)
-        timer = setTimeout(() => {
-            messageElement.remove(); // 消息淡出後移除元素
-            MessageDateElement.remove();
-        }, 4000);
+function init_camera() {
+    camera.fov = 75;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.near = 0.1;
+    camera.far = 100;
+    camera.updateProjectionMatrix();
 }
-
-
-
-//登入表單
-const user_login = document.getElementById('login')
-if(user_login){
-    user_login.addEventListener('submit', async (event) => {
-        event.preventDefault(); // 阻止默认提交行为
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        auth.login(email, password);
-    });
+function init_renderer() {
+    const canvas = renderer.domElement;
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(canvas);
 }
-
-//刪除帳號
-const Delete_account = document.getElementById('delete');
-if(Delete_account){
-    Delete_account.addEventListener('click', async () => {
-        auth.delete_account();
-    })
+function init_other() {
+    scene.add(new THREE.GridHelper(100, 1000, 0x0ff0f0, 0xcccccc));
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
+    scene.add(new THREE.DirectionalLight(0xffffff, 3));
+    window.addEventListener('resize', resize);
+    window.addEventListener('fullscreenchange', resize);
+    function resize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 }
-
-//登出帳號
-const logout_account = document.getElementById('logout');
-if(logout_account){
-    logout_account.addEventListener('click', async () => {
-        auth.Sign_out()
-    })
-}
-
-// 獲取圖片元素
-// const emailLoginButton = document.getElementById('emailLoginButton');
-// const googleLoginButton = document.getElementById('googleLoginButton');
-// const facebookLoginButton = document.getElementById('facebookLoginButton');
-
-// 其他登入
-// if (emailLoginButton && googleLoginButton && facebookLoginButton) {
-//     //電子郵件登入
-//     emailLoginButton.addEventListener('click', async () => {
-//         auth.email_login()
-//     });
-//     //google登入
-//     googleLoginButton.addEventListener('click', async () => {
-//         auth.google_login()
-//     });
-//     //facebook登入
-//     facebookLoginButton.addEventListener('click', async () => {
-//         auth.facebook_login()
-//     });
-// }
