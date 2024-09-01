@@ -13,6 +13,9 @@ class Controller {
         this.__setupActions();
         this.isGameStarted = false;  // 游戏是否开始
         this.chatmode = false;  // 初始化聊天模式為關閉
+        camera.position.y = this.playerHight;
+        this.scene.add( camera );
+        this.speed = 0; // 新增速度的變數，用於偵測玩家的速度來播放不同動作
     }
 
     //設置移動參數
@@ -120,12 +123,15 @@ class Controller {
             playerPosition.y = this.playerHight; 
             this.canJump = true; 
         }
-        // 玩家旋轉
+
+        // 計算速度
+        const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
+        this.speed = speed; // 更新速度變數
+
         const characterData = player.children[0].children[0].userData;
         const { currentActionName, previousActionName } = characterData;
         const rotation = this.__getRotationShaveXZ( player );
         const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
-
         return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
 
     }
@@ -156,6 +162,7 @@ class Controller {
         document.querySelector('#message_input').style.display = 'none'; // 输入框
     }
 
+    // 聊天室
     __chatroom = (event) => {
         if (event.key === 'Enter') {
             const messageInput = document.querySelector('#message_input');
@@ -185,5 +192,3 @@ class Controller {
 }
 
 export default Controller;
-
-

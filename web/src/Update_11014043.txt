@@ -1,0 +1,60 @@
+=更新日誌=
+
+7月下旬
+Controller.js
+> class Controller
+	> constructor (s,cam,can){}
+		> 最底下新增
+		this.speed = 0; //新增速度的變數
+	>update(delta) {}
+    	>最底下新增
+		// 計算速度
+		const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
+		this.speed = speed; // 更新速度變數
+		...中間的內容(無更動)...
+		return {......, speed} //裡面多一個速度詞條
+
+CharacterManager.js
+> class CharacterManager
+	> 將 [獲取角色的速度] 移動到 setCurrentAction 和 detectSpeedAndSetAction 的中間並更新return的值
+	// 獲取角色的速度
+	__getSpeed(meshContainer) {
+    	return meshContainer.userData.speed || 0;
+    }
+
+8月上中旬:處理搬家事務和跑後續相關程序，所以比較沒時間處理專題。
+
+8月下旬:
+Script.js
+> 導入ImportCharacterAndScene.js的ICAS並將其const+初始化
+> 新增function loadModels和init function loadModels
+
+更新public/mesh內容，結構如下：
+public/
+├── mesh/
+    ├── glb/
+    │   └── lilbray.glb
+	│	└── Xbot.glb
+    ├── fbx/
+    │   └── lilbray.fbx
+    ├── obj/
+    │   └── lilbray2.obj
+    └── mtl/
+        └── lilbray2.mtl
+
+ImportCharacterAndScene.js
+> 新增導入JSON格式的方法
+
+更新public/mesh內容，結構如下：
+public/
+├── mesh/
+    ├── glb/
+    │   └── lilbray.glb
+	│	└── Xbot.glb
+    ├── fbx/
+    │   └── lilbray.fbx
+    ├── obj/
+    │   └── lilbray2.obj
+    └── mtl/
+    │   └── lilbray2.mtl
+	└── json/

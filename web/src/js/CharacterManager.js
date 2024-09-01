@@ -49,8 +49,12 @@ class CharacterManager {
         for( const meshContainer of playerList ) {
 
             const characterData = meshContainer.children[0].userData;
-    
             const { animations, currentActionName, previousActionName, mixer } = characterData;
+
+            // 偵測速度並更新動作
+            const speed = this.__getSpeed(meshContainer); 
+            this.__detectSpeedAndSetAction(meshContainer.children[0], speed);
+            
             if( currentActionName !== previousActionName ) {
                 console.log(currentActionName)
                 const startAction = animations[previousActionName].action;
@@ -85,6 +89,34 @@ class CharacterManager {
                 break;
             }
             default: { mesh.userData.currentActionName = actionName; }
+        }
+    }
+
+    // 獲取角色的速度
+    // 新版，這個是return meshContainer.userData.speed
+    __getSpeed(meshContainer) {
+        // 假設 meshContainer 有一個 speed 屬性，該屬性會隨時間更新
+        return meshContainer.userData.speed || 0; 
+    }
+
+    /*
+        舊版，這個是return playerController.speed
+        __getSpeed(meshContainer) {
+        // 假設 meshContainer 有一個 speed 屬性，該屬性會隨時間更新
+        return playerController.speed || 0;
+    }
+    */
+
+    // 偵測角色速度並設定相應的動作
+    __detectSpeedAndSetAction(mesh, speed) {
+        if (speed === 0) {
+            this.__setCurrentAction(mesh, 'idle');
+        } else if (speed > 0 && speed <= 100) {
+            this.__setCurrentAction(mesh, 'walk');
+        } else if (speed > 100 && speed <= 400) {
+            this.__setCurrentAction(mesh, 'walk_forward');
+        } else if (speed > 400) {
+            this.__setCurrentAction(mesh, 'run');
         }
     }
 
