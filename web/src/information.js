@@ -128,7 +128,7 @@ function newCard(englishText, chineseText) {
                 dialog.showModal();
 
                 // 綁定關閉 dialog 的按鈕事件
-                closeBtn.getElementById('close').addEventListener('click', function () {
+                closeBtn.addEventListener('click', function () {
                     dialog.close();
                 });
             });
