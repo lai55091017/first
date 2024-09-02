@@ -44,7 +44,7 @@ function newCard(englishText, chineseText) {
 
     // 設置卡片內容
     newCard.innerHTML = `
-        <div id="card">
+        <div id="card${card_number}">
             <h1 id="word${card_number}">${englishText}</h1>
             <p id="chinese${card_number}">${chineseText}</p>
             <button class="edit_btn">
@@ -65,13 +65,28 @@ function newCard(englishText, chineseText) {
             <input type="text" id="edit_chinese_text" value="${chineseText}" required><br>
             <button id="save_btn">保存</button>
         </div>
+        
+        <dialog id="dialog_box${card_number}">
+                <h1 id="dialog_word${card_number}">${englishText}</h1>
+                <p id="dialog_chinese${card_number}">${chineseText}</p>
+                <button id="close">
+                <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 30 30">
+                <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
+                </svg>
+                </button>
+                <audio id="audio" src="audio.mp3" controls></audio>
+        </dialog>
+        
     `;
+
     // 隱藏edit_form
     newCard.querySelector('#edit_form').style.display = 'none';
 
-    const cardbody = newCard.querySelector('#card');
+    const dialog = document.querySelector(`#dialog_box${card_number}`);
+    const cardbody = newCard.querySelector(`#card${card_number}`);
     const editBtn = newCard.querySelector('.edit_btn');
     const deleteButton = newCard.querySelector('.delete_btn');
+    const closeBtn = newCard.querySelector(`#close`)
 
     // 編輯按鈕
     editBtn.addEventListener('click', function (event) {
@@ -89,18 +104,36 @@ function newCard(englishText, chineseText) {
         newCard.querySelector('#save_btn').addEventListener('click', function (event) {
             event.stopPropagation(); // 避免dialog跳出
 
-            const newEnglishText = newCard.querySelector('#edit_english_text').value;
-            const newChineseText = newCard.querySelector('#edit_chinese_text').value;
+            const newEnglishText = document.querySelector('#edit_english_text').value;
+            const newChineseText = document.querySelector('#edit_chinese_text').value;
 
             // 正確選取字詞元素並更新內容
-            newCard.querySelector(`#word${card_number}`).textContent = newEnglishText;
-            newCard.querySelector(`#chinese${card_number}`).textContent = newChineseText;
+            document.getElementById(`word${card_number}`).textContent = newEnglishText;
+            document.getElementById(`chinese${card_number}`).textContent = newChineseText;
+            document.getElementById(`dialog_word${card_number}`).textContent = newEnglishText;
+            document.getElementById(`dialog_chinese${card_number}`).textContent = newChineseText;
 
             //顯示卡片
             cardbody.style.display = 'block';
             // 隱藏編輯表單
             newCard.querySelector('#edit_form').style.display = 'none';
         });
+
+
+        // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
+        if (cardbody.style.display != 'none') {
+            cardbody.addEventListener('click', function () {
+
+                // 顯示 dialog
+                dialog.showModal();
+
+                // 綁定關閉 dialog 的按鈕事件
+                closeBtn.getElementById('close').addEventListener('click', function () {
+                    dialog.close();
+                });
+            });
+        }
+
     }
 
 
@@ -110,31 +143,7 @@ function newCard(englishText, chineseText) {
         newCard.remove();  // 删除卡片
     });
 
-    // 綁定卡片的點擊事件，顯示對應的內容在 dialog 中
-    if (cardbody.style.display != 'none') {
-        cardbody.addEventListener('click', function () {
-            const dialog = document.getElementById('dialog');
-            const dialogContent = document.querySelector('#dialog');
-            // 將點擊的卡片內容顯示在 dialog 中
-            dialogContent.innerHTML = `
-                <a>${englishText}</a>
-                <a>${chineseText}</a>
-                <button id="close">
-                <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 30 30">
-                <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
-                </svg>
-                </button>
-                <audio id="audio" src="audio.mp3" controls></audio>
-                `;
-            // 顯示 dialog
-            dialog.showModal();
 
-            // 綁定關閉 dialog 的按鈕事件
-            document.getElementById('close').addEventListener('click', function () {
-                dialog.close();
-            });
-        });
-    }
 }
 
 
