@@ -11,8 +11,7 @@ class Controller {
         this.__setupMovement();
         this.__setupListeners();
         this.__setupActions();
-        this.isGameStarted = false;  // 游戏是否开始
-        this.chatmode = false;  // 初始化聊天模式為關閉
+        this.isGame = false;  // 是否再遊戲中
         camera.position.y = this.playerHight;
         this.scene.add( camera );
         this.speed = 0; // 新增速度的變數，用於偵測玩家的速度來播放不同動作
@@ -53,7 +52,7 @@ class Controller {
 
     //處理鍵盤按下事件
     __handleKeyDown( event ) {
-        if( !this.canJump || this.chatmode ) return;
+        if( !this.canJump || !this.isGame) return;
         if( ['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes( event.code ) ) this.moveDistance = 16;
         const actions = {
             'KeyW':  () => { this.movingForward  = true; this.walk_forward();  },
@@ -68,7 +67,6 @@ class Controller {
 
     //處理鍵盤放開事件
     __handleKeyUp( event ) { 
-        if(this.chatmode) return;
         const actions = {
             'KeyW': () => { this.movingForward  = false; this.idle(); },
             'KeyA': () => { this.movingLeft     = false; this.idle(); },
@@ -140,54 +138,59 @@ class Controller {
     setupBlocker( blocker ) {
         blocker.addEventListener( 'click', () => { this.controls.lock(); } );
         this.controls.addEventListener( 'lock', () => {  
-            this.__toggleGameUI(true);
-            this.isGameStarted = true;
-            this.chatmode = false; 
+            this.__toggleGameUI("blocker", false);
             document.addEventListener('keydown', this.__chatroom);
+            this.isGame = true;
         });
         this.controls.addEventListener( 'unlock', () => {  
-             this.__resetState();
-             this.__toggleGameUI(false);
-             this.isGameStarted = false;
-             
+            this.__resetState();
+            if(this.isGame){
+                this.__toggleGameUI("blocker", true);
+                document.removeEventListener('keydown', this.__chatroom);
+            }
         });
     }
 
     //切換遊戲介面
-    __toggleGameUI(isGameActive) {
-        if(this.chatmode) return;
-        document.getElementById('blocker').style.display = isGameActive ? 'none' : 'block'; // 黑色遮罩
-        document.getElementById('crosshair').style.display = isGameActive ? 'block' : 'none'; // 十字准心
-        document.getElementById('menu').style.display = isGameActive ? 'none' : 'block'; // 菜单
-        document.querySelector('#message_input').style.display = 'none'; // 输入框
+    __toggleGameUI(isGameActive, powerswitch) {
+        switch (isGameActive) {
+            case "blocker":
+                document.getElementById('blocker').style.display = powerswitch ? 'block' : 'none'; // 黑色遮罩
+                document.getElementById('crosshair').style.display = powerswitch ? 'none' : 'block'; // 十字准心
+                document.getElementById('menu').style.display = powerswitch ? 'block' : 'none'; // 菜单
+                break;
+            case "chatroom":
+                document.getElementById('message_input').style.display = powerswitch? 'block' : 'none';
+                document.getElementById('chat_box').style.display = powerswitch? 'block' : 'none';
+                break;
+        }
+
+
+
     }
 
     // 聊天室
     __chatroom = (event) => {
+        const messageInput = document.querySelector('#message_input');
         if (event.key === 'Enter') {
-            const messageInput = document.querySelector('#message_input');
-            const chatBox = document.querySelector('#chat_box');            // 聊天框
-            if (!this.chatmode) {
-                // 進入聊天模式
-                this.chatmode = true;
-                this.controls.unlock();
-                messageInput.style.display = 'block';
-                chatBox.style.display = 'block';
-                messageInput.focus();
-            } else {
-                // 發送消息
-                if (messageInput.value.trim() !== "") {
-                    document.querySelector('#send_button').click();
-                }
-                this.chatmode = false;
-                this.controls.lock();
-                document.removeEventListener('keydown', this.__chatroom);
-                messageInput.style.display = 'none';
-                chatBox.style.display = 'none';
+            this.isGame = false;
+            this.__toggleGameUI("chatroom", true);
+            this.controls.unlock();
+
+            messageInput.focus();
+            // 發送消息
+            if (messageInput.value.trim() !== "") {
+                document.querySelector('#send_button').click();
             }
         }
+        else if(event.key === 'Escape') {
+            this.__toggleGameUI("chatroom", false);
+            // 確保在適當的時機捕獲滑鼠
+            setTimeout(() => {
+                this.controls.lock(); // 重新鎖定滑鼠
+            }, 200); // 延遲保證切換狀態後能夠正確鎖定
+        }
     }
-
 
 }
 
