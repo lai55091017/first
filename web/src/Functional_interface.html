@@ -44,11 +44,11 @@
                     <a id="delete" href="index.html">刪除帳號</a>
                 </li>
             </ul>
-            <div class="header__login">
-                <button class="login__dropdown">
+            <div class="header_login">
+                <button class="login_dropdown">
                     <strong id="username"></strong>
                 </button>
-                <ul class="login__dropdown_menu">
+                <ul class="login_dropdown_menu">
                     <li class="dropdown"><a id="logout" href="sign_up.html">註冊</a> </li>
                     <li class="dropdown"><a id="logout" href="index.html">登出</a></li>
                 </ul>
@@ -57,7 +57,15 @@
     </div>
     <div id="content">
         <div class="message_container">
-            <div id="chat_box"></div>
+            <div id="chat_box">
+                <!-- 只要有訊息就會出現 -->
+                <!-- <div id="message">訊息</div> -->
+                <!-- <div id="message_date">時間</div> -->
+
+                <!-- 如果是私人訊息就會出現 -->
+                <!-- <div id="personal_message"</div> -->
+                <!-- <div id="personal_message_date"</div> -->
+            </div>
             <div id="input_box">
                 <input type="text" id="message_input" maxlength="50" placeholder="請輸入訊息...">
                 <button id="send_button"></button>
