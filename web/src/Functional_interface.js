@@ -268,38 +268,38 @@ function init_other() {
     }
 }
 // 導入場景模型
-async function loadModels() {
-    const models = [
+async function loadModels() { // 這個async function我記得之前問chatGPT它是跟我說這叫異步函數(非同步函數)
+    const models = [ // const一個名為models的陣列，裡面裝了模型，type是模型的檔案格式，path是模型所在的位置
         { type: 'glb', path: './mesh/glb/lilbrary.glb' },
         { type: 'fbx', path: './mesh/fbx/lilbray.fbx' },
         { type: 'obj', path: './mesh/obj/lilbray2.obj' },
         { type: 'json', path: './mesh/json/Test_Library.json' }
     ];
 
-    for (const model of models) {
-        let loadedModel;
-        try {
-            switch (model.type) {
-                case 'glb':
-                    loadedModel = await icas.loadGLTF(model.path);
-                    scene.add(loadedModel.scene);
-                    break;
-                case 'fbx':
+    for (const model of models) { // for迴圈，目標是models陣列中的每個模型
+        let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
+        try { // 這個try的註解放在後面的catch那邊
+            switch (model.type) { // 使用switch根據model(模型)的type(檔案格式)來執行對應格式的程式
+                case 'glb': // 檔案格式為glb
+                    loadedModel = await icas.loadGLTF(model.path); // 這個await只能用在async function裡，用來暫停非同步函數的執行，直到await後面的非同步操作完成並返回結果後才能結束暫停
+                    scene.add(loadedModel.scene); // 把剛剛載入的模型加到場景中
+                    break; // 簡單來說就是加載某個格式(obj、fbx...json等格式)的文件，等加載完後將結果return給loadModel
+                case 'fbx': // 檔案格式為fbx，其餘同上
                     loadedModel = await icas.loadFBX(model.path);
                     scene.add(loadedModel);
                     break;
-                case 'obj':
+                case 'obj': // 檔案格式為obj，這裡多了個mtlPath是chatGPT幫我糾錯的，它說obj可能會有mtl(材質)文件跟著
                     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
                     scene.add(loadedModel);
                     break;
-                case 'json':
+                case 'json': // 檔案格式為json，其餘同上
                     loadedModel = await icas.loadJSON(model.path);
                     scene.add(loadedModel);
                     break;
-                default:
+                default: // 如果不是上面這些格式就紀錄錯誤訊息:Unknown model type(未知的檔案格式)
                     console.error('Unknown model type:', model.type);
             }
-        } catch (error) {
+        } catch (error) { // 為防止加載時出錯，所以用try...catch來抓錯，只要出現加載錯誤就傳送錯誤訊息:Error loading model
             console.error('Error loading model:', model.path, error);
         }
     }
