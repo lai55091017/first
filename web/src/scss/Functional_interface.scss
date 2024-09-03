@@ -248,7 +248,7 @@ body {
 }
 
 /*-------------登入-------------------*/
-.header__login {
+.header_login {
     display: flex;
     justify-content: flex-end;
     /*將子項目在主軸上對齊到容器的末端*/
@@ -271,7 +271,7 @@ body {
     }
 
     /*單純只有下拉表會員名稱的觸碰效果*/
-    .login__dropdown {
+    .login_dropdown {
         position: relative;
         padding: 0 30px 0 0;
         height: 100%;
@@ -311,7 +311,7 @@ body {
     }
 
     /*下拉清單*/
-    .login__dropdown_menu {
+    .login_dropdown_menu {
         background-color: rgba(34, 34, 34, 0.904);
         box-shadow: 5px 5px 3px #000000bf;
         /*左右,上下陰影位置,陰影模糊度*/
@@ -476,6 +476,7 @@ a {
 }
 
 #message_input {
+    display: none;
     height: 50px;
     width: 450px;
     padding: 20px 20px;

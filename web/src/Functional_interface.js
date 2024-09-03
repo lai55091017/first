@@ -220,10 +220,10 @@ function onPlayerMessage(data) {
         message_element.id = 'message';
         message_date_element.id = 'message_date';
 
-        // if (message_val.username === username) {
-        //     message_element.id = 'personal_message';
-        //     message_date_element.id = 'personal_message_date';
-        // }
+        if (connect.playerList.find(player => player.uuid === data.uuid)) {
+            message_element.id = 'personal_message';
+            message_date_element.id = 'personal_message_date';
+        }
         
         message_element.textContent = `${data.username}:${data.message}`;
         message_date_element.textContent = ` 時間:${data.timestamp}`;
