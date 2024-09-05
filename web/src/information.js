@@ -1,5 +1,7 @@
 import "./scss/information.scss";
+import "./scss/menu.scss";
 import FirebaseDB from './js/firebase/Realtime Database';
+import * as menu from './js/menu.js';
 
 
 const db = new FirebaseDB;
@@ -180,6 +182,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('username').textContent = `歡迎${username}玩家`;
     })
 
+    // 讀取菜單
+    fetch('menu.html')
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById('menu_container').innerHTML = data;
+        menu.menu();
+    })
+    .catch(error => console.error('Error loading menu:', error));
+
 })
 
 
@@ -189,5 +200,3 @@ db.read_data_list("word_cards").then(data => {
         newCard(data[i].words[0], data[i].translate[0])
     }
 })
-
-onAuthStateChanged()

@@ -10,7 +10,7 @@ module.exports = {
     Functional_interface: './src/Functional_interface.js',
     index: './src/index.js',
     sign_up: './src/sign_up.js',
-    information: './src/information.js'
+    information: './src/information.js',
   },
 
   output: {
@@ -54,6 +54,7 @@ module.exports = {
       template: './src/index.html',
       filename: 'index.html', // 输出的 HTML 文件名
       chunks: ['index'] // 可以指定只注入單個( index.js )文件 預設是全部文件
+      
     }),
     new HtmlWebpackPlugins({
       template: './src/sign_up.html',
@@ -74,6 +75,11 @@ module.exports = {
       template: './src/information.html',
       filename: 'information.html',
       chunks: ['information']
+    }),
+    new HtmlWebpackPlugins({
+      filename: 'menu.html',  // 指定要生成的文件名稱
+      template: './src/menu.html',  // 來源 HTML 模板
+      inject: false,  // 不自動注入腳本
     })
   ]
 
