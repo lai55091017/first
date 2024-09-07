@@ -121,7 +121,7 @@ function init() {
     controller.setupBlocker(document.getElementById('blocker'));
 
     // 導入(載入)模型
-    // loadModels();
+    loadModels();
 }
 
 function animate() {
@@ -274,39 +274,65 @@ function init_other() {
     }
 }
 // 導入場景模型
-// async function loadModels() { // 這個async function我記得之前問chatGPT它是跟我說這叫異步函數(非同步函數)
-//     const models = [ // const一個名為models的陣列，裡面裝了模型，type是模型的檔案格式，path是模型所在的位置
-//         { type: 'glb', path: './mesh/glb/lilbrary.glb' },
-//         { type: 'fbx', path: './mesh/fbx/lilbray.fbx' },
-//         { type: 'obj', path: './mesh/obj/lilbray2.obj' },
-//         { type: 'json', path: './mesh/json/Test_Library.json' }
-//     ];
+async function loadModels() {
+    const models = [
+        { type: 'glb', path: './mesh/glb/Library_Full.glb' },
+        // { type: 'fbx', path: './mesh/fbx/Library_Full.fbx' },
+        // { type: 'obj', path: './mesh/obj/lilbray2.obj' },
+        // { type: 'json', path: './mesh/json/Test_Library.json' }
+    ];
 
-//     for (const model of models) { // for迴圈，目標是models陣列中的每個模型
-//         let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
-//         try { // 這個try的註解放在後面的catch那邊
-//             switch (model.type) { // 使用switch根據model(模型)的type(檔案格式)來執行對應格式的程式
-//                 case 'glb': // 檔案格式為glb
-//                     loadedModel = await icas.loadGLTF(model.path); // 這個await只能用在async function裡，用來暫停非同步函數的執行，直到await後面的非同步操作完成並返回結果後才能結束暫停
-//                     scene.add(loadedModel.scene); // 把剛剛載入的模型加到場景中
-//                     break; // 簡單來說就是加載某個格式(obj、fbx...json等格式)的文件，等加載完後將結果return給loadModel
-//                 case 'fbx': // 檔案格式為fbx，其餘同上
-//                     loadedModel = await icas.loadFBX(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 case 'obj': // 檔案格式為obj，這裡多了個mtlPath是chatGPT幫我糾錯的，它說obj可能會有mtl(材質)文件跟著
-//                     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
-//                     scene.add(loadedModel);
-//                     break;
-//                 case 'json': // 檔案格式為json，其餘同上
-//                     loadedModel = await icas.loadJSON(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 default: // 如果不是上面這些格式就紀錄錯誤訊息:Unknown model type(未知的檔案格式)
-//                     console.error('Unknown model type:', model.type);
-//             }
-//         } catch (error) { // 為防止加載時出錯，所以用try...catch來抓錯，只要出現加載錯誤就傳送錯誤訊息:Error loading model
-//             console.error('Error loading model:', model.path, error);
-//         }
-//     }
-// }
+    for (const model of models) {
+        let loadedModel;
+        try {
+            switch (model.type) {
+                case 'glb': 
+                    loadedModel = await icas.loadGLTF(model.path); 
+                    scene.add(loadedModel.scene);
+                    loadedModel.scene.traverse(function (child) {
+                        // 检查子对象的类型，或者使用名称等其他标识
+                        // if (child.isMesh) {
+                        //     console.log('找到Mesh:', child.name, child);
+                        //     // 在此处对子对象进行操作
+                        // } else if (child.isGroup) {
+                        //     console.log('找到Group:', child.name, child);
+                        //     // 在此处对Group进行操作
+                        // }
+                        // 可以尋找場景裡的子对象
+                        if (child.isGroup) {
+                            if(child.name === 'Scene') {
+                                console.log('找到Group:', child.name, child);
+                            }
+                        }
+                    });
+                
+                    // 你可以根据需要访问特定的子对象，例如通过名称
+                    const specificObject = loadedModel.scene.getObjectByName('LIB_Door_Left');
+                    if (specificObject) {
+                        console.log('找到指定对象:', specificObject);
+                        
+                        // 对该对象进行操作
+                        //向上移動
+                        specificObject.position.y = -100;
+                    } 
+                    break;
+                case 'fbx':
+                    loadedModel = await icas.loadFBX(model.path);
+                    scene.add(loadedModel);
+                    break;
+                case 'obj':
+                    loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+                    scene.add(loadedModel);
+                    break;
+                case 'json':
+                    loadedModel = await icas.loadJSON(model.path);
+                    scene.add(loadedModel);
+                    break;
+                default:
+                    console.error('Unknown model type:', model.type);
+            }
+        } catch (error) {
+            console.error('Error loading model:', model.path, error);
+        }
+    }
+}
