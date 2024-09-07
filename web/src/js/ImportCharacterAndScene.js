@@ -11,8 +11,8 @@ class ICAS {
         this.scene = scene;
         this.camera = camera;
         this.fbxLoader = new FBXLoader();
-        this.objLoader = new OBJLoader();
-        this.mtlLoader = new MTLLoader();
+        // 有問題，先使用fbx或glb this.objLoader = new OBJLoader();
+        // 有問題，先使用fbx或glb this.mtlLoader = new MTLLoader();
         this.gltfLoader = new GLTFLoader();
         this.jsonLoader = new THREE.ObjectLoader();
     }
@@ -25,6 +25,7 @@ class ICAS {
     }
     
     // 新增OBJ載入方法
+    /* 有問題，先使用fbx或glb
     loadOBJ(path, mtlPath) {
         return new Promise((resolve, reject) => {
             const objLoader = new OBJLoader();
@@ -35,6 +36,7 @@ class ICAS {
             });
         });
     }
+    */
 
     // 新增GLTF載入方法
     loadGLTF(path) {
