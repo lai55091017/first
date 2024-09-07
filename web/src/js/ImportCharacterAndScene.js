@@ -1,8 +1,8 @@
 // 導入模組
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+// 有問題，先使用fbx或glb  import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+// 有問題，先使用fbx或glb  import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // 測試
 
