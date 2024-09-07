@@ -37,17 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 讀取菜單
     fetch('menu.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('menu_container').innerHTML = data;
-        menu.menu();
-    })
-    .catch(error => console.error('Error loading menu:', error));
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('menu_container').innerHTML = data;
+            menu.menu();
+        })
+        .catch(error => console.error('Error loading menu:', error));
 
     db.read_username_once().then(username => {
         document.getElementById('username').textContent = `歡迎${username}玩家`;
     })
-    
+
     // 聊天室
     const messageInput = document.getElementById('message_input');  //聊天室輸入框
     const sendButton = document.getElementById('send_button');      //聊天室按鈕
@@ -74,12 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch (err) {
                         console.error('Error sending message:', err);
                     }
-    
+
                 }
             })
 
         })
-        .catch((error) => {console.error(error);})
+            .catch((error) => { console.error(error); })
     });
 
     //遊戲內容載入
@@ -198,22 +198,44 @@ function onPlayerMessage(data) {
     const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
 
     if (playermessage) {
+
+        const message_box = document.createElement('div');
         const message_element = document.createElement('div');
         const message_date_element = document.createElement('div');
+        const message_item = document.createElement('div');
+        const message_name = document.createElement('div');
+        const name = document.createElement('span');
+        const message_total = document.createElement('div');
 
+        message_total.className = 'message message_item';
+        message_item.className = 'message_item';
+        message_box.id = 'message_box';
         message_element.id = 'message';
         message_date_element.id = 'message_date';
+        message_name.className = 'name';
 
         if (connect.playerList.find(player => player.uuid === data.uuid)) {
             message_element.id = 'personal_message';
             message_date_element.id = 'personal_message_date';
         }
-        
-        message_element.textContent = `${data.username}:${data.message}`;
+
+        name.textContent = `${data.username}`;
+        message_element.textContent = `${data.message}`;
         message_date_element.textContent = ` 時間:${data.timestamp}`;
 
-        chatBox.appendChild(message_element);
-        chatBox.appendChild(message_date_element);
+        //span丟到.name
+        message_name.appendChild(name);
+        //訊息時間丟到#message_box;
+        message_box.appendChild(message_element);
+        message_box.appendChild(message_date_element);
+        //#message_box和.name丟到#message_item
+        message_item.appendChild(message_name);
+        message_item.appendChild(message_box);
+        //#message_item丟到.message_total
+        message_total.appendChild(message_item);
+        //.message_total丟到#chat_box，訊息顯示在聊天室
+        chatBox.appendChild(message_total);
+
 
         // 将聊天室滚动条移动到底部函数
         const messageContainer = document.querySelector('.message_container');

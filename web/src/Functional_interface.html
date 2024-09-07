@@ -26,17 +26,38 @@
     </div>
     <div id="content">
         <div class="message_container">
+            <div class="header">
+                <div class="title">Message
+                    <div class="info"></div>
+                </div>
+            </div>
             <div id="chat_box">
                 <!-- 只要有訊息就會出現 -->
                 <!-- <div id="message">訊息</div> -->
                 <!-- <div id="message_date">時間</div> -->
 
-                <!-- 如果是私人訊息就會出現 -->
-                <!-- <div id="personal_message"</div> -->
-                <!-- <div id="personal_message_date"</div> -->
+                <!-- 自己輸出訊息就會出現 -->
+                <!-- <div class="message message_item" index="0" data-draggable="true">
+                    <div class="avatar"><img
+                            src="https://patchwiki.biligame.com/images/sr/c/c4/06fupomr900c72ymsn6pgq8m4c077r7.png"
+                            alt=""></div>
+                    <div class="message_item">
+                        <div class="name">
+                            <span>托帕</span>
+                        </div>
+                        <div class="text_box">
+                            <div class="text" id="message" contenteditable="false">
+                                愿此行，终sssssssssssssssssssssssssssssssssssssssssssssssss抵群星</div>
+                            <div class="time" id="message_date">時間 2024 9/7</div>
+                        </div>
+                    </div>
+                    </div> -->
             </div>
             <div id="input_box">
-                <input type="text" id="message_input" maxlength="50" placeholder="請輸入訊息...">
+                <div data-v-0493a0ed="" class="avatar" title="選擇角色"><img
+                        src="https://patchwiki.biligame.com/images/sr/d/d9/q1kzn8lehteph6x95tlyzjzf9re3ek8.png" alt="">
+                </div>
+                <input type="text" id="message_input" placeholder="輸入訊息..">
                 <button id="send_button"></button>
             </div>
         </div>

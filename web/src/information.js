@@ -184,12 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 讀取菜單
     fetch('menu.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('menu_container').innerHTML = data;
-        menu.menu();
-    })
-    .catch(error => console.error('Error loading menu:', error));
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('menu_container').innerHTML = data;
+            menu.menu();
+        })
+        .catch(error => console.error('Error loading menu:', error));
 
 })
 
