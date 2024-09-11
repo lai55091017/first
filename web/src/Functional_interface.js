@@ -129,7 +129,23 @@ function init() {
     connect.onMove = onPlayerMove;
     connect.onMessage = onPlayerMessage;
     controller.setupBlocker(document.getElementById('blocker'));
-    
+
+    // 導入(載入)模型
+    loadModels();
+}
+
+function animate() {
+
+    requestAnimationFrame(animate);
+    const time = performance.now();
+    const delta = (time - prevTime) / 1000;
+    prevTime = time;
+
+    const playerData = controller.update(delta);
+    characterManager.updateCharactersAnimation(delta, connect.playerList);
+    connect.socket.send(JSON.stringify(playerData));
+    renderer.render(scene, camera);
+
 }
 
 /*********************************** Websocket Event *********************************************/
@@ -479,4 +495,55 @@ function checkCollisionEnd() {
       console.log('玩家和目標之間的碰撞已結束');
     }
   }
+}
+// 導入場景模型
+async function loadModels() { // 這個async function我記得之前問chatGPT它是跟我說這叫異步函數(非同步函數)
+    const models = [ // const一個陣列，type是模型的檔案格式，path是模型所在的位置
+        { type: 'glb', path: './mesh/glb/Library_Full.glb' }
+    ];
+
+    for (const model of models) {
+        let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
+        try { // 這個try的註解放在後面的catch那邊
+            switch (model.type) { // 使用switch根據model(模型)的type(檔案格式)來執行對應格式的程式
+                case 'glb':
+                    loadedModel = await icas.loadGLTF(model.path); // 這個await只能用在async function裡，用來暫停非同步函數的執行，直到await後面的非同步操作完成並返回結果後才能結束暫停
+                    scene.add(loadedModel.scene); // 把剛剛載入的模型加到場景中
+
+                    // 找門，要用來做開關設置的
+                    const libDoorL = loadedModel.scene.getObjectByName('LIB_Door_Left');
+                    const libDoorR = loadedModel.scene.getObjectByName('LIB_Door_Right');
+
+                    if (libDoorL && libDoorR) {
+                        console.log('好消息，找到圖書館的門了');
+                        // 傳到Ctrl.js
+                        controller.setDoors(libDoorL, libDoorR);
+
+                        // 存起來，目前先註解怕之後要改
+                        // this.libDoorL = libDoorL;
+                        // this.libDoorR = libDoorR;
+                    } else {
+                        console.log('壞消息，沒門!');
+                    }
+
+                    break;
+                case 'fbx':
+                    loadedModel = await icas.loadFBX(model.path);
+                    scene.add(loadedModel);
+                    break;
+                // case 'obj': // 出了點錯先註解掉，obj可能會有mtl(材質)文件跟著
+                //     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+                //     scene.add(loadedModel);
+                //     break;
+                case 'json':
+                    loadedModel = await icas.loadJSON(model.path);
+                    scene.add(loadedModel);
+                    break;
+                default: // 如果不是上面這些格式就紀錄錯誤訊息:Unknown model type(未知的檔案格式)
+                    console.error('Unknown model type:', model.type);
+            }
+        } catch (error) { // 為防止加載時出錯，所以用try...catch來抓錯，只要出現加載錯誤就傳送錯誤訊息:Error loading model
+            console.error('Error loading model:', model.path, error);
+        }
+    }
 }

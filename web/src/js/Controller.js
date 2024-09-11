@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import DoorAnimation from './DoorAnimation';
 
 class Controller {
 
@@ -15,6 +16,19 @@ class Controller {
         camera.position.y = this.playerHight;
         this.scene.add(camera);
         this.speed = 0; // 新增速度的變數，用於偵測玩家的速度來播放不同動作
+        this.isOpen = false;
+        this.libDoorL = null;
+        this.libDoorR = null;
+        this.doorAnimation = null;
+    }
+
+    // 設置門和初始化動畫
+    setDoors(libDoorL, libDoorR) {
+        this.libDoorL = libDoorL;
+        this.libDoorR = libDoorR;
+        this.doorAnimation = new DoorAnimation(libDoorL, libDoorR);
+
+        console.log('已將門從FI.js傳遞至Ctrlr.js')
     }
 
     //設置移動參數
@@ -55,12 +69,13 @@ class Controller {
         if (!this.canJump || !this.isGame) return;
         if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) this.moveDistance = 16;
         const actions = {
-            'KeyW': () => { this.movingForward = true; this.walk_forward(); },
-            'KeyA': () => { this.movingLeft = true; this.walk_left(); },
-            'KeyS': () => { this.movingBackward = true; this.walk_backward(); },
-            'KeyD': () => { this.movingRight = true; this.walk_right(); },
-            'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; },
-            'ShiftLeft': () => { this.run(); this.moveDistance = 40; },
+            'KeyW':  () => { this.movingForward  = true; this.walk_forward();  }, // W鍵向前
+            'KeyA':  () => { this.movingLeft     = true; this.walk_left();     }, // A鍵向左
+            'KeyS':  () => { this.movingBackward = true; this.walk_backward(); }, // S鍵向後 
+            'KeyD':  () => { this.movingRight    = true; this.walk_right();    }, // D鍵向右
+            'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
+            'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
+            'KeyF':  () => { this.__toggleDoor(); } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -292,7 +307,38 @@ class Controller {
             }, 200); // 延遲保證切換狀態後能夠正確鎖定
         }
     }
+    
+    // 開關門方法
+    __toggleDoor() {
+        if (!this.doorAnimation) {
+            console.error('門未初始化');
+            return;
+        }
 
+        if (this.isOpen) {
+            // 關門
+            this.doorAnimation.closeDoors();
+            // 先註解，要是門動畫有問題再用這個
+            // this.libDoorL.rotation.y = 0;
+            // this.libDoorR.rotation.y = 0;
+        } else {
+            // 開門
+            this.doorAnimation.openDoors();
+            // 先註解，要是門動畫有問題再用這個
+            // this.libDoorL.rotation.y = -Math.PI / 2; // 左門 -90度
+            // this.libDoorR.rotation.y = Math.PI / 2;  // 右門 90度
+
+            // 5秒後自動關門
+            setTimeout(() => {
+                this.libDoorL.rotation.y = 0;
+                this.libDoorR.rotation.y = 0;
+                this.isOpen = false;  // 重置門的狀態
+            }, 5000); // 這裡的5000是指5秒後自動關門
+        }
+
+        // 切換門的狀態
+        this.isOpen = !this.isOpen;
+    }
 }
 
 export default Controller;
