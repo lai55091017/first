@@ -10,11 +10,13 @@ import ICAS from './js/ImportCharacterAndScene.js';
 import * as menu from './js/menu.js';
 
 import FirebaseDB from './js/firebase/Realtime Database';
+import Firestore from './js/firebase/Firestore';
 
 
 
 
 const db = new FirebaseDB;
+const firestore = new Firestore;
 
 let prevTime = performance.now();
 const scene = new THREE.Scene();
@@ -32,6 +34,9 @@ const icas = new ICAS(scene, camera);
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
+
+firestore.write_data();
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -121,7 +126,7 @@ function init() {
     controller.setupBlocker(document.getElementById('blocker'));
 
     // 導入(載入)模型
-    loadModels();
+    // loadModels();
 }
 
 function animate() {
