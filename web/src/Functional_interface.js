@@ -41,6 +41,9 @@ $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
 
+firestore.write_data();
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // 讀取菜單
@@ -131,7 +134,7 @@ function init() {
     controller.setupBlocker(document.getElementById('blocker'));
 
     // 導入(載入)模型
-    loadModels();
+    // loadModels();
 }
 
 function animate() {
