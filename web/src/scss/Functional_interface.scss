@@ -12,14 +12,14 @@
     --message-item-img-width: 280px;
     --message-item-avatar-width: 50px;
     --message-item-avatar-margin: 15px;
-    --message-menu-background-color: #cccacd;
+    --message-menu-background-color: #e0e1e2;
     --menu-text-color: #afaeb3;
     --menu-icon-background-color: #e3e3e3;
     --menu-btn-hover: #e4d89b;
     --meni-icon-shadow: 0 0 0px 5px rgba(255, 255, 255, .8);
     --border-color: #595556;
     --border-hover-color: #b5b5b5;
-    --box-background-color: #d8d8d8;
+    --box-background-color: #ffffffbc;
     --menu-border: 3px solid var(--border-color);
     --menu-border-hover: 3px solid var(--border-hover-color);
     --menu-border-highlight: 3px solid #f3f4f6;
@@ -34,12 +34,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #545454
+    background: #908f8f
 }
 
 ::-webkit-scrollbar-track {
     margin: 20px 0;
-    background: #c6c6c6
+    background: #d4d2d2
 }
 
 /*----------------------全域設定----------------------*/
@@ -215,13 +215,14 @@ body {
     z-index: 10;
     width: 450px;
     height: 80%;
-    border-radius: 0 50px 0 0;
+    border-radius: 20px;
     box-shadow: 0px 0px 10px 5px #737373;
     display: none;
 
     /*----------------裝飾線-----------------*/
     &:after {
         position: absolute;
+        border-radius: 20px;
         bottom: -15px;
         left: -15px;
         box-sizing: border-box;
@@ -239,9 +240,10 @@ body {
         flex-direction: column;
         width: 100%;
         height: 100%;
-        border-radius: 0 50px 0 0;
+        border-radius: 20px;
         background: var(--box-background-color);
         box-shadow: 0 0 5px 3px #a5a5a5;
+        backdrop-filter: blur(20px);
 
         /*----------------標題-------------------------*/
         .header {
@@ -255,8 +257,6 @@ body {
             width: 100%;
             height: 70px;
             border-bottom: 3px solid rgba(150, 150, 150, .5);
-            box-shadow: 0 40px 20px -20px #d2d2d280;
-
 
             .title {
                 width: 100%;
@@ -281,6 +281,7 @@ body {
             height: 80px;
             border-top: var(--menu-border-hover);
             background: var(--message-menu-background-color);
+            border-radius: 0 0 20px 20px;
 
             .avatar {
                 position: absolute;
@@ -317,7 +318,7 @@ body {
                 height: 50px;
                 outline: none;
                 border: none;
-                background: #e8e8e8;
+                background: #ffffff;
                 color: var(--input_color);
                 text-align: center;
                 font-size: 24px;
@@ -417,12 +418,13 @@ body {
                 width: -moz-fit-content;
                 width: fit-content;
                 border-radius: 0 15px 15px;
-                background: #ebebeb;
+                background: #dbf1ff;
                 box-shadow: -2px 2px #9d9f9f;
                 color: var(--text-color);
                 word-break: break-word;
                 font-size: 18px;
                 font-family: "Microsoft YaHei";
+
             }
 
             #personal_message_date {
