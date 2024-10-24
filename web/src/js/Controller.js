@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import DoorAnimation from './DoorAnimation';
+import InteractableObject from './InteractableObject';
+import PopupWindow from './PopupWindow';
 
 class Controller {
 
     constructor( scene, camera, canvas ){
+        this.popupWindow = new PopupWindow();
         this.camera = camera;
         this.canvas = canvas;
         this.scene = scene;
@@ -51,6 +54,7 @@ class Controller {
     __setupListeners() {
         document.addEventListener('keydown', this.__handleKeyDown.bind(this));
         document.addEventListener('keyup', this.__handleKeyUp.bind(this));
+        document.addEventListener('mousedown', this.__onMouseDown.bind(this));
     }
 
     //設置動作
@@ -229,14 +233,42 @@ class Controller {
 
             // 5秒後自動關門
             setTimeout(() => {
-                this.libDoorL.rotation.y = 0;
-                this.libDoorR.rotation.y = 0;
+                this.doorAnimation.closeDoors(); // 關門動畫
                 this.isOpen = false;  // 重置門的狀態
             }, 5000); // 這裡的5000是指5秒後自動關門
         }
 
         // 切換門的狀態
         this.isOpen = !this.isOpen;
+    }
+
+    __onMouseDown(event) {
+        // 使用Raycaster檢測玩家點擊了啥物件
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1; // 套公式得到鼠標的X位置
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1; // 套公式得到鼠標的Y位置
+
+        raycaster.setFromCamera(mouse, this.camera);
+
+        const intersects = raycaster.intersectObject(this.scene.children, true);
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+
+            // 判斷是否有可互動物件
+            const ITO = InteractableObject.find(item => item.id === object.name);
+
+            if (ITO) {
+                // 顯示彈窗
+                this.popupWindow.show(
+                    ITO.chineseName, 
+                    ITO.englishName, 
+                    { x: event.clientX, y: event.clientY }
+                );
+            }
+        }
     }
 }
 
