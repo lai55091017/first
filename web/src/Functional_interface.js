@@ -10,11 +10,13 @@ import ICAS from './js/ImportCharacterAndScene.js';
 import * as menu from './js/menu.js';
 
 import FirebaseDB from './js/firebase/Realtime Database';
+import Firestore from "./js/firebase/Firestore.js";
 
 
 
 
 const db = new FirebaseDB;
+const firestore = new Firestore;
 
 let prevTime = performance.now();
 const scene = new THREE.Scene();
@@ -193,54 +195,65 @@ function onPlayerMove(data) {
 //玩家聊天室
 function onPlayerMessage(data) {
 
-    // 聊天室資料庫並輸出到畫面
-    const chatBox = document.getElementById('chat_box');
-    const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
+    db.read_username_once().then(username => {
 
-    if (playermessage) {
-
-        const message_box = document.createElement('div');
-        const message_element = document.createElement('div');
-        const message_date_element = document.createElement('div');
-        const message_item = document.createElement('div');
-        const message_name = document.createElement('div');
-        const name = document.createElement('span');
-        const message_total = document.createElement('div');
-
-        message_total.className = 'message message_item';
-        message_item.className = 'message_item';
-        message_box.id = 'message_box';
-        message_element.id = 'message';
-        message_date_element.id = 'message_date';
-        message_name.className = 'name';
-
-        if (connect.playerList.find(player => player.uuid === data.uuid)) {
-            message_element.id = 'personal_message';
-            message_date_element.id = 'personal_message_date';
+        const chatBox = document.getElementById('chat_box');
+        const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
+    
+        if (playermessage) {
+    
+            const message_box = document.createElement('div');
+            const message_element = document.createElement('div');
+            const message_date_element = document.createElement('div');
+            const message_item = document.createElement('div');
+            const message_name = document.createElement('div');
+            const name = document.createElement('span');
+            const message_total = document.createElement('div');
+    
+            message_total.className = 'message message_item';
+            message_item.className = 'message_item';
+            message_box.id = 'message_box';
+            message_element.id = 'message';
+            message_date_element.id = 'message_date';
+            message_name.className = 'name';
+    
+    
+                if (data.username === username) {
+                    message_element.id = 'personal_message';    
+                    message_date_element.id = 'personal_message_date';
+                }
+            
+    
+            name.textContent = `${data.username}`;
+            message_element.textContent = `${data.message}`;
+            message_date_element.textContent = ` 時間:${data.timestamp}`;
+    
+            //span丟到.name
+            message_name.appendChild(name);
+            //訊息時間丟到#message_box;
+            message_box.appendChild(message_element);
+            message_box.appendChild(message_date_element);
+            //#message_box和.name丟到#message_item
+            message_item.appendChild(message_name);
+            message_item.appendChild(message_box);
+            //#message_item丟到.message_total
+            message_total.appendChild(message_item);
+            //.message_total丟到#chat_box，訊息顯示在聊天室
+            chatBox.appendChild(message_total);
+    
+            // 容器的可见高度
+            const scrollableHeight = chatBox.scrollHeight - chatBox.clientHeight;
+    
+            // 如果用户没有手动向上滚动（即滚动条接近底部），则自动滚动到底部
+            if (chatBox.scrollTop >= scrollableHeight - 500) {
+                chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+            }
+    
+            // 输出调试信息
+            console.log(chatBox.scrollTop, chatBox.scrollHeight);
+    
         }
-
-        name.textContent = `${data.username}`;
-        message_element.textContent = `${data.message}`;
-        message_date_element.textContent = ` 時間:${data.timestamp}`;
-
-        //span丟到.name
-        message_name.appendChild(name);
-        //訊息時間丟到#message_box;
-        message_box.appendChild(message_element);
-        message_box.appendChild(message_date_element);
-        //#message_box和.name丟到#message_item
-        message_item.appendChild(message_name);
-        message_item.appendChild(message_box);
-        //#message_item丟到.message_total
-        message_total.appendChild(message_item);
-        //.message_total丟到#chat_box，訊息顯示在聊天室
-        chatBox.appendChild(message_total);
-
-
-        // 将聊天室滚动条移动到底部函数
-        const messageContainer = document.querySelector('.message_container');
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-    }
+    })
 }
 
 /*********************************** Three.js *********************************************/

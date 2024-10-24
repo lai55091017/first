@@ -3,7 +3,7 @@ class Connect {
     constructor( url ){
         this.playerList = [];
         this.socket = new WebSocket( url );
-        //當執行socket的open、close、message事件時，會觸發該方法
+        //當WebSocket執行open、close、message事件時，會觸發該方法
         this.socket.onopen = this.__handleSocketOpen.bind(this);
         this.socket.onclose = this.__handleSocketClose.bind(this);
         this.socket.onmessage = this.__handleWebSocketMessage.bind(this);
