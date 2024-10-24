@@ -4,7 +4,7 @@ import * as THREE from 'three';
 
 const InteractableObject = [
     {
-        id: 'Door', 
+        id: 'Door',
         chineseName: '門',
         englishName: 'Door'
         // 之後在這裡加入語音

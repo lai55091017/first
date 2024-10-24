@@ -134,7 +134,7 @@ function init() {
     controller.setupBlocker(document.getElementById('blocker'));
 
     // 導入(載入)模型
-    // loadModels();
+    loadModels();
 }
 
 function animate() {
@@ -297,8 +297,10 @@ function init_camera() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.near = 0.1;
     camera.far = 100;
+    camera.layers.enableAll();//相機能顯示所有的層
     camera.updateProjectionMatrix();
 }
+
 function init_renderer() {
     const canvas = renderer.domElement;
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -501,7 +503,7 @@ function checkCollisionEnd() {
 }
 // 導入場景模型
 async function loadModels() {
-    const models = [ 
+    const models = [
         { type: 'glb', path: './mesh/glb/Scene_Library.glb' },
         { type: 'fbx', path: './mesh/fbx/player.fbx' }
     ];
@@ -519,9 +521,11 @@ async function loadModels() {
                     const libDoorR = loadedModel.scene.getObjectByName('LIB_Door_Right');
                     libDoorL.name = 'Door';
                     libDoorR.name = 'Door';
-                    
+
                     if (libDoorL && libDoorR) {
                         console.log('好消息，找到圖書館的門了');
+                        libDoorL.layers.set(1);
+                        libDoorR.layers.set(1);
                         // 傳到Ctrl.js
                         controller.setDoors(libDoorL, libDoorR);
 

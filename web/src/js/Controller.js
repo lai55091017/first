@@ -6,7 +6,7 @@ import PopupWindow from './PopupWindow';
 
 class Controller {
 
-    constructor( scene, camera, canvas ){
+    constructor(scene, camera, canvas) {
         this.popupWindow = new PopupWindow();
         this.camera = camera;
         this.canvas = canvas;
@@ -73,13 +73,13 @@ class Controller {
         if (!this.canJump || !this.isGame) return;
         if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) this.moveDistance = 16;
         const actions = {
-            'KeyW':  () => { this.movingForward  = true; this.walk_forward();  }, // W鍵向前
-            'KeyA':  () => { this.movingLeft     = true; this.walk_left();     }, // A鍵向左
-            'KeyS':  () => { this.movingBackward = true; this.walk_backward(); }, // S鍵向後 
-            'KeyD':  () => { this.movingRight    = true; this.walk_right();    }, // D鍵向右
+            'KeyW': () => { this.movingForward = true; this.walk_forward(); }, // W鍵向前
+            'KeyA': () => { this.movingLeft = true; this.walk_left(); }, // A鍵向左
+            'KeyS': () => { this.movingBackward = true; this.walk_backward(); }, // S鍵向後 
+            'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
-            'KeyF':  () => { this.__toggleDoor(); } // F鍵可以開關門
+            'KeyF': () => { this.__toggleDoor(); } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -311,7 +311,7 @@ class Controller {
             }, 200); // 延遲保證切換狀態後能夠正確鎖定
         }
     }
-    
+
     // 開關門方法
     __toggleDoor() {
         if (!this.doorAnimation) {
@@ -351,23 +351,40 @@ class Controller {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1; // 套公式得到鼠標的X位置
         mouse.y = - (event.clientY / window.innerHeight) * 2 + 1; // 套公式得到鼠標的Y位置
 
+        // 透過Raycaster檢測
         raycaster.setFromCamera(mouse, this.camera);
-
-        const intersects = raycaster.intersectObject(this.scene.children, true);
+        raycaster.layers.set(1);
+        raycaster.precision = 0.00001;
+        // 檢查是否與門物件相交
+        const intersects = raycaster.intersectObjects(this.scene.children, true);
 
         if (intersects.length > 0) {
-            const object = intersects[0].object;
-
+            // console.log(intersects);
+            const object = intersects[0].object;// 獲取相交的物件
             // 判斷是否有可互動物件
-            const ITO = InteractableObject.find(item => item.id === object.name);
-
-            if (ITO) {
+            const color = new THREE.Color(Math.random(), Math.random(), Math.random())
+            object.material.color = color;
+            console.log(object.name);
+            if (object.name === 'Door') {
                 // 顯示彈窗
+                const ITO = InteractableObject.find(item => item.id === object.name);
                 this.popupWindow.show(
-                    ITO.chineseName, 
-                    ITO.englishName, 
-                    { x: event.clientX, y: event.clientY }
-                );
+                    ITO.chineseName,
+                    ITO.englishName,
+                    { x: event.clientX, y: event.clientY });
+
+            } else {
+                console.log('無可互動物件');
+                // const ITO = InteractableObject.find(item => item.id === object.name);
+
+                // if (ITO) {
+                //     // 顯示彈窗
+                //     this.popupWindow.show(
+                //         ITO.chineseName,
+                //         ITO.englishName,
+                //         { x: event.clientX, y: event.clientY }
+                //     );
+                // }
             }
         }
     }
