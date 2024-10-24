@@ -497,9 +497,10 @@ function checkCollisionEnd() {
   }
 }
 // 導入場景模型
-async function loadModels() { // 這個async function我記得之前問chatGPT它是跟我說這叫異步函數(非同步函數)
-    const models = [ // const一個陣列，type是模型的檔案格式，path是模型所在的位置
-        { type: 'glb', path: './mesh/glb/Library_Full.glb' }
+async function loadModels() {
+    const models = [ 
+        { type: 'glb', path: './mesh/glb/Scene_Library.glb' },
+        { type: 'fbx', path: './mesh/fbx/player.fbx' }
     ];
 
     for (const model of models) {
@@ -513,7 +514,9 @@ async function loadModels() { // 這個async function我記得之前問chatGPT�
                     // 找門，要用來做開關設置的
                     const libDoorL = loadedModel.scene.getObjectByName('LIB_Door_Left');
                     const libDoorR = loadedModel.scene.getObjectByName('LIB_Door_Right');
-
+                    libDoorL.name = 'Door';
+                    libDoorR.name = 'Door';
+                    
                     if (libDoorL && libDoorR) {
                         console.log('好消息，找到圖書館的門了');
                         // 傳到Ctrl.js

@@ -1,4 +1,5 @@
 // 導入模組
+import { reject } from 'lodash';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 // 有問題，先使用fbx或glb  import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
@@ -16,7 +17,7 @@ class ICAS {
         this.gltfLoader = new GLTFLoader();
         this.jsonLoader = new THREE.ObjectLoader();
     }
-
+    
     // 新增FBX載入方法
     loadFBX(path) {
         return new Promise((resolve, reject) => {
