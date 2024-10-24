@@ -26,7 +26,9 @@ export function menu() {
         auth.Sign_out()
     })
 
-
+    document.getElementById('power').addEventListener('click', async () => {
+        auth.Sign_out()
+    })
     const menu = document.querySelector(".menu");
     const toggle = document.querySelector(".toggle");
 
