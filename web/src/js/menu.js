@@ -26,6 +26,16 @@ export function menu() {
         auth.Sign_out()
     })
 
-}
 
+    const menu = document.querySelector(".menu");
+    const toggle = document.querySelector(".toggle");
+
+
+    toggle.addEventListener("click", () => {
+        menu.classList.toggle("active");
+        //如果 menu 已經有 "active" 類別，則移除它。
+        //如果沒有 "active" 類別，則新增它。
+    })
+
+}
 
