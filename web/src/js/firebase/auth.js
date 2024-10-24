@@ -13,6 +13,7 @@ import {
     signOut
 } from 'firebase/auth';
 import * as firebaseui from 'firebaseui';
+import { getApps } from 'firebase/app';
 
 class Auth{
     constructor() {
@@ -27,8 +28,12 @@ class Auth{
             databaseURL: "https://cyut-3d-rpg-default-rtdb.firebaseio.com/"
           };
 
-        // 初始化 Firebase 应用
-        this.app = firebase.initializeApp(this.firebaseConfig);
+        // 檢查應用是否已初始化
+        if (!getApps().length) {
+            this.app = firebase.initializeApp(this.firebaseConfig);
+        } else {
+            this.app = getApps()[0]; // 使用已初始化的應用
+        }
         this.auth = getAuth(this.app);
         // this.ui = new firebaseui.auth.AuthUI(this.auth);
 
