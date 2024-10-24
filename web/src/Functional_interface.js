@@ -14,7 +14,6 @@ import Firestore from "./js/firebase/Firestore.js";
 
 
 
-
 const db = new FirebaseDB;
 const firestore = new Firestore;
 
@@ -299,8 +298,8 @@ async function loadModels() {
         let loadedModel;
         try {
             switch (model.type) {
-                case 'glb': 
-                    loadedModel = await icas.loadGLTF(model.path); 
+                case 'glb':
+                    loadedModel = await icas.loadGLTF(model.path);
                     scene.add(loadedModel.scene);
                     loadedModel.scene.traverse(function (child) {
                         // 检查子对象的类型，或者使用名称等其他标识
@@ -313,21 +312,21 @@ async function loadModels() {
                         // }
                         // 可以尋找場景裡的子对象
                         if (child.isGroup) {
-                            if(child.name === 'Scene') {
+                            if (child.name === 'Scene') {
                                 console.log('找到Group:', child.name, child);
                             }
                         }
                     });
-                
+
                     // 你可以根据需要访问特定的子对象，例如通过名称
                     const specificObject = loadedModel.scene.getObjectByName('LIB_Door_Left');
                     if (specificObject) {
                         console.log('找到指定对象:', specificObject);
-                        
+
                         // 对该对象进行操作
                         //向上移動
                         specificObject.position.y = -100;
-                    } 
+                    }
                     break;
                 case 'fbx':
                     loadedModel = await icas.loadFBX(model.path);
