@@ -15,7 +15,7 @@ import Firestore from "./js/firebase/Firestore.js";
 
 
 const db = new FirebaseDB;
-const firestore = new Firestore;
+const fs = new Firestore;
 
 let prevTime = performance.now();
 const scene = new THREE.Scene();
@@ -45,26 +45,27 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => console.error('Error loading menu:', error));
 
-    db.read_username_once().then(username => {
-        document.getElementById('username').textContent = `歡迎${username}玩家`;
-    })
 
-    // 聊天室
-    const messageInput = document.getElementById('message_input');  //聊天室輸入框
-    const sendButton = document.getElementById('send_button');      //聊天室按鈕
-    sendButton.addEventListener('click', () => {
+    fs.get_user_data().then(fs => {
+        document.getElementById('username').textContent = `歡迎${fs.username}玩家`;
 
-        currentTime().then(formattedDateTime => {
+        // 聊天室
+        const messageInput = document.getElementById('message_input');  //聊天室輸入框
+        const sendButton = document.getElementById('send_button');      //聊天室按鈕
+        sendButton.addEventListener('click', () => {
 
-            const messageText = messageInput.value;
-            db.read_username_once().then(username => {
+            currentTime().then(formattedDateTime => {
+
+                const messageText = messageInput.value;
+
+
 
                 if (messageText.trim() !== '') {
 
                     const messagedata = {
                         context: 'sendMessage',
                         message: messageText,
-                        username: username,
+                        username: fs.username,
                         timestamp: formattedDateTime,   //时间戳
                     }
 
@@ -77,12 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                 }
+
             })
-
-        })
-            .catch((error) => { console.error(error); })
-    });
-
+                .catch((error) => { console.error(error); })
+        });
+    })
     //遊戲內容載入
     init()
 })
@@ -191,10 +191,10 @@ function onPlayerMove(data) {
         characterData.previousActionName = data.previousActionName;
     }
 }
-//玩家聊天室
+//顯示玩家聊天室
 function onPlayerMessage(data) {
 
-    db.read_username_once().then(username => {
+    fs.get_user_data().then(fs => {
 
         const chatBox = document.getElementById('chat_box');
         const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
@@ -217,7 +217,7 @@ function onPlayerMessage(data) {
             message_name.className = 'name';
     
     
-                if (data.username === username) {
+                if (data.username === fs.username) {
                     message_element.id = 'personal_message';    
                     message_date_element.id = 'personal_message_date';
                 }

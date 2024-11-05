@@ -1,10 +1,10 @@
 import "./scss/information.scss";
 import "./scss/menu.scss";
-import FirebaseDB from './js/firebase/Realtime Database';
 import * as menu from './js/menu.js';
+import Firestore from "./js/firebase/Firestore.js";
 
 
-const db = new FirebaseDB;
+const fs = new Firestore;
 
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -28,14 +28,14 @@ document.getElementById('card_form').addEventListener('submit', function (event)
 
 
     // 將卡片寫入資料庫
-    db.Add_word_card_information("word_cards", {
-        "words": [englishText],
-        "translate": [chineseText]
+    fs.add_user_card({
+        "card":[{words:englishText, translate:chineseText}]
     })
 
+    
 });
 
-var card_number = 0;
+let card_number = 0;
 function newCard(englishText, chineseText) {
     card_number += 1;
     const newCard = document.createElement('div');
@@ -142,10 +142,16 @@ function newCard(englishText, chineseText) {
     deleteButton.addEventListener('click', function (event) {
         event.stopPropagation();  // 阻止事件冒泡，避免触发 dialog 显示
         newCard.remove();  // 删除卡片
+
+        // 刪除卡片資料
+        fs.delete_user_card({
+            "card":[{words:englishText, translate:chineseText}]
+        })
     });
 
 
 }
+
 
 
 /*------------------------------------音訊卡片功能-----------------------------------------*/
@@ -178,8 +184,8 @@ document.querySelectorAll('button').forEach(button => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    db.read_username_once().then(username => {
-        document.getElementById('username').textContent = `歡迎${username}玩家`;
+    fs.get_user_data().then(data => {
+        document.getElementById('username').textContent = `歡迎${data.username}玩家`;
     })
 
     // 讀取菜單
@@ -195,8 +201,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // 顯示資料庫中的卡片
-db.read_data_list("word_cards").then(data => {
-    for (let i = 0; i < data.length; i++) {
-        newCard(data[i].words[0], data[i].translate[0])
+fs.get_user_data().then(data => {
+    for (let i = 0; i < data.card.length; i++) {
+        newCard(data.card[i].words,data.card[i].translate)
     }
 })
+
+  // 監聽頁面可見性變化時觸發
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "hidden") {
+        fs.commit_data();
+    }
+});
+
+  // 使用監聽頁面切換作為額外保險(有問題無法存資料)
+window.addEventListener("beforeunload", function() {
+    fs.commit_data();
+});
+
+//滑鼠移到menu_container上面就執行
+document.getElementById('menu_container').addEventListener('mouseover', function () {
+    fs.commit_data();
+});
+
