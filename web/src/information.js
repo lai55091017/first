@@ -82,6 +82,22 @@ function newCard(englishText, chineseText) {
         
     `;
 
+    const speakButtons = newCard.querySelectorAll('.speak_btn');
+
+    // 語音按鈕事件
+    speakButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const textToSpeak = this.getAttribute('data-text');
+            speak(textToSpeak);
+        });
+    });
+
+// 語音合成函數
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US'; // 設定語言，根據需要可更改
+    speechSynthesis.speak(utterance);
+}
 
 
     const dialog = document.querySelector(`#dialog_box${card_number}`);
