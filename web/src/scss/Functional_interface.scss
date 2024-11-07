@@ -370,3 +370,21 @@ body {
         transform: translate(-50%, -50%);
     }
 }
+
+
+/****------------------------點擊模型出現跳窗----------------****/
+.model_info {
+    border: none;
+    box-shadow: 2px 2px 10px 0px rgb(98, 98, 98);
+    border-radius: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    width: 300px;
+    position: fixed;
+    color: #ffffff;
+    /* 或 absolute，取決於需求 */
+    bottom: 5px;
+    left: 5px;
+
+}
