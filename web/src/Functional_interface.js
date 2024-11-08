@@ -277,23 +277,23 @@ async function loadModels() {
         { type: 'fbx', path: './mesh/fbx/player.fbx' }
     ];
 
-    const progressBar = document.getElementById("progress-bar");
-    let totalBytesLoaded = 0;
-    let totalBytes = 0;
-    // 計算每個模型的加載進度
-    const onProgress = (xhr) => {
-        if (xhr.lengthComputable) {
-            const percentComplete = (xhr.loaded / xhr.total) * 100;
-            console.log(`加載進度: ${percentComplete.toFixed(2)}%`);
+    // const progressBar = document.getElementById("progress-bar");
+    // let totalBytesLoaded = 0;
+    // let totalBytes = 0;
+    // // 計算每個模型的加載進度
+    // const onProgress = (xhr) => {
+    //     if (xhr.lengthComputable) {
+    //         const percentComplete = (xhr.loaded / xhr.total) * 100;
+    //         console.log(`加載進度: ${percentComplete.toFixed(2)}%`);
 
-            // 更新總進度
-            totalBytesLoaded += xhr.loaded;
-            totalBytes += xhr.total;
+    //         // 更新總進度
+    //         totalBytesLoaded += xhr.loaded;
+    //         totalBytes += xhr.total;
 
-            const overallProgress = (totalBytesLoaded / totalBytes) * 100;
-            progressBar.style.width = overallProgress + "%";
-        }
-    };
+    //         const overallProgress = (totalBytesLoaded / totalBytes) * 100;
+    //         progressBar.style.width = overallProgress + "%";
+    //     }
+    // };
 
     for (const model of models) {
         let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
@@ -344,15 +344,15 @@ async function loadModels() {
         }
     }
     // 加載 GLB 模型的函數
-    async function loadGLBModel(path, onProgress) {
-        return new Promise((resolve, reject) => {
-            const loader = new THREE.GLTFLoader();
-            loader.load(
-                path,
-                (gltf) => resolve(gltf),
-                onProgress,
-                (error) => reject(error)
-            );
-        });
-    }
+    // async function loadGLBModel(path, onProgress) {
+    //     return new Promise((resolve, reject) => {
+    //         const loader = new THREE.GLTFLoader();
+    //         loader.load(
+    //             path,
+    //             (gltf) => resolve(gltf),
+    //             onProgress,
+    //             (error) => reject(error)
+    //         );
+    //     });
+    // }
 }
