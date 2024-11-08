@@ -34,9 +34,21 @@ const icas = new ICAS(scene, camera);
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
-
-firestore.write_data();
-
+// 創建 LoadingManager
+// const loadingManager = new THREE.LoadingManager(
+//     function () { // onLoad
+//         console.log("所有資源已加載完成");
+//         document.getElementById("progress-bar-container").style.display = "none";
+//     },
+//     function (itemUrl, itemsLoaded, itemsTotal) { // onProgress
+//         const progress = (itemsLoaded / itemsTotal) * 100;
+//         document.getElementById("progress-bar").style.width = progress + "%";
+//         console.log(`加載進度：${progress.toFixed(2)}%`);
+//     },
+//     function (error) { // onError
+//         console.error("加載出錯:", error);
+//     }
+// );
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -265,6 +277,24 @@ async function loadModels() {
         { type: 'fbx', path: './mesh/fbx/player.fbx' }
     ];
 
+    const progressBar = document.getElementById("progress-bar");
+    let totalBytesLoaded = 0;
+    let totalBytes = 0;
+    // 計算每個模型的加載進度
+    const onProgress = (xhr) => {
+        if (xhr.lengthComputable) {
+            const percentComplete = (xhr.loaded / xhr.total) * 100;
+            console.log(`加載進度: ${percentComplete.toFixed(2)}%`);
+
+            // 更新總進度
+            totalBytesLoaded += xhr.loaded;
+            totalBytes += xhr.total;
+
+            const overallProgress = (totalBytesLoaded / totalBytes) * 100;
+            progressBar.style.width = overallProgress + "%";
+        }
+    };
+
     for (const model of models) {
         let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
         try { // 這個try的註解放在後面的catch那邊
@@ -312,5 +342,17 @@ async function loadModels() {
         } catch (error) { // 為防止加載時出錯，所以用try...catch來抓錯，只要出現加載錯誤就傳送錯誤訊息:Error loading model
             console.error('Error loading model:', model.path, error);
         }
+    }
+    // 加載 GLB 模型的函數
+    async function loadGLBModel(path, onProgress) {
+        return new Promise((resolve, reject) => {
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                path,
+                (gltf) => resolve(gltf),
+                onProgress,
+                (error) => reject(error)
+            );
+        });
     }
 }
