@@ -3,6 +3,8 @@ import "./scss/Functional_interface.scss";
 import "./scss/menu.scss";
 
 import * as THREE from 'three';
+import CANNON from "cannon";
+
 import Controller from './js/Controller.js';
 import Connect from './js/Connect.js';
 import CharacterManager from './js/CharacterManager.js';
@@ -21,12 +23,12 @@ let prevTime = performance.now();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+const cannon_world = new CANNON.World();
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
 const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
-// init();
 const icas = new ICAS(scene, camera);
 
 //----------------------loading動畫--------------
@@ -115,28 +117,14 @@ function init() {
     init_camera();
     init_renderer();
     init_other();
+    loadModels();
+    init_physics();
     connect.onJoin = onPlayerJoin;
     connect.onLeave = onPlayerLeave;
     connect.onMove = onPlayerMove;
     connect.onMessage = onPlayerMessage;
     controller.setupBlocker(document.getElementById('blocker'));
-
-    // 導入(載入)模型
-    loadModels();
-}
-
-function animate() {
-
-    requestAnimationFrame(animate);
-    const time = performance.now();
-    const delta = (time - prevTime) / 1000;
-    prevTime = time;
-
-    const playerData = controller.update(delta);
-    characterManager.updateCharactersAnimation(delta, connect.playerList);
-    connect.socket.send(JSON.stringify(playerData));
-    renderer.render(scene, camera);
-
+    
 }
 
 /*********************************** Websocket Event *********************************************/
@@ -273,6 +261,42 @@ function init_renderer() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(canvas);
 }
+
+
+let boxBody;
+let boxMesh;
+function init_physics() {
+
+    cannon_world.gravity.set(0, -0.1, 0);
+    // 碰撞偵測
+    cannon_world.broadphase = new CANNON.NaiveBroadphase()
+    cannon_world.solver.iterations = 10;
+
+    // 創建一個 Three.js 方塊
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    scene.add(boxMesh);
+
+    // 創建一個 Cannon.js 剛體 (Box)
+    const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Box size: half extents
+    boxBody = new CANNON.Body({
+        mass: 1, // 質量 (0 表示靜止不動)
+        position: new CANNON.Vec3(0, 5, 0), // 初始位置
+        shape: boxShape
+    });
+    cannon_world.addBody(boxBody);
+
+    // // 創建一個 Cannon.js 平面 (地面)
+    // const groundShape = new CANNON.Plane();
+    // const groundBody = new CANNON.Body({ mass: 0 }); // 質量為 0，表示地面是靜止的
+    // groundBody.addShape(groundShape);
+    // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0); // 旋轉地面，使其水平
+    // cannon_world.addBody(groundBody);
+
+
+}
+
 function init_other() {
     scene.add(new THREE.GridHelper(100, 1000, 0x0ff0f0, 0xcccccc));
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
@@ -285,66 +309,194 @@ function init_other() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
-// 導入場景模型
-async function loadModels() {
-    const models = [
-        { type: 'glb', path: './mesh/glb/Library_Full.glb' },
-        // { type: 'fbx', path: './mesh/fbx/Library_Full.fbx' },
-        // { type: 'obj', path: './mesh/obj/lilbray2.obj' },
-        // { type: 'json', path: './mesh/json/Test_Library.json' }
-    ];
 
-    for (const model of models) {
-        let loadedModel;
-        try {
-            switch (model.type) {
-                case 'glb':
-                    loadedModel = await icas.loadGLTF(model.path);
-                    scene.add(loadedModel.scene);
-                    loadedModel.scene.traverse(function (child) {
-                        // 检查子对象的类型，或者使用名称等其他标识
-                        // if (child.isMesh) {
-                        //     console.log('找到Mesh:', child.name, child);
-                        //     // 在此处对子对象进行操作
-                        // } else if (child.isGroup) {
-                        //     console.log('找到Group:', child.name, child);
-                        //     // 在此处对Group进行操作
-                        // }
-                        // 可以尋找場景裡的子对象
-                        if (child.isGroup) {
-                            if (child.name === 'Scene') {
-                                console.log('找到Group:', child.name, child);
-                            }
-                        }
-                    });
+// 創建物理剛體
+function createPhysicsBody(model) {
 
-                    // 你可以根据需要访问特定的子对象，例如通过名称
-                    const specificObject = loadedModel.scene.getObjectByName('LIB_Door_Left');
-                    if (specificObject) {
-                        console.log('找到指定对象:', specificObject);
+    // 將模型的 Bounding Box 中心位置設為原點
+    const boundingBox = new THREE.Box3().setFromObject(model);
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+    // model.position.sub(center);
 
-                        // 对该对象进行操作
-                        //向上移動
-                        specificObject.position.y = -100;
-                    }
-                    break;
-                case 'fbx':
-                    loadedModel = await icas.loadFBX(model.path);
-                    scene.add(loadedModel);
-                    break;
-                case 'obj':
-                    loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
-                    scene.add(loadedModel);
-                    break;
-                case 'json':
-                    loadedModel = await icas.loadJSON(model.path);
-                    scene.add(loadedModel);
-                    break;
-                default:
-                    console.error('Unknown model type:', model.type);
-            }
-        } catch (error) {
-            console.error('Error loading model:', model.path, error);
+    // 獲取尺寸
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size); // 將Bounding Box的尺寸儲存到 size
+
+
+    // 創建 Cannon.js Box 形狀 (half extents)
+    const halfExtents = new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2);
+    const shape = new CANNON.Box(halfExtents);
+
+    // 同步剛體的位置到模型
+    const body = new CANNON.Body({
+        mass: 0,
+        position: new CANNON.Vec3(center.x, center.y, center.z), // 將剛體位置設置為模型中心
+        shape: shape
+    });
+
+    // 將剛體存儲在模型的 userData 屬性中
+    model.userData.physicsBody = body; 
+
+    // 將剛體添加到 Cannon.js 世界中
+    cannon_world.addBody(body);
+
+    createWireframeForBody(body, size);
+    // console.log(model.position, body.position);
+    // console.log(model.quaternion, body.quaternion, model.name);
+    
+}
+
+// 創建線框來顯示剛體邊界
+function createWireframeForBody(body, size) {
+    // 創建線框幾何
+    const boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+    const wireframe = new THREE.WireframeGeometry(boxGeometry);
+    const line = new THREE.LineSegments(wireframe, new THREE.LineBasicMaterial({ color: 0xff0000 }));
+    
+    scene.add(line); // 將線框添加到場景中
+
+    // 將線框與剛體同步
+    body.userData = { wireframe: line }; // 將線框存儲到剛體的 userData 屬性中
+}
+
+function animate() {
+
+    requestAnimationFrame(animate);
+    const time = performance.now();
+    const delta = (time - prevTime) / 1000;
+    prevTime = time;
+
+    const playerData = controller.update(delta);
+    characterManager.updateCharactersAnimation(delta, connect.playerList);
+    connect.socket.send(JSON.stringify(playerData));
+
+      // 更新物理世界
+    cannon_world.step(1 / 60); // 固定步長為 1/60 秒
+
+    // 將物理引擎與 Three.js 物體進行綁定
+    boxMesh.position.copy(boxBody.position);
+    boxMesh.quaternion.copy(boxBody.quaternion);
+
+    // 更新模型的位置和旋轉
+    scene.traverse(function (object) {
+        if (object.userData.physicsBody) {
+            const body = object.userData.physicsBody;
+
+            const worldPosition = new THREE.Vector3();
+            object.localToWorld(worldPosition);
+
+            // object.position.copy(body.position);
+            // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
+            
+            
         }
+    });
+
+    // 更新模型和線框的位置與旋轉
+    cannon_world.bodies.forEach(function (body) {
+        if (body.userData && body.userData.wireframe) {
+            const wireframe = body.userData.wireframe;
+            wireframe.position.copy(body.position);
+            wireframe.quaternion.copy(body.quaternion);
+        }
+    });
+
+    renderer.render(scene, camera);
+
+}
+// 導入場景模型1.0太複雜
+// async function loadModels() {
+//     const models = [
+//         { type: 'glb', path: './mesh/glb/Library_Full.glb' },
+//         // { type: 'fbx', path: './mesh/fbx/Library_Full.fbx' },
+//         // { type: 'obj', path: './mesh/obj/lilbray2.obj' },
+//         // { type: 'json', path: './mesh/json/Test_Library.json' }
+//     ];
+
+//     for (const model of models) {
+//         let loadedModel;
+//         try {
+//             switch (model.type) {
+//                 case 'glb':
+//                     loadedModel = await icas.loadGLTF(model.path);
+//                     scene.add(loadedModel.scene);
+//                     loadedModel.scene.traverse(function (child) {
+//                         // 检查子对象的类型，或者使用名称等其他标识
+//                         // if (child.isMesh) {
+//                         //     console.log('找到Mesh:', child.name, child);
+//                         //     // 在此处对子对象进行操作
+//                         // } else if (child.isGroup) {
+//                         //     console.log('找到Group:', child.name, child);
+//                         //     // 在此处对Group进行操作
+//                         // }
+//                         // 可以尋找場景裡的子对象
+//                         if (child.isGroup) {
+//                             if (child.name === 'Scene') {
+//                                 console.log('找到Group:', child.name, child);
+//                             }
+//                         }
+//                     });
+
+//                     // 你可以根据需要访问特定的子对象，例如通过名称
+//                     const specificObject = loadedModel.scene.getObjectByName('LIB_Door_Left');
+//                     if (specificObject) {
+//                         console.log('找到指定对象:', specificObject);
+
+//                         // 对该对象进行操作
+//                         //向上移動
+//                         specificObject.position.y = -100;
+//                     }
+//                     break;
+//                 case 'fbx':
+//                     loadedModel = await icas.loadFBX(model.path);
+//                     scene.add(loadedModel);
+//                     break;
+//                 case 'obj':
+//                     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
+//                     scene.add(loadedModel);
+//                     break;
+//                 case 'json':
+//                     loadedModel = await icas.loadJSON(model.path);
+//                     scene.add(loadedModel);
+//                     break;
+//                 default:
+//                     console.error('Unknown model type:', model.type);
+//             }
+//         } catch (error) {
+//             console.error('Error loading model:', model.path, error);
+//         }
+//     }
+// }
+
+// 導入場景模型2.0
+async function loadModels() {
+    try {
+        let library = await icas.loadGLTF('./mesh/glb/Library_Freeze.glb');
+        scene.add(library.scene);
+
+        //綁定物理引擎
+        library.scene.traverse(function (child) {
+            if (child.name !== 'Scene' &&
+                // !child.name.match(/^Bookshelf/) &&
+                // !child.name.match(/^Chair/) &&
+                // !child.name.match(/^Table/) &&
+                // !child.name.match(/^Door/) &&
+                // !child.name.match(/^LIB/) &&
+                // !child.name.match(/^wall/) &&
+                // !child.name.match(/^Floor/) &&
+                // !child.name.match(/^counter/) &&
+                // !child.name.match(/^piller/) &&
+                !child.name.match(/^Mesh/) 
+            ) {
+                createPhysicsBody(child);
+                // console.log('綁定物理引擎:', child.name, child);
+            }
+        })
+
+    } catch (error) {
+        console.error('Error loading model:', error);
     }
+
+
 }
