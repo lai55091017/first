@@ -4,6 +4,7 @@ import "./scss/menu.scss";
 
 import * as THREE from 'three';
 import CANNON from "cannon";
+import CannonDebugger from 'cannon-es-debugger'
 
 import Controller from './js/Controller.js';
 import Connect from './js/Connect.js';
@@ -24,6 +25,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 const cannon_world = new CANNON.World();
+// 創建 Cannon.js 的 DebugRenderer
+const cannonDebugger = new CannonDebugger(scene, cannon_world, {
+    // options...
+})
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
@@ -145,6 +150,8 @@ async function onPlayerJoin(data) {
         if (uuid === data.uuid) {
             characterManager.bindAction(controller, character.getMesh());
             characterManager.hiddenMesh(character.getMesh());
+            const body = createPhysicsBody(character.getMesh(), [0.75, 1.75], 'cylinder');
+
             camera.add(character);
             animate();
 
@@ -287,14 +294,6 @@ function init_physics() {
     });
     cannon_world.addBody(boxBody);
 
-    // // 創建一個 Cannon.js 平面 (地面)
-    // const groundShape = new CANNON.Plane();
-    // const groundBody = new CANNON.Body({ mass: 0 }); // 質量為 0，表示地面是靜止的
-    // groundBody.addShape(groundShape);
-    // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0); // 旋轉地面，使其水平
-    // cannon_world.addBody(groundBody);
-
-
 }
 
 function init_other() {
@@ -310,54 +309,53 @@ function init_other() {
     }
 }
 
-// 創建物理剛體
-function createPhysicsBody(model) {
-
-    // 將模型的 Bounding Box 中心位置設為原點
+// 創建物理剛體(預設從模型的 Bounding Box 中取得大小，或者使用自定義大小:寬度、高度、深度)
+function createPhysicsBody(model, modelSize, shape = 'box') {
     const boundingBox = new THREE.Box3().setFromObject(model);
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
-    // model.position.sub(center);
 
-    // 獲取尺寸
-    const size = new THREE.Vector3();
-    boundingBox.getSize(size); // 將Bounding Box的尺寸儲存到 size
+    // 獲取模型的尺寸或使用自定義尺寸
+    const size = modelSize ? modelSize : boundingBox.getSize(new THREE.Vector3());
+    let shapeType;
+    let body;
+    
+    // 根據形狀類型創建剛體
+    if (shape === 'cylinder') {
+        const radius = size[0] / 2;
+        const height = size[1];
+        shapeType = new CANNON.Cylinder(radius, radius, height, 16);
 
+        // 創建剛體
+        body = new CANNON.Body({
+            mass: 0,
+            position: new CANNON.Vec3(center.x, center.y, center.z),
+            quaternion: new CANNON.Quaternion().setFromEuler(Math.PI / 2, 0, 0),
+            shape: shapeType,
+        });
 
-    // 創建 Cannon.js Box 形狀 (half extents)
-    const halfExtents = new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2);
-    const shape = new CANNON.Box(halfExtents);
+    } else {
+        // 預設使用 Box
+        const halfExtents = new CANNON.Vec3(size.x / 2 || size[0] / 2, size.y / 2 || size[1] / 2, size.z / 2 || size[2] / 2);
+        shapeType = new CANNON.Box(halfExtents);
 
-    // 同步剛體的位置到模型
-    const body = new CANNON.Body({
-        mass: 0,
-        position: new CANNON.Vec3(center.x, center.y, center.z), // 將剛體位置設置為模型中心
-        shape: shape
-    });
+        // 創建剛體
+        body = new CANNON.Body({
+            mass: 0,
+            position: new CANNON.Vec3(center.x, center.y, center.z),
+            shape: shapeType,
+        });
+
+    }
+
+    // 添加到物理世界
+    cannon_world.addBody(body);
 
     // 將剛體存儲在模型的 userData 屬性中
     model.userData.physicsBody = body; 
 
-    // 將剛體添加到 Cannon.js 世界中
-    cannon_world.addBody(body);
+    return body;
 
-    createWireframeForBody(body, size);
-    // console.log(model.position, body.position);
-    // console.log(model.quaternion, body.quaternion, model.name);
-    
-}
-
-// 創建線框來顯示剛體邊界
-function createWireframeForBody(body, size) {
-    // 創建線框幾何
-    const boxGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-    const wireframe = new THREE.WireframeGeometry(boxGeometry);
-    const line = new THREE.LineSegments(wireframe, new THREE.LineBasicMaterial({ color: 0xff0000 }));
-    
-    scene.add(line); // 將線框添加到場景中
-
-    // 將線框與剛體同步
-    body.userData = { wireframe: line }; // 將線框存儲到剛體的 userData 屬性中
 }
 
 function animate() {
@@ -373,6 +371,7 @@ function animate() {
 
       // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
+    cannonDebugger.update()
 
     // 將物理引擎與 Three.js 物體進行綁定
     boxMesh.position.copy(boxBody.position);
@@ -386,6 +385,13 @@ function animate() {
             const worldPosition = new THREE.Vector3();
             object.localToWorld(worldPosition);
 
+            if (object.name === 'Entry') {
+                body.position.x = camera.position.x;
+                body.position.y = camera.position.y - controller.playerHight / 2;
+                body.position.z = camera.position.z;
+                
+                // body.rotation.copy(camera.quaternion);
+            }
             // object.position.copy(body.position);
             // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
             
@@ -393,19 +399,10 @@ function animate() {
         }
     });
 
-    // 更新模型和線框的位置與旋轉
-    cannon_world.bodies.forEach(function (body) {
-        if (body.userData && body.userData.wireframe) {
-            const wireframe = body.userData.wireframe;
-            wireframe.position.copy(body.position);
-            wireframe.quaternion.copy(body.quaternion);
-        }
-    });
-
     renderer.render(scene, camera);
 
 }
-// 導入場景模型1.0太複雜
+
 // async function loadModels() {
 //     const models = [
 //         { type: 'glb', path: './mesh/glb/Library_Full.glb' },
