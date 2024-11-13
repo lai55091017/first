@@ -636,12 +636,21 @@ const wordMeanings = {
     bird: "鳥",
     sheep: "羊",
     chicken: "雞",
-    pen: "筆",
+    pencil: "鉛筆",
     eraser: "橡皮擦",
-    book: "書",
-    table: "桌子",
-    chair: "椅子",
-    teacher: "老師"
+    ruler: "尺",
+    fork: "叉子",
+    spoon: "湯匙",
+    america: "美國",
+    china: "中國",
+    taiwan: "台灣",
+    japan: "日本",
+    korea: "韓國",
+    rice: "飯",
+    noodle: "麵",
+    soup: "湯",
+    meat: "肉",
+    bread: "麵包"
 };
 
 // 獲得中文意思
@@ -654,7 +663,9 @@ const themes = {
     // 解釋："key": ["value0", "value1", "value2"] key就相當於目錄的名字，value就是key裡面的值，這樣可以方便獲取相關資料
     "水果": ["apple", "banana", "grape", "orange", "guava"],
     "動物": ["dog", "cat", "cow", "pig", "bird", "sheep", "chicken"],
-    "教室": ["pen", "eraser", "book", "table", "chair", "teacher"]
+    "工具": ["pencil", "eraser", "ruler", "fork", "spoon"],
+    "國家": ["america", "china", "taiwan", "japan", "korea"],
+    "食物": ["rice", "noodle", "soup", "meat", "bread"]
 };
 
 // 隨機選擇一個主題和對應的單字庫
