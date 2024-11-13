@@ -10,7 +10,8 @@
     background-color: rgba(34, 34, 34, 0.682);
     box-shadow: 0 5px 5px #000000bf;
     /*左右,上下陰影位置,陰影模糊度*/
-    padding-left: 30px;
+    padding-left: 3%;
+    padding-right: 34%;
     transition: .2s;
 
     img {
@@ -25,68 +26,37 @@
     .header {
         font-weight: bold;
         position: absolute;
-        display: flex;
-        justify-content: center;
+        display: inline-block;
         list-style: none;
-        align-items: center;
-        flex-direction: column;
         /*列表樣式為空*/
         transition: .2s;
-        background-color: #00000060;
-        padding: 50px;
-        box-shadow: 0 0 10px #000000e1;
-        // border-radius: 10px;
-        gap: 10px;
-        /*上右下左邊距 */
-        // left: 35%;
-        /* 使用 transform 居中 */
-        display: none;
 
         .list {
-            width: 500px;
+            width: 100px;
             height: 60px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
+            /* 水平置中 */
+            float: left;
             padding: 10px;
-            margin: 20px 60px;
+            margin: 20px 20px 20px 20px;
             /*上右下左邊距 */
             transition: .2s;
-            // border-radius: 5px;
-            background-color: #a5a5a5af;
-            box-shadow: #363636cb 5px 5px 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-
-            a {
-                cursor: pointer;
-                color: #ffffff;
-                font-weight: bold;
-                font-family: '微軟正黑體';
-                letter-spacing: 8px;
-                font-size: 18px;
-            }
 
             &:hover {
-
                 transition: .2s;
-                // height: 50px;
+                height: 50px;
                 text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
-                background: linear-gradient(to right, #c9c9c9c5 10%, transparent 100%);
+                background: linear-gradient(to top, #8d8c8c 20%, transparent 100%);
                 /*background往上顯示顏色還有逐漸變透明位置和比例*/
-                // background-color: #8d8c8c;
+                transform: translatey(-3px);
                 font-size: 110%;
-                transform: translate(-20px);
-
             }
         }
     }
 
     &:hover {
         height: 90px;
-        background-color: rgba(65, 64, 64, 0.899);
+        background-color: rgb(73, 73, 73);
         transition: .4s;
 
         img {
@@ -97,8 +67,7 @@
 
         .header {
             transition: .4s;
-            background-color: rgba(59, 58, 58, 0.884);
-            display: block;
+            transform: translateY(8px);
         }
     }
 }

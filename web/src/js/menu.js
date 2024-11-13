@@ -26,6 +26,6 @@ export function menu() {
         auth.Sign_out()
     })
 
+    $('#function_li').on('click', async () => { $("#main_menu").fadeToggle(500); })
 }
-
 
