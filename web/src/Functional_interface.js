@@ -40,21 +40,7 @@ const icas = new ICAS(scene, camera);
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
-// 創建 LoadingManager
-// const loadingManager = new THREE.LoadingManager(
-//     function () { // onLoad
-//         console.log("所有資源已加載完成");
-//         document.getElementById("progress-bar-container").style.display = "none";
-//     },
-//     function (itemUrl, itemsLoaded, itemsTotal) { // onProgress
-//         const progress = (itemsLoaded / itemsTotal) * 100;
-//         document.getElementById("progress-bar").style.width = progress + "%";
-//         console.log(`加載進度：${progress.toFixed(2)}%`);
-//     },
-//     function (error) { // onError
-//         console.error("加載出錯:", error);
-//     }
-// );
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -586,16 +572,318 @@ async function loadModels() {
             console.error('Error loading model:', model.path, error);
         }
     }
-    // 加載 GLB 模型的函數
-    // async function loadGLBModel(path, onProgress) {
-    //     return new Promise((resolve, reject) => {
-    //         const loader = new THREE.GLTFLoader();
-    //         loader.load(
-    //             path,
-    //             (gltf) => resolve(gltf),
-    //             onProgress,
-    //             (error) => reject(error)
-    //         );
-    //     });
-    // }
+
 }
+/*-----------------------------------暫停模式menu--------------------------------------------------*/
+
+const main_menu = $("#main_menu");
+const menu_btn = $(".btn");
+
+//toggle代表切換顯示和消失，fade代表淡入淡出，500(0.5秒)是淡入淡出的時間
+// menu_btn.on('click', async () => {
+//     main_menu.fadeToggle(500);
+// })
+
+const instruction = $("#instruction_container");
+
+instruction.hide();
+
+$("#instruction").on('click', async () => {
+    instruction.fadeToggle(500);
+})
+
+const WordleGame = $("#WordleGame");
+
+WordleGame.hide();
+
+$('#Game').on('click', async () => {
+    WordleGame.fadeToggle(500);
+})
+
+
+/*-----------------------------------關閉按鈕--------------------------------------------------*/
+//$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
+$(document).ready(function () {
+
+    $(".close").click(function () {
+        // 獲取按鈕的 ID
+        const buttonId = $(this).attr('id');
+        // 使用 switch...case 根據按鈕 ID 處理
+        switch (buttonId) {
+            case 'close_instruction'://id=close_instruction
+                instruction.fadeToggle(500);
+                break;
+            case 'close_wordlegame'://id=close_wordlegame
+                WordleGame.fadeToggle(500);
+                break;
+            default:
+                console.log('未知的按鈕 ID');
+        }
+    });
+})
+/*-----------------------------------wordlegame--------------------------------------------------*/
+
+// 定義單字和它的中文意思
+const wordMeanings = {
+    apple: "蘋果",
+    banana: "香蕉",
+    grape: "葡萄",
+    orange: "橘子",
+    guava: "芭樂",
+    dog: "狗",
+    cat: "貓",
+    cow: "牛",
+    pig: "豬",
+    bird: "鳥",
+    sheep: "羊",
+    chicken: "雞",
+    pen: "筆",
+    eraser: "橡皮擦",
+    book: "書",
+    table: "桌子",
+    chair: "椅子",
+    teacher: "老師"
+};
+
+// 獲得中文意思
+function getChineseMeaning(word) {
+    return wordMeanings[word.toLowerCase()] || "未知";
+};
+
+// 單字主題和對應的單字庫
+const themes = {
+    // 解釋："key": ["value0", "value1", "value2"] key就相當於目錄的名字，value就是key裡面的值，這樣可以方便獲取相關資料
+    "水果": ["apple", "banana", "grape", "orange", "guava"],
+    "動物": ["dog", "cat", "cow", "pig", "bird", "sheep", "chicken"],
+    "教室": ["pen", "eraser", "book", "table", "chair", "teacher"]
+};
+
+// 隨機選擇一個主題和對應的單字庫
+const themeNames = Object.keys(themes);
+const randomTheme = themeNames[Math.floor(Math.random() * themeNames.length)];
+const wordList = themes[randomTheme];  // 取得隨機選中的單字庫
+let answer = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase(); // 從單字庫中選擇隨機一個單字作謎底
+let chineseAnswer = getChineseMeaning(answer); // 獲取答案的中文意思
+
+// 更新標題顯示選定的主題名稱
+document.querySelector("h1").textContent = `本次的主題是 ${randomTheme}`;
+
+// 測試用，顯示隨機到的主題和單字，完成後記得刪(不然可以直接從控制台看到答案)
+console.log(`主題: ${randomTheme}, 答案: ${answer}`);
+
+// 遊戲設定(參數)
+const maxAttempts = 6; // 最大嘗試次數
+let currentAttempt = 0;
+let currentGuess = "";
+
+// 選擇HTML元素
+const guessGrid = document.getElementById("guess-grid");
+const keyboard = document.getElementById("keyboard");
+
+// ------------------------------遊戲UI部分------------------------------
+// 初始化，遊戲介面
+function initGame() {
+    // 讓一行的格子數和答案長度相同
+    const columns = answer.length; // 行=答案長度
+    guessGrid.style.gridTemplateColumns = `repeat(${columns}, 50px)`;
+
+    // 創建格子
+    for (let i = 0; i < maxAttempts; i++) {
+        for (let j = 0; j < answer.length; j++) {
+            const box = document.createElement("div");
+            box.classList.add("letter-box");
+            guessGrid.appendChild(box);
+        }
+    }
+
+    // 創建虛擬鍵盤
+    const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    let count = 0;
+
+    keys.forEach(letter => {
+        const key = document.createElement("div");
+        key.classList.add("key");
+        key.textContent = letter;
+        key.onclick = () => handleKeyPress(letter);
+        key.setAttribute("data-key", letter);
+        keyboard.appendChild(key);
+
+        // 虛擬鍵盤每7個字母就換行，7*4 (26個英文字母+退回鍵+提交鍵)
+        count++;
+        if (count % 7 === 0) {
+            keyboard.appendChild(document.createElement("br"));
+        }
+    });
+
+    // 加入退回鍵和提交鍵
+    const backspaceKey = document.createElement("div");
+    backspaceKey.classList.add("key");
+    backspaceKey.textContent = "退回";
+    backspaceKey.onclick = () => handleKeyPress("BACKSPACE");
+    keyboard.appendChild(backspaceKey);
+
+    const submitKey = document.createElement("div");
+    submitKey.classList.add("key");
+    submitKey.textContent = "提交";
+    submitKey.onclick = submitGuess; // 直接連接提交函數
+    keyboard.appendChild(submitKey);
+}
+
+// ------------------------------遊戲運行部分------------------------------
+// 重新開始遊戲的初始化，清空上局遊戲的相關變數 (處理問題1)
+function resetGame() {
+    currentAttempt = 0;
+    currentGuess = "";
+
+    // 隨機選擇主題和單字庫
+    const randomTheme = themeNames[Math.floor(Math.random() * themeNames.length)];
+    const wordList = themes[randomTheme];
+    answer = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
+    chineseAnswer = getChineseMeaning(answer);
+
+    // 測試用：顯示隨機主題和單字
+    console.log(`主題: ${randomTheme}, 答案: ${answer}`);
+
+    // 更新標題顯示選定的主題名稱
+    document.querySelector("h1").textContent = `本次的主題是 ${randomTheme}`;
+
+    // 清空現有的格子
+    guessGrid.innerHTML = "";
+
+    // 清空上一局遊戲的虛擬鍵盤
+    keyboard.innerHTML = "";
+
+    // 重新初始化遊戲，根據新答案生成正確數量的格子
+    initGame();
+
+    // 清除方塊內文字和內容
+    const boxes = document.querySelectorAll(".letter-box");
+    boxes.forEach(box => {
+        box.textContent = "";
+        box.classList.remove("correct", "present", "absent");
+    });
+
+    // 重置虛擬鍵盤的顏色
+    const keys = document.querySelectorAll(".key");
+    keys.forEach(key => {
+        key.classList.remove("correct", "present", "absent"); // 清除狀態
+        key.style.backgroundColor = "#ffffff"; // 重置格的顏色
+        key.style.color = "#333"; // 重置字的顏色
+    });
+}
+
+// 處理鍵盤的輸入，包括添加字母和退回鍵
+function handleKeyPress(letter) {
+    if (letter === "BACKSPACE") {
+        currentGuess = currentGuess.slice(0, -1); // 刪除最後一個輸入的字母
+    } else if (currentGuess.length < answer.length) {
+        currentGuess += letter;  // 添加單字
+    }
+    updateGuessGrid();  // 更新當前猜測的單字格顯示
+}
+
+// 更新當前猜測的單字格顯示
+function updateGuessGrid() {
+    const boxes = guessGrid.querySelectorAll(".letter-box");
+    const offset = currentAttempt * answer.length;
+    // 清空目前顯示的字母格
+    for (let i = 0; i < answer.length; i++) {
+        boxes[offset + i].textContent = currentGuess[i] || ""; // 如果有字母就顯示，否則清空
+    }
+}
+
+// 同步更新鍵盤顏色
+function updateKeyboardStatus(letter, status) {
+    const key = document.querySelector(`.key[data-key="${letter}"]`);
+    if (key) {
+        // 檢查目前的狀態避免鍵盤被刷新覆蓋，調整優先級為綠(correct)>黃(present)>灰(absent)
+        if (status === "correct") {
+            key.style.backgroundColor = "#6aaa64"; // 虛擬鍵盤顏色設為綠色，字母正確，位置正確
+            key.style.color = "#fff";
+        } else if (status === "present" && !key.classList.contains("correct")) {
+            if (key.style.backgroundColor !== "rgb(106, 170, 100)") { // 避免覆蓋 correct 顏色
+                key.style.backgroundColor = "#c9b458"; // 虛擬鍵盤顏色設為黃色，字母正確，位置錯誤
+                key.style.color = "#fff";
+            }
+        } else if (status === "absent" && !key.classList.contains("correct") && !key.classList.contains("present")) {
+            if (key.style.backgroundColor !== "rgb(106, 170, 100)" && key.style.backgroundColor !== "rgb(201, 180, 88)") {
+                key.style.backgroundColor = "#787c7e"; // 虛擬鍵盤顏色設為灰色，字母錯誤
+                key.style.color = "#fff";
+            }
+        }
+    }
+}
+
+
+// 提交答案並檢查是否正確
+function submitGuess() {
+    if (currentGuess.length !== answer.length) {
+        alert("Please enter a word with the correct length."); // 若提交的單字和答案長度不同則告訴用戶 " 請輸入一個長度正確的單字 "
+        return;
+    }
+
+    const boxes = guessGrid.querySelectorAll(".letter-box");
+    const offset = currentAttempt * answer.length;
+
+    // 臨時保存答案 (處理問題3)
+    const answerLetters = answer.split("");
+    const guessLetters = currentGuess.split("");
+
+    // 第一輪：檢查綠色
+    for (let i = 0; i < guessLetters.length; i++) {
+        const box = boxes[offset + i];
+        if (guessLetters[i] === answerLetters[i]) {
+            box.classList.add("correct");
+            answerLetters[i] = null; // 將已匹配的字母設為 null，避免重複計算
+            updateKeyboardStatus(guessLetters[i], "correct"); // 同步鍵盤顏色
+        }
+    }
+
+    // 第二輪：檢查黃色
+    for (let i = 0; i < guessLetters.length; i++) {
+        const box = boxes[offset + i];
+        if (!box.classList.contains("correct")) { // 避免重複標記綠色
+            const letterIndex = answerLetters.indexOf(guessLetters[i]);
+            if (letterIndex !== -1) {
+                box.classList.add("present");
+                answerLetters[letterIndex] = null; // 標記已匹配的字母
+                updateKeyboardStatus(guessLetters[i], "present"); // 同步鍵盤顏色
+            } else {
+                box.classList.add("absent"); // 不包含的字母
+                updateKeyboardStatus(guessLetters[i], "absent"); // 同步鍵盤顏色
+            }
+        }
+    }
+
+    // 檢查是否猜對
+    if (currentGuess === answer) {
+        alert("Congratulations! You guessed the word!"); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
+        setTimeout(resetGame, 1000); // 1秒後刷新遊戲
+        return;
+    }
+
+    // 重置當前猜測並增加次數
+    currentAttempt++;
+    currentGuess = "";
+
+    if (currentAttempt >= maxAttempts) {
+        alert(`Game over! The word was: ${answer} (${chineseAnswer})`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
+        setTimeout(resetGame, 1000); // 1秒後刷新遊戲
+    }
+}
+
+// 添加鍵盤事件監聽 (處理問題4)
+document.addEventListener("keydown", (event) => {
+    const key = event.key.toUpperCase();
+
+    if (key === "ENTER") {
+        submitGuess();
+    } else if (key === "BACKSPACE") {
+        handleKeyPress("BACKSPACE");
+    } else if (/^[A-Z]$/.test(key)) { // 只允許輸入字母 A~Z
+        handleKeyPress(key);
+    }
+});
+
+// 初始化，遊戲
+initGame();

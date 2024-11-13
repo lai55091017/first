@@ -12,6 +12,7 @@
     /*左右,上下陰影位置,陰影模糊度*/
     padding-left: 3%;
     padding-right: 34%;
+<<<<<<< HEAD
     transition: .2s;
 
     img {
@@ -311,68 +312,37 @@ a {
     .header {
         font-weight: bold;
         position: absolute;
-        display: flex;
-        justify-content: center;
+        display: inline-block;
         list-style: none;
-        align-items: center;
-        flex-direction: column;
         /*列表樣式為空*/
         transition: .2s;
-        background-color: #00000060;
-        padding: 50px;
-        box-shadow: 0 0 10px #000000e1;
-        // border-radius: 10px;
-        gap: 10px;
-        /*上右下左邊距 */
-        // left: 35%;
-        /* 使用 transform 居中 */
-        display: none;
 
         .list {
-            width: 500px;
+            width: 100px;
             height: 60px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
+            /* 水平置中 */
+            float: left;
             padding: 10px;
-            margin: 20px 60px;
+            margin: 20px 20px 20px 20px;
             /*上右下左邊距 */
             transition: .2s;
-            // border-radius: 5px;
-            background-color: #a5a5a5af;
-            box-shadow: #363636cb 5px 5px 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-
-            a {
-                cursor: pointer;
-                color: #ffffff;
-                font-weight: bold;
-                font-family: '微軟正黑體';
-                letter-spacing: 8px;
-                font-size: 18px;
-            }
 
             &:hover {
-
                 transition: .2s;
-                // height: 50px;
+                height: 50px;
                 text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
-                background: linear-gradient(to right, #c9c9c9c5 10%, transparent 100%);
+                background: linear-gradient(to top, #8d8c8c 20%, transparent 100%);
                 /*background往上顯示顏色還有逐漸變透明位置和比例*/
-                // background-color: #8d8c8c;
+                transform: translatey(-3px);
                 font-size: 110%;
-                transform: translate(-20px);
-
             }
         }
     }
 
     &:hover {
         height: 90px;
-        background-color: rgba(65, 64, 64, 0.899);
+        background-color: rgb(73, 73, 73);
         transition: .4s;
 
         img {
@@ -383,8 +353,7 @@ a {
 
         .header {
             transition: .4s;
-            background-color: rgba(59, 58, 58, 0.884);
-            display: block;
+            transform: translateY(8px);
         }
     }
 }
@@ -490,10 +459,114 @@ a {
 
 /*---上排連結文字----*/
 a {
+    text-decoration: none;
+    color: #151414;
     cursor: pointer;
+}
+
+#home_link {
     color: #ffffff;
-    font-weight: bold;
-    font-family: '微軟正黑體';
-    letter-spacing: 1px;
-    font-size: 15px;
+    /* 藍色 */
+}
+
+#info_link {
+    color: #ffffff;
+    /* 橙色 */
+}
+
+#function_li {
+    color: #ffffff;
+    /* 綠色 */
+}
+
+#delete {
+    color: #ffffff
+}
+
+#logout {
+    color: #ffffff
+}
+
+
+/*------------------功能鍵-----------------*/
+.function_key {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1220;
+
+    .menu {
+        position: relative;
+        width: 210px;
+        height: 210px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu .toggle {
+        position: relative;
+        height: 50px;
+        width: 50px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 5px 4px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: 0.5s;
+        z-index: 5;
+    }
+
+    .menu.active .toggle {
+        transform: rotate(180deg);
+        box-shadow: 0 0px 0px rgba(255, 255, 255, 0.15),
+            0 0 0 80px #d3e3fd;
+        transition: 0.5s;
+    }
+
+    .menu li {
+        position: absolute;
+        left: 0;
+        list-style: none;
+        transition: 0.5s;
+        transform: rotate(calc(360deg/8 * var(--i))); //每個項目的旋轉角度  eg. 360/8 = 45度*第一個項目(變數--i)
+        transform-origin: 105px; //即轉換（如旋轉、縮放等）是從哪個點開始的
+        scale: 0; //表示元素的大小為,隱藏起來了
+        transition-delay: calc(0.05s * var(--i)); //按下功能鍵出現項目的延遲時間
+        z-index: 6;
+    }
+
+    .menu.active li {
+        scale: 1; //表示元素的大小為 原始尺寸的 100%，在點擊功能鍵後出現了
+    }
+
+    .menu li a {
+        position: relative;
+        display: flex;
+        transform: rotate(calc(360deg/-8 * var(--i)));
+        width: 45px;
+        height: 45px;
+        background-color: #FFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        color: var(--clr);
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15);
+        transition: 0.3s;
+    }
+
+    .menu li:hover a {
+        font-size: 2rem;
+        box-shadow: 0 0 0 2px var(--clr),
+            0 0 0 6px #fff;
+    }
 }

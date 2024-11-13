@@ -39,5 +39,8 @@ export function menu() {
         //如果沒有 "active" 類別，則新增它。
     })
 
+    $('#function_li').on('click', async () => { $("#main_menu").fadeToggle(500); })
 }
+
+
 

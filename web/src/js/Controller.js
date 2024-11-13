@@ -23,6 +23,7 @@ class Controller {
         this.libDoorL = null;
         this.libDoorR = null;
         this.doorAnimation = null;
+        this.WordleGame = $("#WordleGame");
     }
 
     // 設置門和初始化動畫
@@ -359,18 +360,6 @@ class Controller {
         // 檢查是否與門物件相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
-
-        // 建立後期處理的渲染通道
-        // const composer = new THREE.EffectComposer(renderer);
-        // composer.addPass(new THREE.RenderPass(scene, camera));
-
-        // const outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
-        // outlinePass.edgeStrength = 2.5; // 邊框的強度
-        // outlinePass.edgeGlow = 0.5; // 邊框的光暈
-        // outlinePass.visibleEdgeColor.set('#ffffff'); // 邊框顏色
-        // outlinePass.hiddenEdgeColor.set('#000000'); // 隱藏邊框顏色
-        // composer.addPass(outlinePass);
-
         if (intersects.length > 0) {
             // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
@@ -379,8 +368,6 @@ class Controller {
             object.material.color = color;
             console.log(object.name);
 
-            // 將檢測到的物件傳給 OutlinePass
-            // outlinePass.selectedObjects = [intersects[0].object];
 
             if (object.name === 'Door') {
 
@@ -390,20 +377,11 @@ class Controller {
                     ITO.chineseName,
                     ITO.englishName,
                     { x: event.clientX, y: event.clientY });
+                // this.WordleGame.toggle();
 
             } else {
                 console.log('無可互動物件');
-                // outlinePass.selectedObjects = [];
-                // const ITO = InteractableObject.find(item => item.id === object.name);
 
-                // if (ITO) {
-                //     // 顯示彈窗
-                //     this.popupWindow.show(
-                //         ITO.chineseName,
-                //         ITO.englishName,
-                //         { x: event.clientX, y: event.clientY }
-                //     );
-                // }
             }
         }
     }
