@@ -259,8 +259,7 @@ function init_other() {
 // 導入場景模型
 async function loadModels() {
     const models = [
-        { type: 'glb', path: './mesh/glb/Scene_Library.glb' },
-        { type: 'fbx', path: './mesh/fbx/player.fbx' }
+        { type: 'glb', path: './mesh/glb/Scene_Library.glb' }
     ];
 
     // const progressBar = document.getElementById("progress-bar");
