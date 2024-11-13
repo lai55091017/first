@@ -68,6 +68,19 @@ body {
 }
 
 
+#content {
+    width: 50%;
+    text-align: left;
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#menu {
+    transform: translatey(-100px);
+}
+
 /*------------------------------載入畫面--------------------------------------------*/
 .loading_wrapper {
     background-color: #0c0c0c;
@@ -554,9 +567,10 @@ body {
 /*------------主選單------------*/
 #main_menu {
     z-index: 100;
-    position: absolute;
+    position: fixed;
     display: flex;
     justify-content: center;
+    justify-self: center;
     list-style: none;
     align-items: center;
     flex-direction: column;
@@ -565,7 +579,8 @@ body {
     padding: 50px;
     gap: 10px;
     /*上右下左邊距 */
-
+    left: 28vw;
+    top: 15vh;
 
     .btn {
         width: 500px;
