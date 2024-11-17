@@ -178,6 +178,7 @@ class Controller {
                 document.getElementById('blocker').style.display = powerswitch ? 'block' : 'none'; // 黑色遮罩
                 document.getElementById('crosshair').style.display = powerswitch ? 'none' : 'block'; // 十字准心
                 document.getElementById('menu').style.display = powerswitch ? 'block' : 'none'; // 菜单
+                document.getElementById('main_menu').style.display = powerswitch ? 'block' : 'none';
                 break;
             case "chatroom":
                 document.getElementById('message_input').style.display = powerswitch ? 'block' : 'none';

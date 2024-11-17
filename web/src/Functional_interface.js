@@ -407,7 +407,47 @@ const wordMeanings = {
     noodle: "麵",
     soup: "湯",
     meat: "肉",
-    bread: "麵包"
+    bed: "床",
+    bread: "麵包",
+    bedroom: "臥室",
+    kitchen: "廚房",
+    livingroom: "客廳",
+    bathroom: "浴室",
+    balcony: "陽台",
+    socket: "插座",
+    sofa: "沙發",
+    tv: "電視",
+    wardrobe: "衣櫃",
+    fridge: "冰箱",
+    table: "桌子",
+    chair: "椅子",
+    window: "窗戶",
+    blackboard: "黑板",
+    door: "門",
+    school: "學校",
+    classroom: "教室",
+    teacher: "老師",
+    student: "同學",
+    class: "班級",
+    homework: "作業",
+    wall: "牆壁",
+    fan: "電扇",
+    chalk: "粉筆",
+    clock: "時鐘",
+    book: "書",
+    pen: "筆",
+    pencil: "鉛筆",
+    eraser: "橡皮擦",
+    notebook: "筆記本",
+    computer: "電腦",
+    restroom: "洗手間",
+    library: "圖書館",
+    platform: "司令台",
+    playground: "操場",
+    backpack: "背包",
+    bookcase: "書櫃",
+    mirror: "鏡子",
+
 };
 
 // 獲得中文意思
@@ -422,7 +462,12 @@ const themes = {
     "動物": ["dog", "cat", "cow", "pig", "bird", "sheep", "chicken"],
     "工具": ["pencil", "eraser", "ruler", "fork", "spoon"],
     "國家": ["america", "china", "taiwan", "japan", "korea"],
-    "食物": ["rice", "noodle", "soup", "meat", "bread"]
+    "食物": ["rice", "noodle", "soup", "meat", "bread"],
+    "家裡": ["bed", "bedroom", "kitchen", "livingroom", "bathroom", "balcony", "socket", "sofa", "tv", "wardrobe", "fridge"],
+    "學校": ["table", "chair", "window", "blackboard", "door", "school", "classroom", "teacher", "student", "class", "homework",
+        "wall", "fan", "chalk", "clock", "book", "pen", "pencil", "eraser", "notebook", "computer", "restroom", "library", "platform", "playground", "backpack", "bookcase", "mirror"
+    ],
+
 };
 
 // 隨機選擇一個主題和對應的單字庫
