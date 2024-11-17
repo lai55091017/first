@@ -42,16 +42,17 @@ $(window).on("load", function () {
 });
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // 讀取菜單
     fetch('menu.html')
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById('menu_container').innerHTML = data;
-            menu.menu();
-        })
-        .catch(error => console.error('Error loading menu:', error));
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('menu_container').innerHTML = data;
+                menu.menu();
+            })
+            .catch(error => console.error('Error loading menu:', error));
 
 
     fs.get_user_data().then(fs => {
@@ -84,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch (err) {
                         console.error('Error sending message:', err);
                     }
-
+    
                 }
 
             })
