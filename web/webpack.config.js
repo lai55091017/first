@@ -11,7 +11,6 @@ module.exports = {
     index: './src/index.js',
     sign_up: './src/sign_up.js',
     information: './src/information.js',
-    memorycard: './src/memory card/assets/**/*.js',// 使用 glob 模式
   },
 
   output: {
@@ -86,12 +85,8 @@ module.exports = {
       filename: 'menu.html',  // 指定要生成的文件名稱
       template: './src/menu.html',  // 來源 HTML 模板
       inject: false,  // 不自動注入腳本
-    }),
-    new HtmlWebpackPlugins({
-      template: './src/memory card/memorycard.html',
-      filename: 'memorycard.html',
-      chunks: ['memorycard']
     })
+
   ]
 
 };
