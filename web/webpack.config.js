@@ -18,7 +18,12 @@ module.exports = {
     path: path.resolve(__dirname, './public'),
   },
 
-  watch:true,
+  //這行配置告訴 Webpack，不要將 jQuery 打包到 bundle 中，而是使用全域變數 jQuery（從 CDN 載入）
+  externals: {
+    jquery: 'jQuery'
+  },
+
+  watch: true,
 
   // 開發伺服器devServer
   devServer: {
@@ -54,7 +59,7 @@ module.exports = {
       template: './src/index.html',
       filename: 'index.html', // 输出的 HTML 文件名
       chunks: ['index'] // 可以指定只注入單個( index.js )文件 預設是全部文件
-      
+
     }),
     new HtmlWebpackPlugins({
       template: './src/sign_up.html',
@@ -81,6 +86,7 @@ module.exports = {
       template: './src/menu.html',  // 來源 HTML 模板
       inject: false,  // 不自動注入腳本
     })
+
   ]
 
 };

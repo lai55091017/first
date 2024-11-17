@@ -174,113 +174,14 @@
 /*---上排連結文字----*/
 a {
     text-decoration: none;
-    color: #151414;
+    color: #ffffff;
     cursor: pointer;
 }
 
 #home_link {
     color: #ffffff;
-    /* 藍色 */
-}
-
-#info_link {
-    color: #ffffff;
-    /* 橙色 */
-}
-
-#function_li {
-    color: #ffffff;
-    /* 綠色 */
-}
-
-#delete {
-    color: #ffffff
-}
-
-#logout {
-    color: #ffffff
-}
-
-
-/*------------------功能鍵-----------------*/
-.function_key {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1220;
-
-    .menu {
-        position: relative;
-        width: 210px;
-        height: 210px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .menu .toggle {
-        position: relative;
-        height: 50px;
-        width: 50px;
-        background: #fff;
-        border-radius: 50%;
-        box-shadow: 0 5px 4px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #333;
-        font-size: 2rem;
-        cursor: pointer;
-        transition: 0.5s;
-        z-index: 5;
-    }
-
-    .menu.active .toggle {
-        transform: rotate(180deg);
-        box-shadow: 0 0px 0px rgba(255, 255, 255, 0.15),
-            0 0 0 80px #d3e3fd;
-        transition: 0.5s;
-    }
-
-    .menu li {
-        position: absolute;
-        left: 0;
-        list-style: none;
-        transition: 0.5s;
-        transform: rotate(calc(360deg/8 * var(--i))); //每個項目的旋轉角度  eg. 360/8 = 45度*第一個項目(變數--i)
-        transform-origin: 105px; //即轉換（如旋轉、縮放等）是從哪個點開始的
-        scale: 0; //表示元素的大小為,隱藏起來了
-        transition-delay: calc(0.05s * var(--i)); //按下功能鍵出現項目的延遲時間
-        z-index: 6;
-    }
-
-    .menu.active li {
-        scale: 1; //表示元素的大小為 原始尺寸的 100%，在點擊功能鍵後出現了
-    }
-
-    .menu li a {
-        position: relative;
-        display: flex;
-        transform: rotate(calc(360deg/-8 * var(--i)));
-        width: 45px;
-        height: 45px;
-        background-color: #FFF;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        font-size: 1.5rem;
-        color: var(--clr);
-        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15);
-        transition: 0.3s;
-    }
-
-    .menu li:hover a {
-        font-size: 2rem;
-        box-shadow: 0 0 0 2px var(--clr),
-            0 0 0 6px #fff;
-    }
+    font-weight: bold;
+    font-family: '微軟正黑體';
+    letter-spacing: 1px;
+    font-size: 15px;
 }

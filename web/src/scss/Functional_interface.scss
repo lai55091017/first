@@ -68,6 +68,26 @@ body {
 }
 
 
+#content {
+    width: 50%;
+    text-align: left;
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#menu {
+    transform: translatey(-100px);
+    transition: 1s;
+
+    &:hover {
+        transition: 1s;
+        transform: translatey(0px);
+
+    }
+}
+
 /*------------------------------載入畫面--------------------------------------------*/
 .loading_wrapper {
     background-color: #0c0c0c;
@@ -462,32 +482,43 @@ body {
     }
 }
 
-/*--------------------遊戲介面------------------------------------------------------*/
+/*--------------------遊戲介面----------------------------------------*/
 #blocker {
     position: absolute;
     width: 100%;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    // display: -webkit-box;
+    // display: -moz-box;
+    // -webkit-box-orient: horizontal;
+    // -moz-box-orient: horizontal;
+    // box-orient: horizontal;
+    // -webkit-box-pack: center;
+    // -moz-box-pack: center;
+    // box-pack: center;
+    // -webkit-box-align: center;
+    // -moz-box-align: center;
+    // box-align: center;
+
 }
 
-#instructions {
-    width: 100%;
-    height: 100%;
-    display: -webkit-box;
-    display: -moz-box;
-    display: box;
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    box-orient: horizontal;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-    box-pack: center;
-    -webkit-box-align: center;
-    -moz-box-align: center;
-    box-align: center;
+#instruction_container {
+    padding: 30px;
+    min-width: 100vh;
+    margin: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    justify-content: center;
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     color: #ffffff;
     text-align: center;
-    cursor: pointer;
+    border-radius: 10px;
+    z-index: 10000;
+    gap: 20px;
 }
 
 #canvas {
@@ -517,5 +548,173 @@ body {
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+    }
+}
+
+/*------------關閉按鈕---------------------*/
+.close {
+    color: #5d6e95;
+    padding: .5rem;
+    border-radius: .5rem;
+    border: none;
+    height: 2.5rem;
+    cursor: pointer;
+    transition: .2s;
+    position: absolute;
+    width: 2.5rem;
+    top: 10px;
+    right: 10px;
+
+    &:hover {
+        transition: .2s;
+        background-color: #c6dbfe;
+    }
+}
+
+/*------------主選單------------*/
+#main_menu {
+    z-index: 100;
+    position: fixed;
+    /*列表樣式為空*/
+    transition: .2s;
+    padding: 50px;
+    /*上右下左邊距 */
+    left: 28vw;
+    top: 15vh;
+
+    .btn {
+        width: 500px;
+        height: 60px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        margin: 40px 60px;
+        /*上右下左邊距 */
+        transition: .2s;
+        // border-radius: 5px;
+        background-color: #a5a5a5af;
+        box-shadow: #363636cb 5px 5px 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+
+        a {
+            cursor: pointer;
+            color: #ffffff;
+            font-weight: bold;
+            font-family: '微軟正黑體';
+            letter-spacing: 8px;
+            font-size: 18px;
+        }
+
+        &:hover {
+
+            transition: .2s;
+            // height: 50px;
+            text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
+            background: linear-gradient(to right, #c9c9c9c5 10%, transparent 100%);
+            /*background往上顯示顏色還有逐漸變透明位置和比例*/
+            // background-color: #8d8c8c;
+            font-size: 110%;
+            transform: translate(-20px);
+
+        }
+    }
+}
+
+
+/****------------------------點擊模型出現跳窗----------------****/
+.model_info {
+    border: none;
+    box-shadow: 2px 2px 10px 0px rgb(98, 98, 98);
+    border-radius: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 300px;
+    position: fixed;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 5px;
+    left: 5px;
+    text-align: center;
+
+}
+
+/*********拼字遊戲*********/
+#WordleGame {
+    font-family: Arial, sans-serif;
+    /* 這裡是字型 */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f4;
+    color: #333;
+    z-index: 999;
+    bottom: 5px;
+    justify-self: center;
+
+    #guess-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 50px);
+        /* 網格大小 */
+        gap: 5px;
+        margin-top: 20px;
+    }
+
+    .letter-box {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #333;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        color: #333;
+    }
+
+    .correct {
+        background-color: #6aaa64;
+        /* 綠色，有字母且位置正確 */
+        color: #fff;
+    }
+
+    .present {
+        background-color: #c9b458;
+        /* 黃色，有字母但位置錯誤 */
+        color: #fff;
+    }
+
+    .absent {
+        background-color: #787c7e;
+        /* 灰色，沒有這個字母 */
+        color: #fff;
+    }
+
+    /* --------------------虛擬鍵盤-------------------- */
+    #keyboard {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 450px;
+        gap: 5px;
+        margin-top: 20px;
+    }
+
+    .key {
+        width: 50px;
+        height: 50px;
+        /* background-color: #d3d6da; 虛擬鍵盤的顏色由JS文件控制 */
+        border: 1px solid #333;
+        color: #333;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
     }
 }
