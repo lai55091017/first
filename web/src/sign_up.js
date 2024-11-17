@@ -1,11 +1,11 @@
 //引入自訂函式檔案
 import Auth from './js/firebase/auth';
-import FirebaseDB from './js/firebase/Realtime Database';
 import "./scss/sign_up.scss";
+import Firestore from './js/firebase/Firestore';
 
 // 初始化 Firebase 应用
 const auth = new Auth;
-const db = new FirebaseDB;
+const fs = new Firestore;
 
 //註冊表單
 
@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //資料
         let userdata = {
             username: username,
-            email: email,
-            friends_list: [username]
+            email: email
         }
 
         try {
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await new Promise(resolve => setTimeout(resolve, 2000))
 
             // 保存用户数据
-            db.writeUserData(userdata);
+            fs.new_user_data(userdata)
 
 
         } catch (error) {

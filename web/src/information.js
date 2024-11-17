@@ -1,10 +1,10 @@
 import "./scss/information.scss";
 import "./scss/menu.scss";
-import FirebaseDB from './js/firebase/Realtime Database';
 import * as menu from './js/menu.js';
+import Firestore from "./js/firebase/Firestore.js";
 
 
-const db = new FirebaseDB;
+const fs = new Firestore;
 
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -28,14 +28,14 @@ document.getElementById('card_form').addEventListener('submit', function (event)
 
 
     // 將卡片寫入資料庫
-    db.Add_word_card_information("word_cards", {
-        "words": [englishText],
-        "translate": [chineseText]
+    fs.add_user_card({
+        "card": [{ words: englishText, translate: chineseText }]
     })
+
 
 });
 
-var card_number = 0;
+let card_number = 0;
 function newCard(englishText, chineseText) {
     card_number += 1;
     const newCard = document.createElement('div');
@@ -49,6 +49,7 @@ function newCard(englishText, chineseText) {
         <div id="card${card_number}">
             <h1 id="word${card_number}">${englishText}</h1>
             <p id="chinese${card_number}">${chineseText}</p>
+            
             <button class="edit_btn">
             <svg class="feather feather-edit" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -76,11 +77,27 @@ function newCard(englishText, chineseText) {
             <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
             </svg>
             </button>
-            <audio id="audio" src="audio.mp3" controls></audio>
+            <button class="speak_btn" data-text="${englishText}">說英文</button>
         </dialog>
         
     `;
 
+    const speakButtons = newCard.querySelectorAll('.speak_btn');
+
+    // 語音按鈕事件
+    speakButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const textToSpeak = this.getAttribute('data-text');
+            speak(textToSpeak);
+        });
+    });
+
+    // 語音合成函數
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US'; // 設定語言，根據需要可更改
+        speechSynthesis.speak(utterance);
+    }
 
 
     const dialog = document.querySelector(`#dialog_box${card_number}`);
@@ -142,10 +159,16 @@ function newCard(englishText, chineseText) {
     deleteButton.addEventListener('click', function (event) {
         event.stopPropagation();  // 阻止事件冒泡，避免触发 dialog 显示
         newCard.remove();  // 删除卡片
+
+        // 刪除卡片資料
+        fs.delete_user_card({
+            "card": [{ words: englishText, translate: chineseText }]
+        })
     });
 
 
 }
+
 
 
 /*------------------------------------音訊卡片功能-----------------------------------------*/
@@ -178,25 +201,43 @@ document.querySelectorAll('button').forEach(button => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    db.read_username_once().then(username => {
-        document.getElementById('username').textContent = `歡迎${username}玩家`;
+    fs.get_user_data().then(data => {
+        document.getElementById('username').textContent = `歡迎${data.username}玩家`;
     })
 
     // 讀取菜單
     fetch('menu.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('menu_container').innerHTML = data;
-        menu.menu();
-    })
-    .catch(error => console.error('Error loading menu:', error));
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('menu_container').innerHTML = data;
+            menu.menu();
+        })
+        .catch(error => console.error('Error loading menu:', error));
 
 })
 
 
 // 顯示資料庫中的卡片
-db.read_data_list("word_cards").then(data => {
-    for (let i = 0; i < data.length; i++) {
-        newCard(data[i].words[0], data[i].translate[0])
+fs.get_user_data().then(data => {
+    for (let i = 0; i < data.card.length; i++) {
+        newCard(data.card[i].words, data.card[i].translate)
     }
 })
+
+// 監聽頁面可見性變化時觸發
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") {
+        fs.commit_data();
+    }
+});
+
+// 使用監聽頁面切換作為額外保險(有問題無法存資料)
+window.addEventListener("beforeunload", function () {
+    fs.commit_data();
+});
+
+//滑鼠移到menu_container上面就執行
+document.getElementById('menu_container').addEventListener('mouseover', function () {
+    fs.commit_data();
+});
+

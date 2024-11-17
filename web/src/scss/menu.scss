@@ -173,7 +173,12 @@
 
 /*---上排連結文字----*/
 a {
+    text-decoration: none;
+    color: #151414;
     cursor: pointer;
+}
+
+#home_link {
     color: #ffffff;
     font-weight: bold;
     font-family: '微軟正黑體';

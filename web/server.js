@@ -52,9 +52,9 @@ function connect(ws) {
                     context, uuid,
                     message: data.message,
                     timestamp: data.timestamp,
-                    username: data.username
+                    username: data.username,
                 };
-                sendToAllUser(messageForUser);
+                sendToAllUser( messageForUser);
                 break;
             }
         }
@@ -83,16 +83,34 @@ function sendToAllUser(data) {
 }
 
 //發送給其他用戶(不包含自己)
-function sendToOtherUser(data, myUUID) {
+function sendToOtherUser ( data, myUUID ) {
 
-    const message = JSON.stringify(data);
+    const message = JSON.stringify( data );
 
     wss.clients.forEach(client => {
         const isUserReady = client.readyState === WebSocket.OPEN;
         const isMyself = client.uuid !== myUUID;
-        if (isUserReady && isMyself) { client.send(message); }
+        if( isUserReady && isMyself ) { client.send( message ); }
     });
+}
+//只發送給自己
+function sendToSelf ( data ) {
+    const message = JSON.stringify( data );
+    wss.clients.forEach( client => {
+        const isUserReady = client.readyState === WebSocket.OPEN;
+        if( isUserReady ) { client.send( message ); }
+    });
+}
 
+
+//只傳給特定用戶
+function sendToUser ( data, targetUUID ) {
+
+    const message = JSON.stringify( data );
+    wss.clients.forEach( client => {
+        const isUserReady = client.readyState === WebSocket.OPEN;
+        if( isUserReady && client.uuid === targetUUID ) { client.send( message ); }
+    });
 }
 
 //用戶斷開連線

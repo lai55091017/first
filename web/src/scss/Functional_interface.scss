@@ -1,3 +1,48 @@
+/*----------------------自訂變數----------------------*/
+:root {
+    --text-color: #040406;
+    --title_color: #040406af;
+    --input_color: #757575;
+    --info-color: #6a6a6a;
+    --notice-color: #949595;
+    --message-text-hover-color: var(--text-color);
+    --message-icon-hover-color: #050505;
+    --message-item-name-color: #6b6b6b;
+    --message-item-background-color: #cecece;
+    --message-item-img-width: 280px;
+    --message-item-avatar-width: 50px;
+    --message-item-avatar-margin: 15px;
+    --message-menu-background-color: #e0e1e2;
+    --menu-text-color: #afaeb3;
+    --menu-icon-background-color: #e3e3e3;
+    --menu-btn-hover: #e4d89b;
+    --meni-icon-shadow: 0 0 0px 5px rgba(255, 255, 255, .8);
+    --border-color: #595556;
+    --border-hover-color: #b5b5b5;
+    --box-background-color: #ffffffbc;
+    --menu-border: 3px solid var(--border-color);
+    --menu-border-hover: 3px solid var(--border-hover-color);
+    --menu-border-highlight: 3px solid #f3f4f6;
+    --option-background-color: #ece9ec;
+    --option-background--hover-color: #ccc;
+    --avatar-background: #3a3a3a;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px
+}
+
+::-webkit-scrollbar-thumb {
+    background: #908f8f
+}
+
+::-webkit-scrollbar-track {
+    margin: 20px 0;
+    background: #d4d2d2
+}
+
+/*----------------------全域設定----------------------*/
 * {
     padding: 0;
     margin: 0;
@@ -183,145 +228,259 @@ body {
 }
 
 /*------------------------------------聊天室-----------------------*/
-#chat_box {
-    width: 100%;
-    padding: 10px 10px 30px 50px;
-}
-
-.message_container {
-    box-sizing: border-box;
-    width: 100%;
-    /* background-color: #ededed; */
-    margin: auto;
-    padding: 10px;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    /* 垂直居中 */
-    overflow-y: auto;
-    /* 当内容超出容器高度时，显示滚动条 */
-    padding: 10px 0px 10px 20px;
-
-    &::-webkit-scrollbar {
-        display: none;
-        /* Chrome Safari 使聊天室滾輪消失 */
-    }
-}
-
-#message {
-    background-color: #d4dbcd;
-    padding: 6px 10px 8px 10px;
-    margin: auto;
-    word-wrap: break-word;
-    /* 自动换行 */
-    display: inline-block;
-    border-radius: 7px;
-    max-width: 75%;
-    /* 最大宽度 */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-#message_date {
-    padding: 20px 10px;
-    margin-bottom: 10px;
-    /* 设置消息间距 */
-    word-wrap: break-word;
-    /* 自动换行 */
-    border-radius: 8px;
-    max-width: 75%;
-    /* 最大宽度 */
-    font-size: 12px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    color: #999;
-    text-align: left;
-}
-
-#personal_message {
-    background-color: #b9d7ec;
-    padding: 6px 10px 8px 10px;
-    margin: auto;
-    word-wrap: break-word;
-    /* 自动换行 */
-    display: inline-block;
-    border-radius: 7px;
-    max-width: 75%;
-    /* 最大宽度 */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-#personal_message_date {
-    padding: 20px 10px;
-    margin-bottom: 10px;
-    /* 设置消息间距 */
-    word-wrap: break-word;
-    /* 自动换行 */
-    border-radius: 8px;
-    max-width: 75%;
-    /* 最大宽度 */
-    font-size: 12px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    color: #181818;
-    text-align: left;
-}
-
-/*--------------------輸入框------------------------------------------------------*/
-#input_box {
-    justify-content: space-between;
-    /* 按鈕和輸入框之間的間距 */
-    display: flex;
-    width: 70%;
-    position: sticky;
-    /* 使用固定定位 */
-    bottom: 20px;
-    /* 距离底部的距离 */
-    align-items: center;
-    /* 垂直居中 */
-}
-
-#message_input {
-    display: none;
-    height: 50px;
+#content {
+    position: absolute;
+    top: 10%;
+    left: 900px;
+    z-index: 10;
     width: 450px;
-    padding: 20px 20px;
-    /* 输入框內邊距 */
-    border: 3px solid #ccc;
-    /* 輸入框邊框大小 */
+    height: 80%;
     border-radius: 20px;
-    /* 输入框邊框原角 */
-    font-size: 16px;
-    /* 输入框字體大小 */
-    outline: none;
-    /* 去除输入框聚焦時的外邊框 */
-    transition: 0.2s;
-    /* 邊框顏色過度效果 */
-    border-color: #d7d5d5;
-
-    &:hover {
-        border-color: #7b7a7a99;
-        /* 輸入框輸入時旁的顏色 */
-        transition: 0.2s;
-        /* 邊框顏色過度效果 */
-    }
-
-    &:focus {
-        border-color: #d3e3fd;
-        /* 輸入框聚焦石的顏色 */
-        box-shadow: 0px 0px 5px 1px #d3e3fd;
-        /* 輸入框聚焦時的陰影效果 */
-        transition: 0.2s;
-        /* 邊框顏色過度效果 */
-    }
-
-}
-
-#send_button {
+    box-shadow: 0px 0px 10px 5px #737373;
     display: none;
-}
 
+    /*----------------裝飾線-----------------*/
+    &:after {
+        position: absolute;
+        border-radius: 20px;
+        bottom: -15px;
+        left: -15px;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        border: 3px solid rgb(193, 193, 193);
+        content: "";
+        pointer-events: none;
+        clip-path: polygon(0 0, 10px 0, 100% calc(100% - 10px), 100% 100%, 0 100%)
+    }
+
+
+    .message_container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: var(--box-background-color);
+        box-shadow: 0 0 5px 3px #a5a5a5;
+        backdrop-filter: blur(20px);
+
+        /*----------------標題-------------------------*/
+        .header {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 30px 30px;
+            width: 100%;
+            height: 70px;
+            border-bottom: 3px solid rgba(150, 150, 150, .5);
+
+            .title {
+                width: 100%;
+                margin-left: 15px;
+                border: none;
+                background: transparent;
+                color: var(--title_color);
+                font-size: 24px;
+                font-weight: 500;
+                font-family: "Microsoft YaHei";
+            }
+        }
+
+        /*----------------輸入框------------------*/
+        #input_box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 0 30px;
+            width: 100%;
+            height: 80px;
+            border-top: var(--menu-border-hover);
+            background: var(--message-menu-background-color);
+            border-radius: 0 0 20px 20px;
+
+            .avatar {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                overflow: hidden;
+                box-sizing: border-box;
+                margin-left: 10px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: #c2c2c2;
+                transform: translateY(-50%);
+                -webkit-user-select: none;
+                user-select: none;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50%;
+                    background: var(--avatar-background);
+                    object-fit: contain;
+                    clip-path: var(--avatar-image-clip-path-bilibiliwiki-only)
+                }
+
+                &:hover {
+                    box-shadow: 5px 5px 15px #aaa
+                }
+            }
+
+            #message_input {
+                flex: 1;
+                padding: 0 40px 0 40px;
+                height: 50px;
+                outline: none;
+                border: none;
+                background: #ffffff;
+                color: var(--input_color);
+                text-align: center;
+                font-size: 24px;
+                transition: box-shadow .2s;
+
+                &:focus,
+                &:hover {
+                    box-shadow: 0 3px 3px #aaa
+                }
+            }
+
+            #send_button {
+                display: none;
+            }
+
+        }
+    }
+
+    /*----------------聊天室內容-----------------*/
+    #chat_box {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overflow-y: overlay;
+        margin: 0 10px 0 10px;
+        padding: 15px 0;
+        scrollbar-gutter: stable;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+        -webkit-mask-position: 0 0, 100% 0;
+        mask-position: 0 0, 100% 0;
+        -webkit-mask-repeat: no-repeat, no-repeat;
+        mask-repeat: no-repeat, no-repeat;
+
+        .message {
+            display: flex;
+            box-sizing: border-box;
+            padding: 15px 30px;
+            height: -moz-fit-content;
+            height: fit-content;
+            position: relative;
+            width: calc(100% - 5px);
+
+
+            .message_item {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                align-items: flex-start;
+                min-height: 150px;
+                max-width: calc(100% - var(--message-item-avatar-width) - var(--message-item-avatar-margin));
+            }
+
+            #message_box {
+                position: relative;
+                margin-bottom: 10px
+            }
+
+            #message {
+                background-color: #d4dbcd;
+                padding: 6px 10px 8px 10px;
+                margin: auto;
+                word-wrap: break-word;
+                /* 自动换行 */
+                display: inline-block;
+                border-radius: 7px;
+                max-width: 75%;
+                /* 最大宽度 */
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            #message_date {
+                padding: 20px 10px;
+                margin-bottom: 10px;
+                /* 设置消息间距 */
+                word-wrap: break-word;
+                /* 自动换行 */
+                border-radius: 8px;
+                max-width: 75%;
+                /* 最大宽度 */
+                font-size: 12px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                color: var(--message-item-name-color);
+                text-align: left;
+            }
+
+            #personal_message {
+                display: block;
+                margin-top: 10px;
+                padding: 15px 15px;
+                min-width: 20px;
+                min-height: 30px;
+                width: -moz-fit-content;
+                width: fit-content;
+                border-radius: 0 15px 15px;
+                background: #dbf1ff;
+                box-shadow: -2px 2px #9d9f9f;
+                color: var(--text-color);
+                word-break: break-word;
+                font-size: 18px;
+                font-family: "Microsoft YaHei";
+
+            }
+
+            #personal_message_date {
+                padding: 15px 10px;
+                /* 设置消息间距 */
+                word-wrap: break-word;
+                /* 自动换行 */
+                max-width: 75%;
+                /* 最大宽度 */
+                font-size: 12px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                color: var(--message-item-name-color);
+                text-align: left;
+            }
+
+            .name {
+                position: relative;
+                max-width: calc(100% - var(--message-item-avatar-width) - var(--message-item-avatar-margin) - 10px);
+                width: -moz-fit-content; // for firefox
+                width: fit-content; //代表會根據其內容的寬度來自動調整大小
+                color: var(--message-item-name-color);
+                font-size: 22px;
+
+            }
+
+            .name span {
+                display: block;
+                overflow: hidden; //超過容器尺寸就隱藏
+                text-overflow: ellipsis; //如果文字超出容器尺寸，則用省略号表示
+                white-space: nowrap;
+            }
+
+        }
+    }
+}
 
 /*--------------------遊戲介面----------------------------------------*/
 #blocker {
