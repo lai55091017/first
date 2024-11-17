@@ -99,7 +99,7 @@ class Firestore {
         }
     }
 
-    // 新增一個用於更新卡片的函數a
+    // 新增一個用於更新卡片的函數
     async update_user_card(card_data) {
         try {
         await this.__ensureAuth();
@@ -133,7 +133,7 @@ class Firestore {
         }
     }
 
-    
+    //提交批次
     async commit_data() {
         try {
             this.batch.commit();

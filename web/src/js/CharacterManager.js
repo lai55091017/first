@@ -56,7 +56,7 @@ class CharacterManager {
             this.__detectSpeedAndSetAction(meshContainer.children[0], speed);
             
             if( currentActionName !== previousActionName ) {
-                console.log(currentActionName)
+                // console.log(currentActionName)
                 const startAction = animations[previousActionName].action;
                 const endAction = animations[currentActionName].action;
                 this.__executeCrossFade(startAction, endAction, 0.2);

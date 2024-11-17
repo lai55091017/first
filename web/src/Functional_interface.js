@@ -134,33 +134,51 @@ function init() {
 
 /*********************************** Websocket Event *********************************************/
 
+let playerBody
+let targetBody
 //玩家加入
 async function onPlayerJoin(data) {
-
     const players = new Set(connect.playerList.map(player => player.uuid));
 
     for (const uuid of data.userList) {
-
         if (players.has(uuid)) continue;
 
         const character = await characterManager.loadCharacter();
         character.uuid = uuid;
         connect.playerList.push(character);
 
+        // 如果是當前玩家
         if (uuid === data.uuid) {
             characterManager.bindAction(controller, character.getMesh());
             characterManager.hiddenMesh(character.getMesh());
-            const body = createPhysicsBody(character.getMesh(), [0.75, 1.75], 'cylinder');
 
+            // 為玩家添加物理剛體
+            playerBody = Player_body(character.getMesh(), 0.5, 1.75);
+            camera.userData.physicsBody = playerBody;
+
+            // // 偵測玩家碰撞
+            // body.addEventListener('collide', (event) => {
+            //     const contact = event.contact;
+            //     // const collidedObject = contact.other;
+            //     console.log(contact.bi.id);
+            //     if (contact.bi.id === 21) {
+            //         console.log('碰撞到門');
+            //     }
+            // });
+
+            // 註冊玩家的碰撞事件
+            playerBody.addEventListener('collide', handlePlayerCollision);
+
+            // 為玩家添加角色
             camera.add(character);
             animate();
 
         } else {
             scene.add(character);
         }
-
     }
 }
+
 //玩家離開
 function onPlayerLeave(data) {
 
@@ -269,35 +287,8 @@ function init_renderer() {
     document.body.appendChild(canvas);
 }
 
-
-let boxBody;
-let boxMesh;
-function init_physics() {
-
-    cannon_world.gravity.set(0, -0.1, 0);
-    // 碰撞偵測
-    cannon_world.broadphase = new CANNON.NaiveBroadphase()
-    cannon_world.solver.iterations = 10;
-
-    // 創建一個 Three.js 方塊
-    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-    boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-    scene.add(boxMesh);
-
-    // 創建一個 Cannon.js 剛體 (Box)
-    const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Box size: half extents
-    boxBody = new CANNON.Body({
-        mass: 1, // 質量 (0 表示靜止不動)
-        position: new CANNON.Vec3(0, 5, 0), // 初始位置
-        shape: boxShape
-    });
-    cannon_world.addBody(boxBody);
-
-}
-
 function init_other() {
-    scene.add(new THREE.GridHelper(100, 1000, 0x0ff0f0, 0xcccccc));
+    // scene.add(new THREE.GridHelper(100, 1000, 0x0ff0f0, 0xcccccc));
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
     scene.add(new THREE.DirectionalLight(0xffffff, 3));
     window.addEventListener('resize', resize);
@@ -309,54 +300,7 @@ function init_other() {
     }
 }
 
-// 創建物理剛體(預設從模型的 Bounding Box 中取得大小，或者使用自定義大小:寬度、高度、深度)
-function createPhysicsBody(model, modelSize, shape = 'box') {
-    const boundingBox = new THREE.Box3().setFromObject(model);
-    const center = new THREE.Vector3();
-    boundingBox.getCenter(center);
 
-    // 獲取模型的尺寸或使用自定義尺寸
-    const size = modelSize ? modelSize : boundingBox.getSize(new THREE.Vector3());
-    let shapeType;
-    let body;
-    
-    // 根據形狀類型創建剛體
-    if (shape === 'cylinder') {
-        const radius = size[0] / 2;
-        const height = size[1];
-        shapeType = new CANNON.Cylinder(radius, radius, height, 16);
-
-        // 創建剛體
-        body = new CANNON.Body({
-            mass: 0,
-            position: new CANNON.Vec3(center.x, center.y, center.z),
-            quaternion: new CANNON.Quaternion().setFromEuler(Math.PI / 2, 0, 0),
-            shape: shapeType,
-        });
-
-    } else {
-        // 預設使用 Box
-        const halfExtents = new CANNON.Vec3(size.x / 2 || size[0] / 2, size.y / 2 || size[1] / 2, size.z / 2 || size[2] / 2);
-        shapeType = new CANNON.Box(halfExtents);
-
-        // 創建剛體
-        body = new CANNON.Body({
-            mass: 0,
-            position: new CANNON.Vec3(center.x, center.y, center.z),
-            shape: shapeType,
-        });
-
-    }
-
-    // 添加到物理世界
-    cannon_world.addBody(body);
-
-    // 將剛體存儲在模型的 userData 屬性中
-    model.userData.physicsBody = body; 
-
-    return body;
-
-}
 
 function animate() {
 
@@ -366,32 +310,33 @@ function animate() {
     prevTime = time;
 
     const playerData = controller.update(delta);
+    
     characterManager.updateCharactersAnimation(delta, connect.playerList);
     connect.socket.send(JSON.stringify(playerData));
 
       // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
-    cannonDebugger.update()
+    // cannonDebugger.update()
 
-    // 將物理引擎與 Three.js 物體進行綁定
-    boxMesh.position.copy(boxBody.position);
-    boxMesh.quaternion.copy(boxBody.quaternion);
+    checkCollisionEnd()
 
     // 更新模型的位置和旋轉
     scene.traverse(function (object) {
         if (object.userData.physicsBody) {
             const body = object.userData.physicsBody;
 
-            const worldPosition = new THREE.Vector3();
-            object.localToWorld(worldPosition);
+            // const worldPosition = new THREE.Vector3();
+            // object.localToWorld(worldPosition);
 
-            if (object.name === 'Entry') {
-                body.position.x = camera.position.x;
-                body.position.y = camera.position.y - controller.playerHight / 2;
-                body.position.z = camera.position.z;
+            // if (object.name === 'Entry') {
+            //     body.position.x = camera.position.x;
+            //     body.position.y = camera.position.y - controller.playerHight / 2;
+            //     body.position.z = camera.position.z;
+
+            //     console.log(body);
                 
-                // body.rotation.copy(camera.quaternion);
-            }
+            //     body.rotation.copy(camera.quaternion);
+            // }
             // object.position.copy(body.position);
             // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
             
@@ -403,69 +348,6 @@ function animate() {
 
 }
 
-// async function loadModels() {
-//     const models = [
-//         { type: 'glb', path: './mesh/glb/Library_Full.glb' },
-//         // { type: 'fbx', path: './mesh/fbx/Library_Full.fbx' },
-//         // { type: 'obj', path: './mesh/obj/lilbray2.obj' },
-//         // { type: 'json', path: './mesh/json/Test_Library.json' }
-//     ];
-
-//     for (const model of models) {
-//         let loadedModel;
-//         try {
-//             switch (model.type) {
-//                 case 'glb':
-//                     loadedModel = await icas.loadGLTF(model.path);
-//                     scene.add(loadedModel.scene);
-//                     loadedModel.scene.traverse(function (child) {
-//                         // 检查子对象的类型，或者使用名称等其他标识
-//                         // if (child.isMesh) {
-//                         //     console.log('找到Mesh:', child.name, child);
-//                         //     // 在此处对子对象进行操作
-//                         // } else if (child.isGroup) {
-//                         //     console.log('找到Group:', child.name, child);
-//                         //     // 在此处对Group进行操作
-//                         // }
-//                         // 可以尋找場景裡的子对象
-//                         if (child.isGroup) {
-//                             if (child.name === 'Scene') {
-//                                 console.log('找到Group:', child.name, child);
-//                             }
-//                         }
-//                     });
-
-//                     // 你可以根据需要访问特定的子对象，例如通过名称
-//                     const specificObject = loadedModel.scene.getObjectByName('LIB_Door_Left');
-//                     if (specificObject) {
-//                         console.log('找到指定对象:', specificObject);
-
-//                         // 对该对象进行操作
-//                         //向上移動
-//                         specificObject.position.y = -100;
-//                     }
-//                     break;
-//                 case 'fbx':
-//                     loadedModel = await icas.loadFBX(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 case 'obj':
-//                     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
-//                     scene.add(loadedModel);
-//                     break;
-//                 case 'json':
-//                     loadedModel = await icas.loadJSON(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 default:
-//                     console.error('Unknown model type:', model.type);
-//             }
-//         } catch (error) {
-//             console.error('Error loading model:', model.path, error);
-//         }
-//     }
-// }
-
 // 導入場景模型2.0
 async function loadModels() {
     try {
@@ -476,7 +358,7 @@ async function loadModels() {
         library.scene.traverse(function (child) {
             if (child.name !== 'Scene' &&
                 // !child.name.match(/^Bookshelf/) &&
-                // !child.name.match(/^Chair/) &&
+                !child.name.match(/^Chair/) &&
                 // !child.name.match(/^Table/) &&
                 // !child.name.match(/^Door/) &&
                 // !child.name.match(/^LIB/) &&
@@ -486,7 +368,10 @@ async function loadModels() {
                 // !child.name.match(/^piller/) &&
                 !child.name.match(/^Mesh/) 
             ) {
-                createPhysicsBody(child);
+                create_physics_body_box(child);
+                if (child.name.match(/^LIB/)) {
+                    targetBody = child.userData.physicsBody;
+                }
                 // console.log('綁定物理引擎:', child.name, child);
             }
         })
@@ -494,6 +379,104 @@ async function loadModels() {
     } catch (error) {
         console.error('Error loading model:', error);
     }
+}
+
+/*********************************** Physics *********************************************/
+function init_physics() {
+
+    cannon_world.gravity.set(0, -9.82, 0);
+    // 碰撞偵測
+    cannon_world.broadphase = new CANNON.NaiveBroadphase()
+    cannon_world.solver.iterations = 10;
+
+    // 設定接觸事件
+    cannon_world.addEventListener('contact', (event) => {
+        console.log('接觸！');
+        // 處理接觸事件
+    });
+    
+    cannon_world.addEventListener('endContact', (event) => {
+        console.log('結束接觸！');
+        // 處理結束接觸事件
+    });
+
+}
+
+// 創建剛體(方塊) 大小以模型為準
+function create_physics_body_box(model) {
+    const boundingBox = new THREE.Box3().setFromObject(model);
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+
+    // 獲取模型的尺寸或使用自定義尺寸
+    const size = boundingBox.getSize(new THREE.Vector3());
 
 
+    // 創建剛體
+    const body = new CANNON.Body({
+        mass: 0,
+        position: new CANNON.Vec3(center.x, center.y, center.z),
+        shape: new CANNON.Box(new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2)),
+    });
+
+    // 添加到物理世界
+    cannon_world.addBody(body);
+
+    // 將剛體存儲在模型的 userData 屬性中
+    model.userData.physicsBody = body; 
+
+    return body;
+
+}
+// 玩家剛體(圓柱體)
+function Player_body(model, radius, height, radialSegments = 16) {
+    const boundingBox = new THREE.Box3().setFromObject(model);
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+
+    // 創建剛體
+    const body = new CANNON.Body({
+        mass: 1,
+        fixedRotation: true,
+        position: new CANNON.Vec3(center.x, center.y, center.z),
+        quaternion: new CANNON.Quaternion().setFromEuler(Math.PI / 2, 0, 0),
+        shape: new CANNON.Cylinder(radius, radius, height, radialSegments),
+    });
+
+    // 添加到物理世界
+    cannon_world.addBody(body);
+
+    // 將剛體存儲在模型的 userData 屬性中
+    model.userData.physicsBody = body; 
+
+    return body;
+
+}
+
+// 追踪玩家與特定物體 (targetBody) 的碰撞狀態
+let isCollidingWithTarget = false;
+function handlePlayerCollision(event) {
+  const otherBody = event.body;
+  if (otherBody === targetBody) {
+    if (!isCollidingWithTarget) {
+      isCollidingWithTarget = true;
+      console.log('玩家和目標之間開始碰撞');
+    }
+  }
+}
+
+// 檢查碰撞是否結束的函數
+function checkCollisionEnd() {
+  if (isCollidingWithTarget) {
+    // 檢查玩家和目標是否仍在接觸
+    const isStillColliding = cannon_world.contacts.some(contact =>
+      (contact.bi === playerBody && contact.bj === targetBody) ||
+      (contact.bi === targetBody && contact.bj === playerBody)
+    );
+
+    if (!isStillColliding) {
+      isCollidingWithTarget = false;
+      console.log('玩家和目標之間的碰撞已結束');
+    }
+  }
 }

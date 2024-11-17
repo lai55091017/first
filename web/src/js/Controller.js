@@ -22,7 +22,7 @@ class Controller {
         this.playerHight = 1.66;
         this.moveDistance = 16.0;
         this.moveFriction = 10;
-        this.jumpHight = 20.0;
+        this.jumpHight = 250.0;
         this.gravity = 8.0;
         this.movingForward = false;
         this.movingBackward = false;
@@ -95,43 +95,142 @@ class Controller {
         return new THREE.Euler(0, euler.y, 0, 'ZXY');
     }
 
+    //處理碰撞事件
+    __handleCollisions(playerBody) {
+        // 如果玩家碰撞到牆壁，將速度設置為 0
+        playerBody.addEventListener('collision', (event) => {
+            console.log( "碰撞到牆壁" );
+            const contact = event.contact;
+            const normal = contact.normal; // 碰撞法線
+    
+            // 如果撞到牆壁，停止移動
+            if (Math.abs(normal.x) > 0.5) {
+                this.velocity.x = 0;
+                playerBody.velocity.x = 0;
+            }
+            if (Math.abs(normal.z) > 0.5) {
+                this.velocity.z = 0;
+                playerBody.velocity.z = 0;
+            }
+        });
+    }
+    
+    
     //更新角色
-    update(delta) {
+    // update(delta) {
 
+    //     const player = this.camera;
+    //     const playerPosition = player.position;
+    //     // const playerBody = player.userData.physicsBody;
+    //     // console.log(playerBody);
+
+    //     // if (!playerBody) return;
+
+    //     // 随着时间速度会因摩擦力减小
+    //     this.velocity.x -= this.velocity.x * this.moveFriction * delta;
+    //     this.velocity.z -= this.velocity.z * this.moveFriction * delta;
+    //     this.velocity.y -= 9.8 * this.gravity * delta;
+
+    //     // 玩家移动方向
+    //     this.direction.z = Number(this.movingForward) - Number(this.movingBackward);
+    //     this.direction.x = Number(this.movingRight) - Number(this.movingLeft);
+    //     this.direction.normalize();
+
+    //     // 更新玩家的移动速度
+    //     if (this.movingForward || this.movingBackward) {
+    //         this.velocity.z -= this.direction.z * this.moveDistance * delta
+    //     };
+    //     if (this.movingLeft || this.movingRight){
+    //         this.velocity.x -= this.direction.x * this.moveDistance * delta
+    //     };
+
+    //     // 玩家移动
+    //     this.controls.moveRight(- this.velocity.x * delta);
+    //     this.controls.moveForward(- this.velocity.z * delta);
+
+    //     // 防止角色穿牆
+    //     // this.__handleCollisions(playerBody);
+
+    //     // 跳躍
+    //     playerPosition.y += this.velocity.y * delta;
+    //     if (playerPosition.y < this.playerHight) {
+    //         this.velocity.y = 0;
+    //         playerPosition.y = this.playerHight;
+    //         this.canJump = true;
+    //     }
+
+    //     // 計算速度
+    //     const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
+    //     this.speed = speed; // 更新速度變數
+
+    //     const characterData = player.children[0].children[0].userData;
+    //     const { currentActionName, previousActionName } = characterData;
+    //     const rotation = this.__getRotationShaveXZ(player);
+    //     const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
+    //     return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
+
+    // } 
+
+    update(delta) {
         const player = this.camera;
         const playerPosition = player.position;
-        // 随着时间速度会因摩擦力减小
-        this.velocity.x -= this.velocity.x * this.moveFriction * delta;
-        this.velocity.z -= this.velocity.z * this.moveFriction * delta;
-        this.velocity.y -= 9.8 * this.gravity * delta;
-        // 玩家移动方向
-        this.direction.z = Number(this.movingForward) - Number(this.movingBackward);
-        this.direction.x = Number(this.movingRight) - Number(this.movingLeft);
-        this.direction.normalize();
-        // 更新玩家的移动速度
-        if (this.movingForward || this.movingBackward) this.velocity.z -= this.direction.z * this.moveDistance * delta;
-        if (this.movingLeft || this.movingRight) this.velocity.x -= this.direction.x * this.moveDistance * delta;
-        // 玩家移动
-        this.controls.moveRight(- this.velocity.x * delta);
-        this.controls.moveForward(- this.velocity.z * delta);
+        const playerBody = player.userData.physicsBody;
+    
+        if (!playerBody) return;
+    
+        // 獲取相機的朝向
+        const cameraDirection = new THREE.Vector3();
+        this.camera.getWorldDirection(cameraDirection);
+        cameraDirection.y = 0;
+        cameraDirection.normalize();
+
+        // 計算移動方向向量
+        const moveDirection = new THREE.Vector3();
+        if (this.movingForward) moveDirection.z = -1;
+        if (this.movingBackward) moveDirection.z = 1;
+        if (this.movingLeft) moveDirection.x = -1;
+        if (this.movingRight) moveDirection.x = 1;
+
+        // 計算相機前向和右向的向量
+        const forwardVector = new THREE.Vector3(cameraDirection.x, 0, cameraDirection.z);
+        const rightVector = new THREE.Vector3(cameraDirection.z, 0, -cameraDirection.x);
+
+        // 計算最終移動向量
+        const finalMove = new THREE.Vector3();
+        finalMove.addScaledVector(forwardVector, moveDirection.z);
+        finalMove.addScaledVector(rightVector, moveDirection.x);
+        finalMove.normalize();
+    
+        // 使用鋼體進行移動，而不是相機
+        playerBody.velocity.x = -finalMove.x * this.moveDistance;
+        playerBody.velocity.z = -finalMove.z * this.moveDistance;
+    
+        // 同步相機位置
+        playerPosition.copy(playerBody.position);
+        // playerPosition.x = playerBody.position.x;
+        // playerPosition.z = playerBody.position.z;
+    
+        // // 跳躍
+        // playerPosition.y += this.velocity.y * delta;
+        // if (playerPosition.y < this.playerHight) {
+        //     this.velocity.y = 0;
+        //     playerPosition.y = this.playerHight;
+        //     this.canJump = true;
+        // }
+
+        // 跳躍(有問題)
         playerPosition.y += this.velocity.y * delta;
-        // 跳躍
-        if (playerPosition.y < this.playerHight) {
+        if (playerBody.position.y < this.playerHight) {
             this.velocity.y = 0;
-            playerPosition.y = this.playerHight;
+            playerPosition.y = playerBody.position.y + this.playerHight / 2;
             this.canJump = true;
         }
-
-        // 計算速度
-        const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
-        this.speed = speed; // 更新速度變數
 
         const characterData = player.children[0].children[0].userData;
         const { currentActionName, previousActionName } = characterData;
         const rotation = this.__getRotationShaveXZ(player);
         const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
         return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
-
     }
 
     //設置畫面鎖定控制
