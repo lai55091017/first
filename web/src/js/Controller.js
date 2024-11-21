@@ -24,6 +24,8 @@ class Controller {
         this.libDoorR = null;
         this.modelChair = null;
         this.modelTable = null;
+        this.modelCounter = null;
+        this.modelBookshelf = null;
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
     }
@@ -40,8 +42,14 @@ class Controller {
     setChairAndTable(modelChair, modelTable) {
         this.modelChair = modelChair;
         this.modelTable = modelTable;
+    }
 
-        console.log('急急急急急')
+    setCounter(modelCounter) {
+        this.modelCounter = modelCounter;
+    }
+
+    setBookshelf(modelBookshelf) {
+        this.modelBookshelf = modelBookshelf;
     }
 
     //設置移動參數
@@ -378,7 +386,7 @@ class Controller {
             console.log(object.name);
 
 
-            if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table') {
+            if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
 
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
