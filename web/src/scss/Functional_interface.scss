@@ -79,6 +79,13 @@ body {
 
 #menu {
     transform: translatey(-100px);
+    transition: 1s;
+
+    &:hover {
+        transition: 1s;
+        transform: translatey(0px);
+
+    }
 }
 
 /*------------------------------載入畫面--------------------------------------------*/
@@ -568,16 +575,9 @@ body {
 #main_menu {
     z-index: 100;
     position: fixed;
-    display: flex;
-    justify-content: center;
-    justify-self: center;
-    list-style: none;
-    align-items: center;
-    flex-direction: column;
     /*列表樣式為空*/
     transition: .2s;
     padding: 50px;
-    gap: 10px;
     /*上右下左邊距 */
     left: 28vw;
     top: 15vh;
@@ -590,7 +590,7 @@ body {
         justify-content: center;
         align-items: center;
         padding: 10px;
-        margin: 20px 60px;
+        margin: 40px 60px;
         /*上右下左邊距 */
         transition: .2s;
         // border-radius: 5px;
