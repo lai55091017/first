@@ -41,18 +41,22 @@ class Controller {
         console.log('已將門從FI.js傳遞至Ctrlr.js')
     }
 
+    // 設置椅子
     setChairs(chairs) {
         this.chairs = chairs;
     }
 
+    // 設置桌子
     setTables(tables) {
         this.tables = tables;
     }
 
+    // 設置櫃台
     setCounters(counters) {
         this.counters = counters;
     }
 
+    // 設置書架
     setBookshelves(bookshelves) {
         this.bookshelves = bookshelves;
     }

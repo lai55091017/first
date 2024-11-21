@@ -558,9 +558,9 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         const chairs = [];
         for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
             for (let j = 1; j <= 4; j++) {
-                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`);
+                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`); // 尋找名稱格式為 Chair_[i]_[j] 的物件
                 if (modelChair) {
-                    modelChair.name = 'Chair';
+                    modelChair.name = 'Chair'; // 命名椅子
                     chairs.push(modelChair);  // 把每個 Chair 放入陣列
                 }
             }
@@ -568,18 +568,18 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         // 找桌子
         const tables = [];
         for (let i = 1; i <= 4; i++) {
-            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`);
+            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`); // 尋找名稱格式為 LIB_Table_[i] 的物件
             if (modelTable) {
-                modelTable.name = 'Table';
+                modelTable.name = 'Table'; // 命名桌子
                 tables.push(modelTable);  // 把每個 Table 放入陣列
             }
         }
         // 找櫃台
         const counters = [];
         for (let i = 1; i <= 2; i++) {
-            const modelCounter = library.scene.getObjectByName(`counter_${i}`);
+            const modelCounter = library.scene.getObjectByName(`counter_${i}`); // 尋找名稱格式為 counter_[i] 的物件
             if (modelCounter) {
-                modelCounter.name = 'Counter';
+                modelCounter.name = 'Counter'; // 命名櫃台
                 counters.push(modelCounter);  // 把每個 Counter 放入陣列
             }
         }
@@ -588,15 +588,16 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         for (let i = 35; i <= 66; i++) {
             // 使用 padStart(3, '0') 來填充，以確保數字是三位數
             const meshName = `Mesh${i.toString().padStart(3, '0')}`;
-            const modelBookshelf = library.scene.getObjectByName(meshName);
+            const modelBookshelf = library.scene.getObjectByName(meshName); // 尋找名稱格式為 Mesh[i] 的物件
             if (modelBookshelf) {
-                modelBookshelf.name = 'Bookshelf';
+                modelBookshelf.name = 'Bookshelf'; // 命名書架
                 bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
             }
         }
 
         if (libDoorL && libDoorR && chairs.length > 0 && tables.length > 0 && counters.length > 0 && bookshelves.length > 0) {
             console.log('好消息，找到圖書館的門了');
+            // 設置圖層
             libDoorL.layers.set(1);
             libDoorR.layers.set(1);
             chairs.forEach(chair => chair.layers.set(1));
@@ -607,7 +608,7 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
             controller.setDoors(libDoorL, libDoorR);
             controller.setChairs(chairs);
             controller.setTables(tables);
-            controller.setCounters(modelCounter);
+            controller.setCounters(counters);
             controller.setBookshelves(bookshelves);
         } else {
             console.log('壞消息，沒門!');
