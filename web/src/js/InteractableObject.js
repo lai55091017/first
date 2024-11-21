@@ -1,7 +1,5 @@
 // InteractableObject.js  主要是用來放可互動物件的訊息
 
-import * as THREE from 'three';
-
 const InteractableObject = [
     {
         id: 'Door',

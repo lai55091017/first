@@ -28,7 +28,6 @@ class Controller {
         this.modelBookshelf = null;
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
-        this.canOpenDoor = false; // 紀錄玩家是否能開門
     }
 
     // 設置門和初始化動畫
@@ -98,11 +97,7 @@ class Controller {
             'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
-            'KeyF': () => {            
-                if (this.canOpenDoor) { 
-                console.log('按下 F 鍵開門');
-                this.__toggleDoor();
-            } } // 只有在碰撞到門時才允許開門
+            'KeyF': () => { this.__toggleDoor(); } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -370,7 +365,7 @@ class Controller {
     __onMouseDown(event) {
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2(0, 0);
+        const mouse = new THREE.Vector2(0,0);
 
         // 透過Raycaster檢測
         raycaster.setFromCamera(mouse, this.camera);
