@@ -22,6 +22,8 @@ class Controller {
         this.isOpen = false;
         this.libDoorL = null;
         this.libDoorR = null;
+        this.modelChair = null;
+        this.modelTable = null;
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
     }
@@ -38,6 +40,8 @@ class Controller {
     setChairAndTable(modelChair, modelTable) {
         this.modelChair = modelChair;
         this.modelTable = modelTable;
+
+        console.log('急急急急急')
     }
 
     //設置移動參數
