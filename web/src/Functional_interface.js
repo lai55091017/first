@@ -546,12 +546,6 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         // 處理場景中特定物件（如門）
         const libDoorL = library.scene.getObjectByName('LIB_Door_Left');
         const libDoorR = library.scene.getObjectByName('LIB_Door_Right');
-        if (libDoorL && libDoorR) {
-            libDoorL.name = 'Door';
-            libDoorR.name = 'Door';
-            controller.setDoors(libDoorL, libDoorR); // 傳遞到控制器
-            console.log('門已綁定到控制器');
-        }
         libDoorL.name = 'Door';
         libDoorR.name = 'Door';
         // 找椅子
