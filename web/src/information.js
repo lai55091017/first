@@ -12,7 +12,6 @@ $(window).on("load", function () {
 });
 ;
 
-
 /*------------------------------------新增卡片功能-----------------------------------------*/
 document.getElementById('card_form').addEventListener('submit', function (event) {
     event.preventDefault(); // 阻止表單的默認提交行為

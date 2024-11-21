@@ -3,6 +3,7 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import DoorAnimation from './DoorAnimation';
 import InteractableObject from './InteractableObject';
 import PopupWindow from './PopupWindow';
+import { doc } from 'firebase/firestore';
 
 class Controller {
 
@@ -22,13 +23,13 @@ class Controller {
         this.isOpen = false;
         this.libDoorL = null;
         this.libDoorR = null;
-        this.modelChair = null;
-        this.modelTable = null;
-        this.modelCounter = null;
-        this.modelBookshelf = null;
+        this.chairs = [];
+        this.tables = [];
+        this.counters = [];
+        this.bookshelves = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
-        this.canOpenDoor = false; // 紀錄玩家是否能開門
+        this.isClickable = true;
     }
 
     // 設置門和初始化動畫
@@ -40,17 +41,20 @@ class Controller {
         console.log('已將門從FI.js傳遞至Ctrlr.js')
     }
 
-    setChairAndTable(modelChair, modelTable) {
-        this.modelChair = modelChair;
-        this.modelTable = modelTable;
+    setChairs(chairs) {
+        this.chairs = chairs;
     }
 
-    setCounter(modelCounter) {
-        this.modelCounter = modelCounter;
+    setTables(tables) {
+        this.tables = tables;
     }
 
-    setBookshelf(modelBookshelf) {
-        this.modelBookshelf = modelBookshelf;
+    setCounters(counters) {
+        this.counters = counters;
+    }
+
+    setBookshelves(bookshelves) {
+        this.bookshelves = bookshelves;
     }
 
     //設置移動參數
@@ -74,6 +78,7 @@ class Controller {
         document.addEventListener('keydown', this.__handleKeyDown.bind(this));
         document.addEventListener('keyup', this.__handleKeyUp.bind(this));
         document.addEventListener('mousedown', this.__onMouseDown.bind(this));
+        document.addEventListener('mousemove', this.__onMouseMove.bind(this));
     }
 
     //設置動作
@@ -98,11 +103,7 @@ class Controller {
             'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
-            'KeyF': () => {            
-                if (this.canOpenDoor) { 
-                console.log('按下 F 鍵開門');
-                this.__toggleDoor();
-            } } // 只有在碰撞到門時才允許開門
+            'KeyF': () => { this.__toggleDoor(); } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -345,15 +346,9 @@ class Controller {
         if (this.isOpen) {
             // 關門
             this.doorAnimation.closeDoors();
-            // 先註解，要是門動畫有問題再用這個
-            // this.libDoorL.rotation.y = 0;
-            // this.libDoorR.rotation.y = 0;
         } else {
             // 開門
             this.doorAnimation.openDoors();
-            // 先註解，要是門動畫有問題再用這個
-            // this.libDoorL.rotation.y = -Math.PI / 2; // 左門 -90度
-            // this.libDoorR.rotation.y = Math.PI / 2;  // 右門 90度
 
             // 5秒後自動關門
             setTimeout(() => {
@@ -365,7 +360,28 @@ class Controller {
         // 切換門的狀態
         this.isOpen = !this.isOpen;
     }
+    __onMouseMove() {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2(0, 0);
+        raycaster.setFromCamera(mouse, this.camera);
+        raycaster.layers.set(1);
+        raycaster.precision = 0.00001;
+        const intersects = raycaster.intersectObjects(this.scene.children, true);
 
+        const crosshair = document.getElementById('crosshair');
+
+        if (intersects.length > 0) {
+            crosshair.style.borderColor = '#ff0000d4'; // 设置十字准心的颜色
+            crosshair.style.transform = 'scale(1.5)'; // 放大 2 倍
+            crosshair.style.transition = 'all 0.3s ease'; // 平滑过渡效果
+            crosshair.classList.add('active');
+        }
+        else {
+            crosshair.style.borderColor = 'white'; // 恢复颜色
+            crosshair.style.transform = 'scale(1)'; // 恢复原始大小
+            crosshair.classList.remove('active'); // 移除
+        }
+    }
 
     __onMouseDown(event) {
         // 使用Raycaster檢測玩家點擊了啥物件
@@ -379,15 +395,20 @@ class Controller {
         // 檢查是否與門物件相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
-        if (intersects.length > 0) {
+        if (intersects.length > 0 && this.isClickable) {
             // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
-            // 判斷是否有可互動物件
-            const color = new THREE.Color(Math.random(), Math.random(), Math.random())
-            object.material.color = color;
+
+            this.isClickable = false; // 禁止点击操作
+
+            //popupWindow先隱藏
+            this.popupWindow.hide();
             console.log(object.name);
+            const originalColor = object.material.color.clone();
 
             if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
+                const color = new THREE.Color('#ea8085');
+                object.material.color = color;
 
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
@@ -399,10 +420,14 @@ class Controller {
                 const englishName = InteractableObject.find(item => item.id === object.name).englishName;
                 this.popupWindow.speak(englishName);
 
-                // this.WordleGame.toggle();
-
+                setTimeout(() => {
+                    this.isClickable = true;
+                    this.popupWindow.hide();
+                    object.material.color = originalColor;
+                }, 3000);
             } else {
                 console.log('無可互動物件');
+
 
             }
         }

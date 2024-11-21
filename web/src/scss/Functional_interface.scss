@@ -547,6 +547,7 @@ body {
     height: 100vh;
 }
 
+//準心
 #crosshair {
     display: none;
     position: fixed;
@@ -570,6 +571,12 @@ body {
         top: 50%;
         transform: translate(-50%, -50%);
     }
+}
+
+/* 觸碰物件時準心改變顏色 */
+#crosshair.active::before {
+    transition: .2s;
+    background-color: #fd3d3da2;
 }
 
 /*------------關閉按鈕---------------------*/
