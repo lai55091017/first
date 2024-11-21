@@ -378,7 +378,7 @@ class Controller {
             console.log(object.name);
 
 
-            if (object.name === 'Door') {
+            if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table') {
 
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
