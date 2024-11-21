@@ -15,6 +15,7 @@ import * as menu from './js/menu.js';
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
 import Auth from './js/firebase/auth';
+import { count } from "firebase/firestore";
 
 
 const db = new FirebaseDB;
@@ -282,6 +283,8 @@ function onPlayerMessage(data) {
 function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
     scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
+    scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
 function init_camera() {
     camera.fov = 75;
@@ -300,9 +303,6 @@ function init_renderer() {
 }
 
 function init_other() {
-    // scene.add(new THREE.GridHelper(100, 1000, 0x0ff0f0, 0xcccccc));
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
-    scene.add(new THREE.DirectionalLight(0xffffff, 3));
     window.addEventListener('resize', resize);
     window.addEventListener('fullscreenchange', resize);
     function resize() {
@@ -460,72 +460,230 @@ function checkCollisionEnd() {
     }
 }
 
-// 導入場景模型2.0
-async function loadModels() {
-    try {
-        let library = await icas.loadGLTF('./mesh/glb/Library_update_Final_3.glb');
-        scene.add(library.scene);
+//嚴重bug會刪到多人的物體
+function clearSceneModelsAndPhysics() {
+    // 白名單：保留的物件名稱（可以根據具體需求添加名稱）
+    const preservedNames = ['Player', 'PlayerModel', 'MainCamera', 'PlayerLight'];
 
-        //綁定物理引擎
-        library.scene.traverse(function (child) {
-            if (child.name !== 'Scene' &&
-                // !child.name.match(/^Bookshelf/) &&
-                !child.name.match(/^Chair/) &&
-                // !child.name.match(/^Table/) &&
-                // !child.name.match(/^Door/) &&
-                // !child.name.match(/^LIB/) &&
-                // !child.name.match(/^wall/) &&
-                // !child.name.match(/^Floor/) &&
-                // !child.name.match(/^counter/) &&
-                // !child.name.match(/^piller/) &&
-                !child.name.match(/^Mesh/)
-            ) {
-                create_physics_body_box(child);
-                if (child.name.match(/^LIB/)) {
-                    targetBody = child.userData.physicsBody;
-                }
-                // console.log('綁定物理引擎:', child.name, child);
+    function recursiveDispose(object) {
+        // 保留白名單中的物件
+        if (preservedNames.includes(object.name)) {
+            console.log(`保留物件: ${object.name}`);
+            return;
+        }
+
+        // 遞歸清理子物件
+        while (object.children.length > 0) {
+            const child = object.children[0];
+            recursiveDispose(child); // 清理子物件
+            object.remove(child); // 從父物件中移除
+        }
+
+        // 如果是 Mesh，釋放其幾何體和材質
+        if (object instanceof THREE.Mesh) {
+            if (object.geometry) {
+                object.geometry.dispose();
+                console.log(`已釋放幾何體: ${object.name}`);
             }
-        })
+            if (object.material) {
+                if (Array.isArray(object.material)) {
+                    object.material.forEach((mat) => mat.dispose());
+                } else {
+                    object.material.dispose();
+                }
+                console.log(`已釋放材質: ${object.name}`);
+            }
+        }
 
-        // 找門，要用來做開關設置的
+        // 如果綁定了剛體，移除剛體
+        if (object.userData.physicsBody) {
+            const physicsBody = object.userData.physicsBody;
+            const index = cannon_world.bodies.indexOf(physicsBody);
+            if (index !== -1) {
+                cannon_world.bodies.splice(index, 1);
+                console.log(`已從物理世界移除剛體: ${object.name}`);
+            }
+        }
+
+        // 從場景中移除物件
+        if (object.parent === scene) {
+            console.log(`已從場景中移除容器: ${object.name}`);
+            scene.remove(object);
+        }
+    }
+
+    // 遍歷場景的頂層物件
+    while (scene.children.length > 0) {
+        const object = scene.children[0];
+        recursiveDispose(object); // 清理每個頂層物件
+    }
+
+    console.log('場景清理完成');
+}
+
+
+// 導入場景模型2.0
+async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
+    try {
+        // 清理舊場景
+        clearSceneModelsAndPhysics();
+        init_scene();
+        // 加載新場景
+        console.log(`正在加載場景：${scenePath}`);
+        let library = await icas.loadGLTF(scenePath); // 非同步加載場景文件
+        scene.add(library.scene);
+        console.log('場景加載完成:', library.scene);
+
+        // 調試場景結構
+        // library.scene.traverse((child) => {
+        //     console.log(`加載的場景物件: ${child.name}, 類型: ${child.constructor.name}`);
+        // });
+
+        // 綁定物理引擎
+        library.scene.traverse((child) => {
+            if (child.isMesh) {
+                create_physics_body_box(child); // 為每個模型綁定剛體
+                // console.log(`綁定剛體到物件: ${child.name}`);
+            }
+        });
+
+        // 處理場景中特定物件（如門）
         const libDoorL = library.scene.getObjectByName('LIB_Door_Left');
         const libDoorR = library.scene.getObjectByName('LIB_Door_Right');
-        libDoorL.name = 'Door';
-        libDoorR.name = 'Door';
-        // 找桌子和椅子
-        const modelChair = library.scene.getObjectByName('Chair5');
-        const modelTable = library.scene.getObjectByName('LIB_Table_1');
-        modelChair.name = 'Chair';
-        modelTable.name = 'Table';
+        if (libDoorL && libDoorR) {
+            libDoorL.name = 'Door';
+            libDoorR.name = 'Door';
+        }
+        // 找椅子
+        const chairs = [];
+        for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
+            for (let j = 1; j <= 4; j++) {
+                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`); // 尋找名稱格式為 Chair_[i]_[j] 的物件
+                if (modelChair) {
+                    modelChair.name = 'Chair'; // 命名椅子
+                    chairs.push(modelChair);  // 把每個 Chair 放入陣列
+                }
+            }
+        }
+        // 找桌子
+        const tables = [];
+        for (let i = 1; i <= 4; i++) {
+            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`); // 尋找名稱格式為 LIB_Table_[i] 的物件
+            if (modelTable) {
+                modelTable.name = 'Table'; // 命名桌子
+                tables.push(modelTable);  // 把每個 Table 放入陣列
+            }
+        }
         // 找櫃台
-        const modelCounter = library.scene.getObjectByName('counter_1');
-        modelCounter.name = 'Counter';
+        const counters = [];
+        for (let i = 1; i <= 2; i++) {
+            const modelCounter = library.scene.getObjectByName(`counter_${i}`); // 尋找名稱格式為 counter_[i] 的物件
+            if (modelCounter) {
+                modelCounter.name = 'Counter'; // 命名櫃台
+                counters.push(modelCounter);  // 把每個 Counter 放入陣列
+            }
+        }
         // 找書架
-        const modelBookshelf = library.scene.getObjectByName('Mesh035');
-        modelBookshelf.name = 'Bookshelf';
+        const bookshelves = [];
+        for (let i = 35; i <= 66; i++) {
+            // 使用 padStart(3, '0') 來填充，以確保數字是三位數
+            const meshName = `Mesh${i.toString().padStart(3, '0')}`;
+            const modelBookshelf = library.scene.getObjectByName(meshName); // 尋找名稱格式為 Mesh[i] 的物件
+            if (modelBookshelf) {
+                modelBookshelf.name = 'Bookshelf'; // 命名書架
+                bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
+            }
+        }
 
-        if (libDoorL && libDoorR && modelChair && modelTable) {
+        if (libDoorL && libDoorR && chairs.length > 0 && tables.length > 0 && counters.length > 0 && bookshelves.length > 0) {
             console.log('好消息，找到圖書館的門了');
+            // 設置圖層
             libDoorL.layers.set(1);
             libDoorR.layers.set(1);
-            modelChair.layers.set(1);
-            modelTable.layers.set(1);
-            modelCounter.layers.set(1);
-            modelBookshelf.layers.set(1);
+            chairs.forEach(chair => chair.layers.set(1));
+            tables.forEach(table => table.layers.set(1));
+            counters.forEach(counter => counter.layers.set(1));
+            bookshelves.forEach(bookshelf => bookshelf.layers.set(1));
             // 傳到Ctrl.js
             controller.setDoors(libDoorL, libDoorR);
-            controller.setChairAndTable(modelChair, modelTable);
-            controller.setCounter(modelCounter);
-            controller.setBookshelf(modelBookshelf);
+            controller.setChairs(chairs);
+            controller.setTables(tables);
+            controller.setCounters(counters);
+            controller.setBookshelves(bookshelves);
         } else {
             console.log('壞消息，沒門!');
         }
 
     } catch (error) {
-        console.error('Error loading model:', error);
+        console.error('加載場景失敗:', error);
     }
 }
+
+
+
+
+function showSceneOptions() {
+    const menu = document.createElement('div');
+    menu.id = 'scene-options';
+    menu.style.position = 'absolute';
+    menu.style.top = '50%';
+    menu.style.left = '50%';
+    menu.style.transform = 'translate(-50%, -50%)';
+    menu.style.padding = '20px';
+    menu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    menu.style.color = 'white';
+    menu.style.borderRadius = '10px';
+    menu.style.textAlign = 'center';
+    menu.style.zIndex = '1000';
+
+    const scenes = {
+        'Library': './mesh/glb/Library_update_Final_3.glb',
+        'Home': './mesh/glb/Home_4.glb',
+        'School': './mesh/glb/School_2.glb',
+    };
+
+    Object.entries(scenes).forEach(([sceneName, scenePath]) => {
+        const button = document.createElement('button');
+        button.textContent = `切換到 ${sceneName}`;
+        button.style.margin = '10px';
+        button.onclick = async () => {
+            await loadModels(scenePath); // 使用非同步的場景加載
+            document.body.removeChild(menu); // 清除選單
+        };
+        menu.appendChild(button);
+    });
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '取消';
+    closeButton.style.margin = '10px';
+    closeButton.onclick = () => document.body.removeChild(menu);
+    menu.appendChild(closeButton);
+
+    document.body.appendChild(menu);
+}
+
+
+
+controller.__toggleDoor = function () {
+    if (!this.doorAnimation) {
+        console.error('門未初始化');
+        return;
+    }
+
+    if (this.isOpen) {
+        this.doorAnimation.closeDoors();
+    } else {
+        this.doorAnimation.openDoors();
+        showSceneOptions(this); // 顯示場景切換選單
+    }
+
+    this.isOpen = !this.isOpen;
+};
+
+
+
+
+
 /*-----------------------------------暫停模式menu--------------------------------------------------*/
 
 const main_menu = $("#main_menu");

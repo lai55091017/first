@@ -13,9 +13,11 @@ class CharacterManager {
     async loadCharacter() {
 
         const meshContainer = new THREE.Group();
+        meshContainer.name = 'Player';
         const gltf = await this.__loadGTLFAsync( './player_model/Character.glb' );
         const mesh = gltf.scene;
         meshContainer.add( mesh );
+        mesh.name = 'PlayerModel'; // 為角色模型設置名稱
         mesh.rotation.y = THREE.MathUtils.degToRad( 180 );
         meshContainer.getMesh = function() { return this.children[0] }
 
@@ -49,6 +51,7 @@ class CharacterManager {
         for( const meshContainer of playerList ) {
 
             const characterData = meshContainer.children[0].userData;
+
             const { animations, currentActionName, previousActionName, mixer } = characterData;
 
             // 偵測速度並更新動作

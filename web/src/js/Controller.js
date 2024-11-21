@@ -23,10 +23,10 @@ class Controller {
         this.isOpen = false;
         this.libDoorL = null;
         this.libDoorR = null;
-        this.modelChair = null;
-        this.modelTable = null;
-        this.modelCounter = null;
-        this.modelBookshelf = null;
+        this.chairs = [];
+        this.tables = [];
+        this.counters = [];
+        this.bookshelves = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -41,17 +41,24 @@ class Controller {
         console.log('已將門從FI.js傳遞至Ctrlr.js')
     }
 
-    setChairAndTable(modelChair, modelTable) {
-        this.modelChair = modelChair;
-        this.modelTable = modelTable;
+    // 設置椅子
+    setChairs(chairs) {
+        this.chairs = chairs;
     }
 
-    setCounter(modelCounter) {
-        this.modelCounter = modelCounter;
+    // 設置桌子
+    setTables(tables) {
+        this.tables = tables;
     }
 
-    setBookshelf(modelBookshelf) {
-        this.modelBookshelf = modelBookshelf;
+    // 設置櫃台
+    setCounters(counters) {
+        this.counters = counters;
+    }
+
+    // 設置書架
+    setBookshelves(bookshelves) {
+        this.bookshelves = bookshelves;
     }
 
     //設置移動參數
