@@ -22,6 +22,10 @@ class Controller {
         this.isOpen = false;
         this.libDoorL = null;
         this.libDoorR = null;
+        this.modelChair = null;
+        this.modelTable = null;
+        this.modelCounter = null;
+        this.modelBookshelf = null;
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
     }
@@ -33,6 +37,19 @@ class Controller {
         this.doorAnimation = new DoorAnimation(libDoorL, libDoorR);
 
         console.log('已將門從FI.js傳遞至Ctrlr.js')
+    }
+
+    setChairAndTable(modelChair, modelTable) {
+        this.modelChair = modelChair;
+        this.modelTable = modelTable;
+    }
+
+    setCounter(modelCounter) {
+        this.modelCounter = modelCounter;
+    }
+
+    setBookshelf(modelBookshelf) {
+        this.modelBookshelf = modelBookshelf;
     }
 
     //設置移動參數
@@ -370,7 +387,7 @@ class Controller {
 
 
 
-            if (object.name === 'Door') {
+            if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
 
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);

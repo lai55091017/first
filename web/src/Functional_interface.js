@@ -488,13 +488,31 @@ async function loadModels() {
         const libDoorR = library.scene.getObjectByName('LIB_Door_Right');
         libDoorL.name = 'Door';
         libDoorR.name = 'Door';
+        // 找桌子和椅子
+        const modelChair = library.scene.getObjectByName('Chair5');
+        const modelTable = library.scene.getObjectByName('LIB_Table_1');
+        modelChair.name = 'Chair';
+        modelTable.name = 'Table';
+        // 找櫃台
+        const modelCounter = library.scene.getObjectByName('counter_1');
+        modelCounter.name = 'Counter';
+        // 找書架
+        const modelBookshelf = library.scene.getObjectByName('Mesh035');
+        modelBookshelf.name = 'Bookshelf';
 
-        if (libDoorL && libDoorR) {
+        if (libDoorL && libDoorR && modelChair && modelTable) {
             console.log('好消息，找到圖書館的門了');
             libDoorL.layers.set(1);
             libDoorR.layers.set(1);
+            modelChair.layers.set(1);
+            modelTable.layers.set(1);
+            modelCounter.layers.set(1);
+            modelBookshelf.layers.set(1);
             // 傳到Ctrl.js
             controller.setDoors(libDoorL, libDoorR);
+            controller.setChairAndTable(modelChair, modelTable);
+            controller.setCounter(modelCounter);
+            controller.setBookshelf(modelBookshelf);
 
             // 存起來，目前先註解怕之後要改
             // this.libDoorL = libDoorL;
