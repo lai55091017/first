@@ -365,10 +365,7 @@ class Controller {
     __onMouseDown(event) {
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1; // 套公式得到鼠標的X位置
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1; // 套公式得到鼠標的Y位置
+        const mouse = new THREE.Vector2(0,0);
 
         // 透過Raycaster檢測
         raycaster.setFromCamera(mouse, this.camera);
