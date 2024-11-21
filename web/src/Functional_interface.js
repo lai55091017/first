@@ -435,27 +435,31 @@ function Player_body(model, radius, height, radialSegments = 16) {
 // 追踪玩家與特定物體 (targetBody) 的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
-    const otherBody = event.body;
-    if (otherBody === targetBody) {
-        if (!isCollidingWithTarget) {
-            isCollidingWithTarget = true;
-            console.log('玩家和目標之間開始碰撞');
-        }
+    const collidedObject = event.contact.bi === playerBody ? event.contact.bj : event.contact.bi;
+
+    // 確認是否為門的剛體
+    if (collidedObject === controller.libDoorL.userData.physicsBody || 
+        collidedObject === controller.libDoorR.userData.physicsBody) {
+        console.log('玩家碰到門，可以按 F 開門');
+        controller.canOpenDoor = true; // 允許開門
     }
 }
 
-// 檢查碰撞是否結束的函數
 function checkCollisionEnd() {
-    if (isCollidingWithTarget) {
-        // 檢查玩家和目標是否仍在接觸
+    if (controller.canOpenDoor) {
+        // 確認是否仍在碰撞
         const isStillColliding = cannon_world.contacts.some(contact =>
-            (contact.bi === playerBody && contact.bj === targetBody) ||
-            (contact.bi === targetBody && contact.bj === playerBody)
+            (contact.bi === playerBody && 
+                (contact.bj === controller.libDoorL.userData.physicsBody || 
+                 contact.bj === controller.libDoorR.userData.physicsBody)) ||
+            (contact.bj === playerBody && 
+                (contact.bi === controller.libDoorL.userData.physicsBody || 
+                 contact.bi === controller.libDoorR.userData.physicsBody))
         );
 
         if (!isStillColliding) {
-            isCollidingWithTarget = false;
-            console.log('玩家和目標之間的碰撞已結束');
+            controller.canOpenDoor = false; // 離開碰撞區，重置狀態
+            console.log('玩家離開門，不能開門');
         }
     }
 }
