@@ -129,6 +129,7 @@ function newCard(englishText, chineseText) {
 
             const newEnglishText = document.querySelector(`#edit_english_text${card_number}`).value;
             const newChineseText = document.querySelector(`#edit_chinese_text${card_number}`).value;
+
             // 正確選取字詞元素並更新內容
             document.getElementById(`word${card_number}`).textContent = newEnglishText;
             document.getElementById(`chinese${card_number}`).textContent = newChineseText;
@@ -137,6 +138,12 @@ function newCard(englishText, chineseText) {
 
             //顯示卡片
             cardbody.style.display = 'block';
+            fs.delete_user_card({
+                "card": [{ words: englishText, translate: chineseText }]
+            })
+            fs.update_user_card({
+                "card": [{ words: newEnglishText, translate: newChineseText }]
+            })
             // 隱藏編輯表單
             newCard.querySelector('#edit_form').style.display = 'none';
         });
