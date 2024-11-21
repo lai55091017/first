@@ -458,7 +458,7 @@ function checkCollisionEnd() {
 // 導入場景模型2.0
 async function loadModels() {
     try {
-        let library = await icas.loadGLTF('./mesh/glb/Library_Freeze.glb');
+        let library = await icas.loadGLTF('./mesh/glb/Library_update_Final.glb');
         scene.add(library.scene);
 
         //綁定物理引擎
