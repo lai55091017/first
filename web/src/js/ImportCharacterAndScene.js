@@ -1,9 +1,9 @@
+// ImportCharacterAndScene.js 主要用來導入角色和場景
+
 // 導入模組
 import { reject } from 'lodash';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-// 有問題，先使用fbx或glb  import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-// 有問題，先使用fbx或glb  import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // 測試
 
@@ -12,8 +12,6 @@ class ICAS {
         this.scene = scene;
         this.camera = camera;
         this.fbxLoader = new FBXLoader();
-        // 有問題，先使用fbx或glb this.objLoader = new OBJLoader();
-        // 有問題，先使用fbx或glb this.mtlLoader = new MTLLoader();
         this.gltfLoader = new GLTFLoader();
         this.jsonLoader = new THREE.ObjectLoader();
     }
@@ -24,20 +22,6 @@ class ICAS {
             this.fbxLoader.load(path, resolve, undefined, reject);
         });
     }
-    
-    // 新增OBJ載入方法
-    /* 有問題，先使用fbx或glb
-    loadOBJ(path, mtlPath) {
-        return new Promise((resolve, reject) => {
-            const objLoader = new OBJLoader();
-            this.mtlLoader.load(mtlPath, (materials) => {
-                materials.preload();
-                objLoader.setMaterials(materials);
-                objLoader.load(path, resolve, undefined, reject);
-            });
-        });
-    }
-    */
 
     // 新增GLTF載入方法
     loadGLTF(path) {
