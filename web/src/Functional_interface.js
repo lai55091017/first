@@ -483,7 +483,7 @@ function clearSceneModelsAndPhysics() {
         if (object instanceof THREE.Mesh) {
             if (object.geometry) {
                 object.geometry.dispose();
-                console.log(`已釋放幾何體: ${object.name}`);
+                // console.log(`已釋放幾何體: ${object.name}`);
             }
             if (object.material) {
                 if (Array.isArray(object.material)) {
@@ -491,7 +491,7 @@ function clearSceneModelsAndPhysics() {
                 } else {
                     object.material.dispose();
                 }
-                console.log(`已釋放材質: ${object.name}`);
+                // console.log(`已釋放材質: ${object.name}`);
             }
         }
 
@@ -501,13 +501,13 @@ function clearSceneModelsAndPhysics() {
             const index = cannon_world.bodies.indexOf(physicsBody);
             if (index !== -1) {
                 cannon_world.bodies.splice(index, 1);
-                console.log(`已從物理世界移除剛體: ${object.name}`);
+                // console.log(`已從物理世界移除剛體: ${object.name}`);
             }
         }
 
         // 從場景中移除物件
         if (object.parent === scene) {
-            console.log(`已從場景中移除容器: ${object.name}`);
+            // console.log(`已從場景中移除容器: ${object.name}`);
             scene.remove(object);
         }
     }
@@ -523,7 +523,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
+async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
     try {
         // 清理舊場景
         clearSceneModelsAndPhysics();
@@ -637,9 +637,9 @@ function showSceneOptions() {
     menu.style.zIndex = '1000';
 
     const scenes = {
-        'Library': './mesh/glb/Library_update_Final_3.glb',
-        'Home': './mesh/glb/Home_4.glb',
-        'School': './mesh/glb/School_2.glb',
+        'Library': './mesh/glb/Library_update_Final_4.glb',
+        'Home': './mesh/glb/Home_6.glb',
+        'School': './mesh/glb/School_3.glb',
     };
 
     Object.entries(scenes).forEach(([sceneName, scenePath]) => {
