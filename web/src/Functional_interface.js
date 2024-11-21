@@ -825,10 +825,10 @@ function updateKeyboardStatus(letter, status) {
 
 // 提交答案並檢查是否正確
 function submitGuess() {
-    if (currentGuess.length !== answer.length) {
-        alert("Please enter a word with the correct length."); // 若提交的單字和答案長度不同則告訴用戶 " 請輸入一個長度正確的單字 "
-        return;
-    }
+    // if (currentGuess.length !== answer.length) {
+    //     alert("Please enter a word with the correct length."); // 若提交的單字和答案長度不同則告訴用戶 " 請輸入一個長度正確的單字 "
+    //     return;
+    // }s
 
     const boxes = guessGrid.querySelectorAll(".letter-box");
     const offset = currentAttempt * answer.length;
