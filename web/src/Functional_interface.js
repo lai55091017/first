@@ -460,10 +460,18 @@ function checkCollisionEnd() {
     }
 }
 
-
+//嚴重bug會刪到多人的物體
 function clearSceneModelsAndPhysics() {
+    // 白名單：保留的物件名稱（可以根據具體需求添加名稱）
+    const preservedNames = ['Player', 'PlayerModel', 'MainCamera', 'PlayerLight'];
+
     function recursiveDispose(object) {
-        
+        // 保留白名單中的物件
+        if (preservedNames.includes(object.name)) {
+            console.log(`保留物件: ${object.name}`);
+            return;
+        }
+
         // 遞歸清理子物件
         while (object.children.length > 0) {
             const child = object.children[0];
@@ -514,10 +522,6 @@ function clearSceneModelsAndPhysics() {
 }
 
 
-
-
-
-
 // 導入場景模型2.0
 async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
     try {
@@ -546,8 +550,10 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         // 處理場景中特定物件（如門）
         const libDoorL = library.scene.getObjectByName('LIB_Door_Left');
         const libDoorR = library.scene.getObjectByName('LIB_Door_Right');
-        libDoorL.name = 'Door';
-        libDoorR.name = 'Door';
+        if (libDoorL && libDoorR) {
+            libDoorL.name = 'Door';
+            libDoorR.name = 'Door';
+        }
         // 找椅子
         const chairs = [];
         for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
@@ -631,7 +637,7 @@ function showSceneOptions() {
 
     const scenes = {
         'Library': './mesh/glb/Library_update_Final_3.glb',
-        'Home': './mesh/glb/Home_3.glb',
+        'Home': './mesh/glb/Home_4.glb',
         'School': './mesh/glb/School_2.glb',
     };
 
