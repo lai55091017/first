@@ -385,8 +385,6 @@ class Controller {
             object.material.color = color;
             console.log(object.name);
 
-
-
             if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
 
                 // 顯示彈窗
@@ -396,6 +394,8 @@ class Controller {
                     ITO.englishName,
                     { x: event.clientX, y: event.clientY });
 
+                const englishName = InteractableObject.find(item => item.id === object.name).englishName;
+                this.popupWindow.speak(englishName);
 
                 // this.WordleGame.toggle();
 

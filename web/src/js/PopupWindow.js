@@ -28,14 +28,13 @@ class PopupWindow {
     hide() {
         this.popup.style.display = 'none'; // 隱藏彈窗
     }
-    
-    // const textToSpeak = InteractableObject.find(item => item.id === object.name).englishName;
-    // function speak(text) {
-    //     const utterance = new SpeechSynthesisUtterance(text);
-    //     utterance.lang = 'en-US'; // 設定語言，根據需要可更改
-    //     speechSynthesis.speak(utterance);
-    // }
-    // speak(textToSpeak);
+
+    speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US'; // 設定語言，根據需要可更改
+        speechSynthesis.speak(utterance);
+    }
+
 
 }
 
