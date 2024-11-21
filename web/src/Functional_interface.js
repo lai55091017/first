@@ -518,10 +518,6 @@ async function loadModels() {
             controller.setChairAndTable(modelChair, modelTable);
             controller.setCounter(modelCounter);
             controller.setBookshelf(modelBookshelf);
-
-            // 存起來，目前先註解怕之後要改
-            // this.libDoorL = libDoorL;
-            // this.libDoorR = libDoorR;
         } else {
             console.log('壞消息，沒門!');
         }

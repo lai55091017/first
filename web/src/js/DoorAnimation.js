@@ -1,3 +1,5 @@
+    // DoorAnimation.js  主要用來控制門的動畫
+    
     import * as THREE from 'three';
 
     class DoorAnimation {

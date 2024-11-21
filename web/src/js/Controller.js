@@ -340,15 +340,9 @@ class Controller {
         if (this.isOpen) {
             // 關門
             this.doorAnimation.closeDoors();
-            // 先註解，要是門動畫有問題再用這個
-            // this.libDoorL.rotation.y = 0;
-            // this.libDoorR.rotation.y = 0;
         } else {
             // 開門
             this.doorAnimation.openDoors();
-            // 先註解，要是門動畫有問題再用這個
-            // this.libDoorL.rotation.y = -Math.PI / 2; // 左門 -90度
-            // this.libDoorR.rotation.y = Math.PI / 2;  // 右門 90度
 
             // 5秒後自動關門
             setTimeout(() => {

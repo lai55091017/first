@@ -5,7 +5,6 @@ const InteractableObject = [
         id: 'Door',
         chineseName: '門',
         englishName: 'Door'
-        // 之後在這裡加入語音
     },
     {
         id: 'Chair',
@@ -27,7 +26,6 @@ const InteractableObject = [
         chineseName: '書架',
         englishName: 'Bookshelf'
     }
-    // 其他物件再這裡添加
 ];
 
 
