@@ -15,7 +15,7 @@ import * as menu from './js/menu.js';
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
 import Auth from './js/firebase/auth';
-import { count } from "firebase/firestore";
+// import { count } from "firebase/firestore";
 
 
 const db = new FirebaseDB;
@@ -147,6 +147,7 @@ function init() {
 
 let playerBody
 let targetBody
+let currentPlayer = null; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -182,6 +183,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加角色
             camera.add(character);
+            currentPlayer = playerBody; // 保存玩家角色到全域變數
             animate();
 
         } else {
@@ -533,6 +535,16 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
         let library = await icas.loadGLTF(scenePath); // 非同步加載場景文件
         scene.add(library.scene);
         console.log('場景加載完成:', library.scene);
+
+
+        // 將玩家移動到 (0, 0, 0)
+        console.log(currentPlayer);
+        if (currentPlayer) {
+            currentPlayer.position.set(0, 0, 0); // 設定玩家位置
+            console.log('玩家已移動到 (0, 0, 0)');
+        } else {
+            console.warn('玩家角色未初始化，無法移動');
+        }
 
         // 調試場景結構
         // library.scene.traverse((child) => {
