@@ -552,6 +552,66 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
             controller.setDoors(libDoorL, libDoorR); // 傳遞到控制器
             console.log('門已綁定到控制器');
         }
+        libDoorL.name = 'Door';
+        libDoorR.name = 'Door';
+        // 找椅子
+        const chairs = [];
+        for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
+            for (let j = 1; j <= 4; j++) {
+                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`);
+                if (modelChair) {
+                    modelChair.name = 'Chair';
+                    chairs.push(modelChair);  // 把每個 Chair 放入陣列
+                }
+            }
+        }
+        // 找桌子
+        const tables = [];
+        for (let i = 1; i <= 4; i++) {
+            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`);
+            if (modelTable) {
+                modelTable.name = 'Table';
+                tables.push(modelTable);  // 把每個 Table 放入陣列
+            }
+        }
+        // 找櫃台
+        const counters = [];
+        for (let i = 1; i <= 2; i++) {
+            const modelCounter = library.scene.getObjectByName(`counter_${i}`);
+            if (modelCounter) {
+                modelCounter.name = 'Counter';
+                counters.push(modelCounter);  // 把每個 Counter 放入陣列
+            }
+        }
+        // 找書架
+        const bookshelves = [];
+        for (let i = 35; i <= 66; i++) {
+            // 使用 padStart(3, '0') 來填充，以確保數字是三位數
+            const meshName = `Mesh${i.toString().padStart(3, '0')}`;
+            const modelBookshelf = library.scene.getObjectByName(meshName);
+            if (modelBookshelf) {
+                modelBookshelf.name = 'Bookshelf';
+                bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
+            }
+        }
+
+        if (libDoorL && libDoorR && chairs.length > 0 && tables.length > 0 && counters.length > 0 && bookshelves.length > 0) {
+            console.log('好消息，找到圖書館的門了');
+            libDoorL.layers.set(1);
+            libDoorR.layers.set(1);
+            chairs.forEach(chair => chair.layers.set(1));
+            tables.forEach(table => table.layers.set(1));
+            counters.forEach(counter => counter.layers.set(1));
+            bookshelves.forEach(bookshelf => bookshelf.layers.set(1));
+            // 傳到Ctrl.js
+            controller.setDoors(libDoorL, libDoorR);
+            controller.setChairs(chairs);
+            controller.setTables(tables);
+            controller.setCounters(modelCounter);
+            controller.setBookshelves(bookshelves);
+        } else {
+            console.log('壞消息，沒門!');
+        }
 
     } catch (error) {
         console.error('加載場景失敗:', error);
@@ -620,71 +680,9 @@ controller.__toggleDoor = function () {
 };
 
 
-        libDoorL.name = 'Door';
-        libDoorR.name = 'Door';
-        // 找椅子
-        const chairs = [];
-        for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
-            for (let j = 1; j <= 4; j++) {
-                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`);
-                if (modelChair) {
-                    modelChair.name = 'Chair';
-                    chairs.push(modelChair);  // 把每個 Chair 放入陣列
-                }
-            }
-        }
-        // 找桌子
-        const tables = [];
-        for (let i = 1; i <= 4; i++) {
-            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`);
-            if (modelTable) {
-                modelTable.name = 'Table';
-                tables.push(modelTable);  // 把每個 Table 放入陣列
-            }
-        }
-        // 找櫃台
-        const counters = [];
-        for (let i = 1; i <= 2; i++) {
-            const modelCounter = library.scene.getObjectByName(`counter_${i}`);
-            if (modelCounter) {
-                modelCounter.name = 'Counter';
-                counters.push(modelCounter);  // 把每個 Counter 放入陣列
-            }
-        }
-        // 找書架
-        const bookshelves = [];
-        for (let i = 35; i <= 66; i++) {
-            // 使用 padStart(3, '0') 來填充，以確保數字是三位數
-            const meshName = `Mesh${i.toString().padStart(3, '0')}`;
-            const modelBookshelf = library.scene.getObjectByName(meshName);
-            if (modelBookshelf) {
-                modelBookshelf.name = 'Bookshelf';
-                bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
-            }
-        }
 
-        if (libDoorL && libDoorR && chairs.length > 0 && tables.length > 0 && counters.length > 0 && bookshelves.length > 0) {
-            console.log('好消息，找到圖書館的門了');
-            libDoorL.layers.set(1);
-            libDoorR.layers.set(1);
-            chairs.forEach(chair => chair.layers.set(1));
-            tables.forEach(table => table.layers.set(1));
-            counters.forEach(counter => counter.layers.set(1));
-            bookshelves.forEach(bookshelf => bookshelf.layers.set(1));
-            // 傳到Ctrl.js
-            controller.setDoors(libDoorL, libDoorR);
-            controller.setChairs(chairs);
-            controller.setTables(tables);
-            controller.setCounters(modelCounter);
-            controller.setBookshelves(bookshelves);
-        } else {
-            console.log('壞消息，沒門!');
-        }
 
-    } catch (error) {
-        console.error('Error loading model:', error);
-    }
-}
+
 /*-----------------------------------暫停模式menu--------------------------------------------------*/
 
 const main_menu = $("#main_menu");
