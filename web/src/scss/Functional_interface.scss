@@ -231,8 +231,8 @@ body {
     justify-items: center;
 
     .ui_btn {
-        width: 65px;
-        height: 65px;
+        width: 70px;
+        height: 70px;
         font-size: 20px;
         display: flex;
         align-items: center;
@@ -598,10 +598,9 @@ body {
     position: fixed;
     /*列表樣式為空*/
     transition: .2s;
-    padding: 50px;
     /*上右下左邊距 */
-    left: 28vw;
-    top: 15vh;
+    left: 35vw;
+    top: 25vh;
 
     .btn {
         width: 500px;
@@ -610,8 +609,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
-        margin: 40px 60px;
+        margin: 40px 0;
         /*上右下左邊距 */
         transition: .2s;
         // border-radius: 5px;

@@ -14,7 +14,7 @@ import * as menu from './js/menu.js';
 
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
-
+import Auth from './js/firebase/auth';
 
 
 const db = new FirebaseDB;
@@ -35,24 +35,28 @@ const characterManager = new CharacterManager(scene, camera);
 const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
 const icas = new ICAS(scene, camera);
-
+const auth = new Auth;
+auth.onAuthStateChanged();
 //----------------------loading動畫--------------
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
 });
 
-
-
+$('#info').on("click", function () {
+    auth.switch_page('information.html');
+})
+// $('#continue').on("click", function () {
+//     controller.setupBlocker(blocker);
+// })
 document.addEventListener('DOMContentLoaded', () => {
-
     // 讀取菜單
     fetch('menu.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('menu_container').innerHTML = data;
-                menu.menu();
-            })
-            .catch(error => console.error('Error loading menu:', error));
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('menu_container').innerHTML = data;
+            menu.menu();
+        })
+        .catch(error => console.error('Error loading menu:', error));
 
 
     fs.get_user_data().then(fs => {
@@ -85,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch (err) {
                         console.error('Error sending message:', err);
                     }
-    
+
                 }
 
             })
@@ -124,13 +128,14 @@ function init() {
     init_camera();
     init_renderer();
     init_other();
-    
+
     init_physics();
     connect.onJoin = onPlayerJoin;
     connect.onLeave = onPlayerLeave;
     connect.onMove = onPlayerMove;
     connect.onMessage = onPlayerMessage;
     controller.setupBlocker(document.getElementById('blocker'));
+    controller.setupBlocker(document.getElementById('continue'));
 
     // 導入(載入)模型
     loadModels();
@@ -216,9 +221,9 @@ function onPlayerMessage(data) {
 
         const chatBox = document.getElementById('chat_box');
         const playermessage = connect.playerList.find(player => player.uuid === data.uuid);
-    
+
         if (playermessage) {
-    
+
             const message_box = document.createElement('div');
             const message_element = document.createElement('div');
             const message_date_element = document.createElement('div');
@@ -226,25 +231,25 @@ function onPlayerMessage(data) {
             const message_name = document.createElement('div');
             const name = document.createElement('span');
             const message_total = document.createElement('div');
-    
+
             message_total.className = 'message message_item';
             message_item.className = 'message_item';
             message_box.id = 'message_box';
             message_element.id = 'message';
             message_date_element.id = 'message_date';
             message_name.className = 'name';
-    
-    
-                if (data.username === fs.username) {
-                    message_element.id = 'personal_message';    
-                    message_date_element.id = 'personal_message_date';
-                }
-            
-    
+
+
+            if (data.username === fs.username) {
+                message_element.id = 'personal_message';
+                message_date_element.id = 'personal_message_date';
+            }
+
+
             name.textContent = `${data.username}`;
             message_element.textContent = `${data.message}`;
             message_date_element.textContent = ` 時間:${data.timestamp}`;
-    
+
             //span丟到.name
             message_name.appendChild(name);
             //訊息時間丟到#message_box;
@@ -257,18 +262,18 @@ function onPlayerMessage(data) {
             message_total.appendChild(message_item);
             //.message_total丟到#chat_box，訊息顯示在聊天室
             chatBox.appendChild(message_total);
-    
+
             // 容器的可见高度
             const scrollableHeight = chatBox.scrollHeight - chatBox.clientHeight;
-    
+
             // 如果用户没有手动向上滚动（即滚动条接近底部），则自动滚动到底部
             if (chatBox.scrollTop >= scrollableHeight - 500) {
                 chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
             }
-    
+
             // 输出调试信息
             console.log(chatBox.scrollTop, chatBox.scrollHeight);
-    
+
         }
     })
 }
@@ -317,11 +322,11 @@ function animate() {
     prevTime = time;
 
     const playerData = controller.update(delta);
-    
+
     characterManager.updateCharactersAnimation(delta, connect.playerList);
     connect.socket.send(JSON.stringify(playerData));
 
-      // 更新物理世界
+    // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
     // cannonDebugger.update()
 
@@ -341,13 +346,13 @@ function animate() {
             //     body.position.z = camera.position.z;
 
             //     console.log(body);
-                
+
             //     body.rotation.copy(camera.quaternion);
             // }
             // object.position.copy(body.position);
             // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
-            
-            
+
+
         }
     });
 
@@ -368,7 +373,7 @@ function init_physics() {
         console.log('接觸！');
         // 處理接觸事件
     });
-    
+
     cannon_world.addEventListener('endContact', (event) => {
         console.log('結束接觸！');
         // 處理結束接觸事件
@@ -397,7 +402,7 @@ function create_physics_body_box(model) {
     cannon_world.addBody(body);
 
     // 將剛體存儲在模型的 userData 屬性中
-    model.userData.physicsBody = body; 
+    model.userData.physicsBody = body;
 
     return body;
 
@@ -421,7 +426,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
     cannon_world.addBody(body);
 
     // 將剛體存儲在模型的 userData 屬性中
-    model.userData.physicsBody = body; 
+    model.userData.physicsBody = body;
 
     return body;
 
@@ -430,29 +435,29 @@ function Player_body(model, radius, height, radialSegments = 16) {
 // 追踪玩家與特定物體 (targetBody) 的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
-  const otherBody = event.body;
-  if (otherBody === targetBody) {
-    if (!isCollidingWithTarget) {
-      isCollidingWithTarget = true;
-      console.log('玩家和目標之間開始碰撞');
+    const otherBody = event.body;
+    if (otherBody === targetBody) {
+        if (!isCollidingWithTarget) {
+            isCollidingWithTarget = true;
+            console.log('玩家和目標之間開始碰撞');
+        }
     }
-  }
 }
 
 // 檢查碰撞是否結束的函數
 function checkCollisionEnd() {
-  if (isCollidingWithTarget) {
-    // 檢查玩家和目標是否仍在接觸
-    const isStillColliding = cannon_world.contacts.some(contact =>
-      (contact.bi === playerBody && contact.bj === targetBody) ||
-      (contact.bi === targetBody && contact.bj === playerBody)
-    );
+    if (isCollidingWithTarget) {
+        // 檢查玩家和目標是否仍在接觸
+        const isStillColliding = cannon_world.contacts.some(contact =>
+            (contact.bi === playerBody && contact.bj === targetBody) ||
+            (contact.bi === targetBody && contact.bj === playerBody)
+        );
 
-    if (!isStillColliding) {
-      isCollidingWithTarget = false;
-      console.log('玩家和目標之間的碰撞已結束');
+        if (!isStillColliding) {
+            isCollidingWithTarget = false;
+            console.log('玩家和目標之間的碰撞已結束');
+        }
     }
-  }
 }
 
 // 導入場景模型2.0
@@ -473,7 +478,7 @@ async function loadModels() {
                 // !child.name.match(/^Floor/) &&
                 // !child.name.match(/^counter/) &&
                 // !child.name.match(/^piller/) &&
-                !child.name.match(/^Mesh/) 
+                !child.name.match(/^Mesh/)
             ) {
                 create_physics_body_box(child);
                 if (child.name.match(/^LIB/)) {

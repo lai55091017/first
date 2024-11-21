@@ -365,7 +365,7 @@ class Controller {
     __onMouseDown(event) {
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2(0,0);
+        const mouse = new THREE.Vector2(0, 0);
 
         // 透過Raycaster檢測
         raycaster.setFromCamera(mouse, this.camera);

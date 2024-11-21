@@ -171,30 +171,30 @@ function newCard(englishText, chineseText) {
 
 
 
-/*------------------------------------音訊卡片功能-----------------------------------------*/
-function toggleAudio(audioId, buttonId) {
-    let audioElement = document.getElementById(audioId);
-    let buttonElement = document.getElementById(buttonId).getElementsByTagName('img')[0];
+// /*------------------------------------音訊卡片功能-----------------------------------------*/
+// function toggleAudio(audioId, buttonId) {
+//     let audioElement = document.getElementById(audioId);
+//     let buttonElement = document.getElementById(buttonId).getElementsByTagName('img')[0];
 
-    if (audioElement.paused) {
-        audioElement.play();
-        buttonElement.src = "/img/pause.png";  // 修改為暫停圖標
-        buttonElement.alt = "Pause";
-    } else {
-        audioElement.pause();
-        buttonElement.src = "/img/play.png";  // 修改為播放圖標
-        buttonElement.alt = "Play";
-    }
-}
+//     if (audioElement.paused) {
+//         audioElement.play();
+//         buttonElement.src = "/img/pause.png";  // 修改為暫停圖標
+//         buttonElement.alt = "Pause";
+//     } else {
+//         audioElement.pause();
+//         buttonElement.src = "/img/play.png";  // 修改為播放圖標
+//         buttonElement.alt = "Play";
+//     }
+// }
 
 // 音樂播放控制
-document.querySelectorAll('button').forEach(button => {
-    button.addEventListener('click', function () {
-        let audioId = this.previousElementSibling.id;
-        let buttonId = this.id;
-        toggleAudio(audioId, buttonId);
-    });
-});
+// document.querySelectorAll('button').forEach(button => {
+//     button.addEventListener('click', function () {
+//         let audioId = this.previousElementSibling.id;
+//         let buttonId = this.id;
+//         toggleAudio(audioId, buttonId);
+//     });
+// });
 
 
 //---------------------玩家資料顯示區----------------------
