@@ -119,10 +119,10 @@ class Controller {
     __handleCollisions(playerBody) {
         // 如果玩家碰撞到牆壁，將速度設置為 0
         playerBody.addEventListener('collision', (event) => {
-            console.log( "碰撞到牆壁" );
+            console.log("碰撞到牆壁");
             const contact = event.contact;
             const normal = contact.normal; // 碰撞法線
-    
+
             // 如果撞到牆壁，停止移動
             if (Math.abs(normal.x) > 0.5) {
                 this.velocity.x = 0;
@@ -134,8 +134,8 @@ class Controller {
             }
         });
     }
-    
-    
+
+
     //更新角色
     // update(delta) {
 
@@ -195,9 +195,9 @@ class Controller {
         const player = this.camera;
         const playerPosition = player.position;
         const playerBody = player.userData.physicsBody;
-    
+
         if (!playerBody) return;
-    
+
         // 獲取相機的朝向
         const cameraDirection = new THREE.Vector3();
         this.camera.getWorldDirection(cameraDirection);
@@ -220,16 +220,16 @@ class Controller {
         finalMove.addScaledVector(forwardVector, moveDirection.z);
         finalMove.addScaledVector(rightVector, moveDirection.x);
         finalMove.normalize();
-    
+
         // 使用鋼體進行移動，而不是相機
         playerBody.velocity.x = -finalMove.x * this.moveDistance;
         playerBody.velocity.z = -finalMove.z * this.moveDistance;
-    
+
         // 同步相機位置
         playerPosition.copy(playerBody.position);
         // playerPosition.x = playerBody.position.x;
         // playerPosition.z = playerBody.position.z;
-    
+
         // // 跳躍
         // playerPosition.y += this.velocity.y * delta;
         // if (playerPosition.y < this.playerHight) {
@@ -369,6 +369,7 @@ class Controller {
             console.log(object.name);
 
 
+
             if (object.name === 'Door') {
 
                 // 顯示彈窗
@@ -377,6 +378,8 @@ class Controller {
                     ITO.chineseName,
                     ITO.englishName,
                     { x: event.clientX, y: event.clientY });
+
+
                 // this.WordleGame.toggle();
 
             } else {

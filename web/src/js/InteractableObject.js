@@ -12,4 +12,5 @@ const InteractableObject = [
     // 其他物件再這裡添加
 ];
 
+
 export default InteractableObject;
