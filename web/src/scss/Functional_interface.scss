@@ -3,16 +3,10 @@
     --text-color: #040406;
     --title_color: #040406af;
     --input_color: #757575;
-    --info-color: #6a6a6a;
-    --notice-color: #949595;
-    --message-text-hover-color: var(--text-color);
-    --message-icon-hover-color: #050505;
     --message-item-name-color: #6b6b6b;
-    --message-item-background-color: #cecece;
-    --message-item-img-width: 280px;
     --message-item-avatar-width: 50px;
     --message-item-avatar-margin: 15px;
-    --message-menu-background-color: #e0e1e2;
+    --background-color: #e0e1e2;
     --menu-text-color: #afaeb3;
     --menu-icon-background-color: #e3e3e3;
     --menu-btn-hover: #e4d89b;
@@ -300,7 +294,7 @@ body {
             width: 100%;
             height: 80px;
             border-top: var(--menu-border-hover);
-            background: var(--message-menu-background-color);
+            background: var(--background-color);
             border-radius: 0 0 20px 20px;
 
             .avatar {
@@ -627,20 +621,31 @@ body {
 
 /****------------------------點擊模型出現跳窗----------------****/
 .model_info {
+    position: absolute;
     border: none;
-    box-shadow: 2px 2px 10px 0px rgb(98, 98, 98);
-    border-radius: 20px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    width: 300px;
-    position: fixed;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: var(--box-background-color);
+    width: 350px;
+    height: 200px;
     bottom: 5px;
     left: 5px;
-    text-align: center;
+
+    p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 30px;
+        font-family: '微軟正黑體';
+        letter-spacing: 1px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #424d6b;
+    }
+
+    ;
 
 }
 
