@@ -463,7 +463,7 @@ function checkCollisionEnd() {
 // 導入場景模型2.0
 async function loadModels() {
     try {
-        let library = await icas.loadGLTF('./mesh/glb/Library_update_Final.glb');
+        let library = await icas.loadGLTF('./mesh/glb/Library_update_Final_3.glb');
         scene.add(library.scene);
 
         //綁定物理引擎
@@ -530,81 +530,6 @@ async function loadModels() {
         console.error('Error loading model:', error);
     }
 }
-
-// // 導入場景模型
-// async function loadModels1() {
-//     const models = [
-//         { type: 'glb', path: './mesh/glb/Scene_Library.glb' }
-//     ];
-
-//     // const progressBar = document.getElementById("progress-bar");
-//     // let totalBytesLoaded = 0;
-//     // let totalBytes = 0;
-//     // // 計算每個模型的加載進度
-//     // const onProgress = (xhr) => {
-//     //     if (xhr.lengthComputable) {
-//     //         const percentComplete = (xhr.loaded / xhr.total) * 100;
-//     //         console.log(`加載進度: ${percentComplete.toFixed(2)}%`);
-
-//     //         // 更新總進度
-//     //         totalBytesLoaded += xhr.loaded;
-//     //         totalBytes += xhr.total;
-
-//     //         const overallProgress = (totalBytesLoaded / totalBytes) * 100;
-//     //         progressBar.style.width = overallProgress + "%";
-//     //     }
-//     // };
-
-//     for (const model of models) {
-//         let loadedModel; // 宣告一個名為loadedModel的變數，用來儲存每次加載的模型
-//         try { // 這個try的註解放在後面的catch那邊
-//             switch (model.type) { // 使用switch根據model(模型)的type(檔案格式)來執行對應格式的程式
-//                 case 'glb':
-//                     loadedModel = await icas.loadGLTF(model.path); // 這個await只能用在async function裡，用來暫停非同步函數的執行，直到await後面的非同步操作完成並返回結果後才能結束暫停
-//                     scene.add(loadedModel.scene); // 把剛剛載入的模型加到場景中
-
-//                     // 找門，要用來做開關設置的
-//                     const libDoorL = loadedModel.scene.getObjectByName('LIB_Door_Left');
-//                     const libDoorR = loadedModel.scene.getObjectByName('LIB_Door_Right');
-//                     libDoorL.name = 'Door';
-//                     libDoorR.name = 'Door';
-
-//                     if (libDoorL && libDoorR) {
-//                         console.log('好消息，找到圖書館的門了');
-//                         libDoorL.layers.set(1);
-//                         libDoorR.layers.set(1);
-//                         // 傳到Ctrl.js
-//                         controller.setDoors(libDoorL, libDoorR);
-
-//                         // 存起來，目前先註解怕之後要改
-//                         // this.libDoorL = libDoorL;
-//                         // this.libDoorR = libDoorR;
-//                     } else {
-//                         console.log('壞消息，沒門!');
-//                     }
-
-//                     break;
-//                 case 'fbx':
-//                     loadedModel = await icas.loadFBX(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 // case 'obj': // 出了點錯先註解掉，obj可能會有mtl(材質)文件跟著
-//                 //     loadedModel = await icas.loadOBJ(model.path, model.mtlPath);
-//                 //     scene.add(loadedModel);
-//                 //     break;
-//                 case 'json':
-//                     loadedModel = await icas.loadJSON(model.path);
-//                     scene.add(loadedModel);
-//                     break;
-//                 default: // 如果不是上面這些格式就紀錄錯誤訊息:Unknown model type(未知的檔案格式)
-//                     console.error('Unknown model type:', model.type);
-//             }
-//         } catch (error) { // 為防止加載時出錯，所以用try...catch來抓錯，只要出現加載錯誤就傳送錯誤訊息:Error loading model
-//             console.error('Error loading model:', model.path, error);
-//         }
-//     }
-
-// }
 /*-----------------------------------暫停模式menu--------------------------------------------------*/
 
 const main_menu = $("#main_menu");
@@ -944,7 +869,7 @@ function submitGuess() {
 
     // 檢查是否猜對
     if (currentGuess === answer) {
-        alert("Congratulations! You guessed the word!"); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
+        alert(`You guessed the word ! The word was: ${answer} ( ${chineseAnswer} )`); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
         setTimeout(resetGame, 1000); // 1秒後刷新遊戲
         return;
     }
@@ -954,7 +879,7 @@ function submitGuess() {
     currentGuess = "";
 
     if (currentAttempt >= maxAttempts) {
-        alert(`Game over! The word was: ${answer} (${chineseAnswer})`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
+        alert(`Game over! The word was: ${answer} ( ${chineseAnswer} )`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
         setTimeout(resetGame, 1000); // 1秒後刷新遊戲
     }
 }
