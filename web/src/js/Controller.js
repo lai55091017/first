@@ -35,6 +35,11 @@ class Controller {
         console.log('已將門從FI.js傳遞至Ctrlr.js')
     }
 
+    setChairAndTable(modelChair, modelTable) {
+        this.modelChair = modelChair;
+        this.modelTable = modelTable;
+    }
+
     //設置移動參數
     __setupMovement() {
         this.playerHight = 1.66;
