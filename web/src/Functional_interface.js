@@ -523,7 +523,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
+async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
     try {
         // 清理舊場景
         clearSceneModelsAndPhysics();
@@ -585,10 +585,10 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         }
         // 找書架
         const bookshelves = [];
-        for (let i = 35; i <= 66; i++) {
+        for (let i = 263; i <= 294; i++) {
             // 使用 padStart(3, '0') 來填充，以確保數字是三位數
-            const meshName = `Mesh${i.toString().padStart(3, '0')}`;
-            const modelBookshelf = library.scene.getObjectByName(meshName); // 尋找名稱格式為 Mesh[i] 的物件
+            // const meshName = `Mesh${i.toString().padStart(3, '0')}`;
+            const modelBookshelf = library.scene.getObjectByName(`Mesh${i}`); // 尋找名稱格式為 Mesh[i] 的物件
             if (modelBookshelf) {
                 modelBookshelf.name = 'Bookshelf'; // 命名書架
                 bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
