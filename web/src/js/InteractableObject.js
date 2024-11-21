@@ -8,6 +8,16 @@ const InteractableObject = [
         chineseName: '門',
         englishName: 'Door'
         // 之後在這裡加入語音
+    },
+    {
+        id: 'Chair',
+        chineseName: '椅子',
+        englishName: 'Chair'
+    },
+    {
+        id: 'Table',
+        chineseName: '桌子',
+        englishName: 'Table'
     }
     // 其他物件再這裡添加
 ];

@@ -489,6 +489,12 @@ async function loadModels() {
         libDoorL.name = 'Door';
         libDoorR.name = 'Door';
 
+        // 找桌子和椅子
+        const modelChair = library.scene.getObjectByName('Chair5');
+        const modelTable = library.scene.getObjectByName('LIB_Table_1');
+        modelChair.name = 'Chair';
+        modelTable.name = 'Table';
+
         if (libDoorL && libDoorR) {
             console.log('好消息，找到圖書館的門了');
             libDoorL.layers.set(1);
