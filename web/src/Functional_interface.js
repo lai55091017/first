@@ -602,7 +602,7 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
             controller.setDoors(libDoorL, libDoorR);
             controller.setChairs(chairs);
             controller.setTables(tables);
-            controller.setCounters(modelCounter);
+            controller.setCounters(counters);
             controller.setBookshelves(bookshelves);
         } else {
             console.log('壞消息，沒門!');
