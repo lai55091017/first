@@ -7,19 +7,11 @@
     --message-item-avatar-width: 50px;
     --message-item-avatar-margin: 15px;
     --background-color: #e0e1e2;
-    --menu-text-color: #afaeb3;
-    --menu-icon-background-color: #e3e3e3;
-    --menu-btn-hover: #e4d89b;
-    --meni-icon-shadow: 0 0 0px 5px rgba(255, 255, 255, .8);
-    --border-color: #595556;
-    --border-hover-color: #b5b5b5;
     --box-background-color: #ffffffbc;
-    --menu-border: 3px solid var(--border-color);
-    --menu-border-hover: 3px solid var(--border-hover-color);
-    --menu-border-highlight: 3px solid #f3f4f6;
-    --option-background-color: #ece9ec;
-    --option-background--hover-color: #ccc;
-    --avatar-background: #3a3a3a;
+    --btn_color: #586380;
+    --hover_color: #d3e3fd;
+
+
 }
 
 ::-webkit-scrollbar {
@@ -41,12 +33,11 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: '微軟正黑體';
+    font-family: sans-serif;
     letter-spacing: 1px;
 }
 
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     /* box-sizing: border-box; */
@@ -230,6 +221,25 @@ body {
     flex-direction: row;
     justify-items: center;
 
+    .ui_logo {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        flex-direction: row;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        margin: 30px;
+
+        .title {
+            color: rgb(255, 255, 255);
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+            font-family: 'impact';
+            font-weight: lighter;
+        }
+    }
+
     .ui_btn {
         width: 70px;
         height: 70px;
@@ -324,34 +334,34 @@ body {
             background: var(--background-color);
             border-radius: 0 0 20px 20px;
 
-            .avatar {
-                position: absolute;
-                top: 50%;
-                left: 0;
-                overflow: hidden;
-                box-sizing: border-box;
-                margin-left: 10px;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                background: #c2c2c2;
-                transform: translateY(-50%);
-                -webkit-user-select: none;
-                user-select: none;
+            // .avatar {
+            //     position: absolute;
+            //     top: 50%;
+            //     left: 0;
+            //     overflow: hidden;
+            //     box-sizing: border-box;
+            //     margin-left: 10px;
+            //     width: 50px;
+            //     height: 50px;
+            //     border-radius: 50%;
+            //     background: #c2c2c2;
+            //     transform: translateY(-50%);
+            //     -webkit-user-select: none;
+            //     user-select: none;
 
-                img {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    background: var(--avatar-background);
-                    object-fit: contain;
-                    clip-path: var(--avatar-image-clip-path-bilibiliwiki-only)
-                }
+            //     img {
+            //         width: 100%;
+            //         height: 100%;
+            //         border-radius: 50%;
+            //         background: var(--avatar-background);
+            //         object-fit: contain;
+            //         clip-path: var(--avatar-image-clip-path-bilibiliwiki-only)
+            //     }
 
-                &:hover {
-                    box-shadow: 5px 5px 15px #aaa
-                }
-            }
+            //     &:hover {
+            //         box-shadow: 5px 5px 15px #aaa
+            //     }
+            // }
 
             #message_input {
                 flex: 1;
@@ -663,15 +673,14 @@ body {
 /****------------------------點擊模型出現跳窗----------------****/
 .model_info {
     position: absolute;
-    border: none;
+    border: 3px solid #667293;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 20px;
     background-color: var(--box-background-color);
-    width: 350px;
-    height: 200px;
-    bottom: 5px;
-    left: 5px;
+    width: 30vw;
+    bottom: 10px;
+    align-self: center;
 
     p {
         display: flex;
@@ -679,15 +688,49 @@ body {
         align-items: center;
         flex-direction: column;
         margin: 30px;
-        font-family: '微軟正黑體';
         letter-spacing: 1px;
-        font-size: 20px;
+        font-size: 24px;
         font-weight: bold;
-        color: #424d6b;
+        color: var(--btn_color);
     }
 
     ;
 
+}
+
+/*-------------------切換場景按鈕---------------------*/
+#scene_options {
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    z-index: 999;
+    align-self: center;
+    box-shadow: var(--btn_color) 5px 5px 5px;
+    border-radius: 10px;
+    background-color: #e0e0e0af;
+    top: 50vh;
+    border: none;
+
+    button {
+        padding: 10px;
+        width: 150px;
+        height: 60px;
+        margin: 10px;
+        border-radius: 10px;
+        border-color: var(--btn_color);
+        transition: .2s;
+        cursor: pointer;
+        font-weight: bold;
+        color: var(--btn_color);
+
+        &:hover {
+            transition: .2s;
+            background-color: var(--hover_color);
+            box-shadow: 0 0 15px #fffffd;
+        }
+    }
 }
 
 /*********拼字遊戲*********/

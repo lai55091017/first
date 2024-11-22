@@ -35,7 +35,7 @@ const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
 // const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
-const connect = new Connect( 'https://my-websocke-server3-485354531854.asia-east1.run.app');
+const connect = new Connect('https://my-websocke-server3-485354531854.asia-east1.run.app');
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
 auth.onAuthStateChanged();
@@ -633,17 +633,17 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
 
 function showSceneOptions() {
     const menu = document.createElement('div');
-    menu.id = 'scene-options';
-    menu.style.position = 'absolute';
-    menu.style.top = '50%';
-    menu.style.left = '50%';
-    menu.style.transform = 'translate(-50%, -50%)';
-    menu.style.padding = '20px';
-    menu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    menu.style.color = 'white';
-    menu.style.borderRadius = '10px';
-    menu.style.textAlign = 'center';
-    menu.style.zIndex = '1000';
+    menu.id = 'scene_options';
+    // menu.style.position = 'absolute';
+    // menu.style.top = '50%';
+    // menu.style.left = '50%';
+    // menu.style.transform = 'translate(-50%, -50%)';
+    // menu.style.padding = '20px';
+    // menu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    // menu.style.color = 'white';
+    // menu.style.borderRadius = '10px';
+    // menu.style.textAlign = 'center';
+    // menu.style.zIndex = '1000';
 
     const scenes = {
         'Library': './mesh/glb/Library_update_Final_4.glb',

@@ -374,9 +374,10 @@ class Controller {
 
         const crosshair = document.getElementById('crosshair');
 
+
         if (intersects.length > 0) {
             crosshair.style.borderColor = '#ff0000d4'; // 设置十字准心的颜色
-            crosshair.style.transform = 'scale(1.5)'; // 放大 2 倍
+            crosshair.style.transform = 'scale(1.5)'; // 放大 1.5 倍
             crosshair.style.transition = 'all 0.3s ease'; // 平滑过渡效果
             crosshair.classList.add('active');
         }
@@ -408,12 +409,12 @@ class Controller {
             //popupWindow先隱藏
             this.popupWindow.hide();
             console.log(object.name);
-            const originalColor = object.material.color.clone();
+            const originalColor = object.material.emissive.clone();
+
 
             if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
-                const color = new THREE.Color('#ea8085');
-                object.material.color = color;
-
+                object.material.emissive.set(1, 1, 1); //選擇顏色發光
+                object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
                 this.popupWindow.show(
@@ -427,7 +428,7 @@ class Controller {
                 setTimeout(() => {
                     this.isClickable = true;
                     this.popupWindow.hide();
-                    object.material.color = originalColor;
+                    object.material.emissive = originalColor;
                 }, 3000);
             } else {
                 console.log('無可互動物件');
