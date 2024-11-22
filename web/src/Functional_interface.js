@@ -15,7 +15,7 @@ import * as menu from './js/menu.js';
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
 import Auth from './js/firebase/auth';
-import { count } from "firebase/firestore";
+// import { count } from "firebase/firestore";
 
 
 const db = new FirebaseDB;
@@ -33,8 +33,9 @@ const cannonDebugger = new CannonDebugger(scene, cannon_world, {
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
-const connect = new Connect('ws://localhost:8080');
+// const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
+const connect = new Connect( 'https://my-websocke-server3-485354531854.asia-east1.run.app');
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
 auth.onAuthStateChanged();
@@ -147,6 +148,7 @@ function init() {
 
 let playerBody
 let targetBody
+let currentPlayer = null; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -182,6 +184,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加角色
             camera.add(character);
+            currentPlayer = playerBody; // 保存玩家角色到全域變數
             animate();
 
         } else {
@@ -483,7 +486,7 @@ function clearSceneModelsAndPhysics() {
         if (object instanceof THREE.Mesh) {
             if (object.geometry) {
                 object.geometry.dispose();
-                console.log(`已釋放幾何體: ${object.name}`);
+                // console.log(`已釋放幾何體: ${object.name}`);
             }
             if (object.material) {
                 if (Array.isArray(object.material)) {
@@ -491,7 +494,7 @@ function clearSceneModelsAndPhysics() {
                 } else {
                     object.material.dispose();
                 }
-                console.log(`已釋放材質: ${object.name}`);
+                // console.log(`已釋放材質: ${object.name}`);
             }
         }
 
@@ -501,13 +504,13 @@ function clearSceneModelsAndPhysics() {
             const index = cannon_world.bodies.indexOf(physicsBody);
             if (index !== -1) {
                 cannon_world.bodies.splice(index, 1);
-                console.log(`已從物理世界移除剛體: ${object.name}`);
+                // console.log(`已從物理世界移除剛體: ${object.name}`);
             }
         }
 
         // 從場景中移除物件
         if (object.parent === scene) {
-            console.log(`已從場景中移除容器: ${object.name}`);
+            // console.log(`已從場景中移除容器: ${object.name}`);
             scene.remove(object);
         }
     }
@@ -523,7 +526,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
+async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
     try {
         // 清理舊場景
         clearSceneModelsAndPhysics();
@@ -533,6 +536,16 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
         let library = await icas.loadGLTF(scenePath); // 非同步加載場景文件
         scene.add(library.scene);
         console.log('場景加載完成:', library.scene);
+
+
+        // 將玩家移動到 (0, 0, 0)
+        console.log(currentPlayer);
+        if (currentPlayer) {
+            currentPlayer.position.set(0, 0, 0); // 設定玩家位置
+            console.log('玩家已移動到 (0, 0, 0)');
+        } else {
+            console.warn('玩家角色未初始化，無法移動');
+        }
 
         // 調試場景結構
         // library.scene.traverse((child) => {
@@ -547,72 +560,68 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_3.glb') {
             }
         });
 
-        // 處理場景中特定物件（如門）
-        const libDoorL = library.scene.getObjectByName('LIB_Door_Left');
-        const libDoorR = library.scene.getObjectByName('LIB_Door_Right');
-        if (libDoorL && libDoorR) {
-            libDoorL.name = 'Door';
-            libDoorR.name = 'Door';
-        }
-        // 找椅子
-        const chairs = [];
-        for (let i = 1; i <= 5; i++) { // Chair_[i]_[j]
-            for (let j = 1; j <= 4; j++) {
-                const modelChair = library.scene.getObjectByName(`Chair_${i}_${j}`); // 尋找名稱格式為 Chair_[i]_[j] 的物件
-                if (modelChair) {
-                    modelChair.name = 'Chair'; // 命名椅子
-                    chairs.push(modelChair);  // 把每個 Chair 放入陣列
+        // 處理場景中特定物件
+        function processSceneObjects(scene) {
+            const objects = {
+                doors: [],
+                chairs: [],
+                tables: [],
+                counters: [],
+                bookshelves: []
+            };
+
+            // 使用正則表達式匹配物件名稱
+            scene.traverse((child) => {
+                if (child.isMesh && child.name) {
+                    if (/LIB_Door_(Left|Right)/.test(child.name)) {
+                        child.name = 'Door';
+                        objects.doors.push(child);
+                    } else if (/^Chair_\d+_\d+$/.test(child.name)) {
+                        child.name = 'Chair';
+                        objects.chairs.push(child);
+                    } else if (/^LIB_Table_\d+$/.test(child.name)) {
+                        child.name = 'Table';
+                        objects.tables.push(child);
+                    } else if (/^counter_\d+$/.test(child.name)) {
+                        child.name = 'Counter';
+                        objects.counters.push(child);
+                    } else if (/^Mesh\d{3}$/.test(child.name)) {
+                        child.name = 'Bookshelf';
+                        objects.bookshelves.push(child);
+                    }
                 }
-            }
-        }
-        // 找桌子
-        const tables = [];
-        for (let i = 1; i <= 4; i++) {
-            const modelTable = library.scene.getObjectByName(`LIB_Table_${i}`); // 尋找名稱格式為 LIB_Table_[i] 的物件
-            if (modelTable) {
-                modelTable.name = 'Table'; // 命名桌子
-                tables.push(modelTable);  // 把每個 Table 放入陣列
-            }
-        }
-        // 找櫃台
-        const counters = [];
-        for (let i = 1; i <= 2; i++) {
-            const modelCounter = library.scene.getObjectByName(`counter_${i}`); // 尋找名稱格式為 counter_[i] 的物件
-            if (modelCounter) {
-                modelCounter.name = 'Counter'; // 命名櫃台
-                counters.push(modelCounter);  // 把每個 Counter 放入陣列
-            }
-        }
-        // 找書架
-        const bookshelves = [];
-        for (let i = 35; i <= 66; i++) {
-            // 使用 padStart(3, '0') 來填充，以確保數字是三位數
-            const meshName = `Mesh${i.toString().padStart(3, '0')}`;
-            const modelBookshelf = library.scene.getObjectByName(meshName); // 尋找名稱格式為 Mesh[i] 的物件
-            if (modelBookshelf) {
-                modelBookshelf.name = 'Bookshelf'; // 命名書架
-                bookshelves.push(modelBookshelf);  // 把每個 Bookshelf 放入陣列
+            });
+
+            // 確保找到所有關鍵物件
+            if (
+                objects.doors.length === 2 &&
+                objects.chairs.length > 0 &&
+                objects.tables.length > 0 &&
+                objects.counters.length > 0 &&
+                objects.bookshelves.length > 0
+            ) {
+                console.log('好消息，找到圖書館的所有物件了');
+                // 設置圖層
+                objects.doors.forEach((door) => door.layers.set(1));
+                objects.chairs.forEach((chair) => chair.layers.set(1));
+                objects.tables.forEach((table) => table.layers.set(1));
+                objects.counters.forEach((counter) => counter.layers.set(1));
+                objects.bookshelves.forEach((bookshelf) => bookshelf.layers.set(1));
+
+                // 傳遞到控制器
+                controller.setDoors(objects.doors[0], objects.doors[1]);
+                controller.setChairs(objects.chairs);
+                controller.setTables(objects.tables);
+                controller.setCounters(objects.counters);
+                controller.setBookshelves(objects.bookshelves);
+            } else {
+                console.log('壞消息，某些關鍵物件遺失!');
             }
         }
 
-        if (libDoorL && libDoorR && chairs.length > 0 && tables.length > 0 && counters.length > 0 && bookshelves.length > 0) {
-            console.log('好消息，找到圖書館的門了');
-            // 設置圖層
-            libDoorL.layers.set(1);
-            libDoorR.layers.set(1);
-            chairs.forEach(chair => chair.layers.set(1));
-            tables.forEach(table => table.layers.set(1));
-            counters.forEach(counter => counter.layers.set(1));
-            bookshelves.forEach(bookshelf => bookshelf.layers.set(1));
-            // 傳到Ctrl.js
-            controller.setDoors(libDoorL, libDoorR);
-            controller.setChairs(chairs);
-            controller.setTables(tables);
-            controller.setCounters(counters);
-            controller.setBookshelves(bookshelves);
-        } else {
-            console.log('壞消息，沒門!');
-        }
+        // 在加載場景後執行處理
+        processSceneObjects(library.scene);
+
 
     } catch (error) {
         console.error('加載場景失敗:', error);
@@ -637,9 +646,9 @@ function showSceneOptions() {
     menu.style.zIndex = '1000';
 
     const scenes = {
-        'Library': './mesh/glb/Library_update_Final_3.glb',
-        'Home': './mesh/glb/Home_4.glb',
-        'School': './mesh/glb/School_2.glb',
+        'Library': './mesh/glb/Library_update_Final_4.glb',
+        'Home': './mesh/glb/Home_6.glb',
+        'School': './mesh/glb/School_3.glb',
     };
 
     Object.entries(scenes).forEach(([sceneName, scenePath]) => {
