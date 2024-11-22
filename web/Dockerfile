@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # 复制应用代码
-COPY .server.js .server.js
+COPY . .
 
 # 暴露端口
 EXPOSE 8080

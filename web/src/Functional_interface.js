@@ -35,7 +35,7 @@ const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
 // const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
-const connect = new Connect( 'https:my-websocke-server2-485354531854.asia-east1.run.app');
+const connect = new Connect( 'https://my-websocke-server3-485354531854.asia-east1.run.app');
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
 auth.onAuthStateChanged();
