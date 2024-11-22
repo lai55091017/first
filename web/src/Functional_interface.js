@@ -647,7 +647,7 @@ function showSceneOptions() {
 
     const scenes = {
         'Library': './mesh/glb/Library_update_Final_6.glb',
-        'Home': './mesh/glb/Home_6.glb',
+        'Home': './mesh/glb/Home_7.glb',
         'School': './mesh/glb/School_3.glb',
     };
 
