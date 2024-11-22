@@ -526,7 +526,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
+async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
     try {
         // 清理舊場景
         clearSceneModelsAndPhysics();
@@ -585,7 +585,7 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_4.glb') {
                     } else if (/^counter_\d+$/.test(child.name)) {
                         child.name = 'Counter';
                         objects.counters.push(child);
-                    } else if (/^Mesh\d{3}$/.test(child.name)) {
+                    } else if (/^Bookshelf_\d+$/.test(child.name)) {
                         child.name = 'Bookshelf';
                         objects.bookshelves.push(child);
                     }
@@ -646,7 +646,7 @@ function showSceneOptions() {
     menu.style.zIndex = '1000';
 
     const scenes = {
-        'Library': './mesh/glb/Library_update_Final_4.glb',
+        'Library': './mesh/glb/Library_update_Final_6.glb',
         'Home': './mesh/glb/Home_6.glb',
         'School': './mesh/glb/School_3.glb',
     };
