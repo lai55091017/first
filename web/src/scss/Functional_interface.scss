@@ -8,7 +8,7 @@
     --message-item-avatar-margin: 15px;
     --background-color: #e0e1e2;
     --box-background-color: #ffffffbc;
-    --btn_color: #586380;
+    --btn_color: #425d8a;
     --hover_color: #d3e3fd;
 
 
@@ -673,11 +673,11 @@ body {
 /****------------------------點擊模型出現跳窗----------------****/
 .model_info {
     position: absolute;
-    border: 3px solid #667293;
+    border: 8px solid #425d8a;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 20px;
-    background-color: var(--box-background-color);
+    background-color: #fdeeea;
     width: 30vw;
     bottom: 10px;
     align-self: center;
