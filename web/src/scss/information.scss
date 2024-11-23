@@ -5,9 +5,19 @@
     box-sizing: border-box;
 }
 
+:root {
+    --btn_color: #425d8a;
+    --btn_hover: #c6dbfe;
+}
+
+@font-face {
+    font-family: 'Fredoka';
+    src: url(./text/Fredoka/Fredoka-VariableFont_wdth\,wght.ttf);
+
+}
+
 
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     /* box-sizing: border-box; */
@@ -151,26 +161,31 @@ body {
             transition: .2s;
             background-color: rgb(255, 255, 255);
 
+            h1 {
+                color: var(--btn_color);
+                margin: 15px;
+            }
+
             &:hover {
                 transform: scale(1.02);
-                box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+                box-shadow: 0px 8px 0px var(--btn_hover);
                 transition: .2s;
 
             }
 
             button {
-                color: #586380;
+                color: var(--btn_color);
                 padding: .5rem;
                 border-radius: .5rem;
                 border: none;
                 height: 2.5rem;
                 transition: .2s;
-                margin-top: 3.5rem;
+                margin-top: 20px;
                 background-color: #ffffff;
                 cursor: pointer;
 
                 &:hover {
-                    background-color: #c6dbfe;
+                    background-color: var(--btn_hover);
                     transition: .2s;
                 }
             }
@@ -193,10 +208,10 @@ dialog {
     left: 50%;
     transform: translate(-50%, -50%);
 
-    a {
-        color: #151414;
-        font-family: impact;
-        font-size: 5em;
+    h1 {
+        font-size: 3rem;
+        margin: 30px;
+        color: var(--btn_color);
     }
 
     img {
@@ -213,8 +228,9 @@ dialog {
         transition: .2s;
         position: absolute;
         width: 2.5rem;
-        top: 10px;
         right: 10px;
+        top: 0px;
+        margin: 20px;
 
         &:hover {
             transition: .2s;
@@ -259,7 +275,7 @@ dialog {
         .title {
             color: rgb(255, 255, 255);
             font-size: 5rem;
-            font-family: 'Impact';
+            font-weight: bolder;
         }
     }
 }

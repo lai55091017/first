@@ -1,3 +1,15 @@
+/*--------文字-------*/
+
+@font-face {
+    font-family: 'Fredoka';
+    src: url(./text/Fredoka/Fredoka-VariableFont_wdth\,wght.ttf);
+
+}
+
+* {
+    font-family: 'Fredoka';
+}
+
 /*---------------------------最上排選擇欄位and滑鼠觸碰事件-------------------------------*/
 
 #menu {
@@ -19,7 +31,7 @@
         /*左右,上下陰影位置,陰影模糊度*/
         background-color: #909090b4;
         padding-bottom: 30px;
-        margin: -15px 100px 0px 100px;
+        margin: -10px 100px 0px 80px;
         transition: .2s;
     }
 
@@ -181,7 +193,6 @@ a {
 #home_link {
     color: #ffffff;
     font-weight: bold;
-    font-family: '微軟正黑體';
     letter-spacing: 1px;
     font-size: 15px;
 }

@@ -17,6 +17,7 @@ class PopupWindow {
 
     show(chineseName, englishName, position) {
         this.popup.innerHTML = `
+            <h1> CARD</h1>
             <p>中文名稱：${chineseName}</p>
             <p>英文名稱：${englishName}</p>
         `; // 這裡使用的是``而不是''，``可以創建多行字串、使用${}直接插入變數或表達式。而''只能創建單行字串且需使用+來串接變數
