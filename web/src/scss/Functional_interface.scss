@@ -221,7 +221,7 @@ body {
 
 @font-palette-values --text {
     font-family: Rocher;
-    base-palette: 0;
+    base-palette: 9;
 }
 
 @font-face {
@@ -254,7 +254,7 @@ body {
             font-size: 2.5rem;
             letter-spacing: 1px;
             font-family: 'Rocher';
-            font-variation-settings: "BVEL" 60, "SHDW" 60;
+            font-variation-settings: "BVEL" 0, "SHDW" 30;
             //BVEL：字體的 bevel（浮雕）效果。
             // SHDW：字體的 shadow（陰影）效果
         }
