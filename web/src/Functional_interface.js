@@ -618,10 +618,10 @@ async function loadModels(scenePath = './mesh/glb/total.glb') {
             if (
                 objects.doors.length === 2 ||
                 objects.chairs.length > 0 ||
-                objects.tables.length >  0 ||
-                objects.counters.length >  0 ||
-                objects.bookshelves.length >  0 ||
-                objects.sofas.length >  0
+                objects.tables.length > 0 ||
+                objects.counters.length > 0 ||
+                objects.bookshelves.length > 0 ||
+                objects.sofas.length > 0
             ) {
                 console.log('好消息，找到圖書館的所有物件了');
                 // 設置圖層
@@ -714,38 +714,10 @@ function showSceneOptions() {
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
+            }
 
-//     const scenes = {
-//         'Library': './mesh/glb/Library_update_Final_6.glb',
-//         'Home': './mesh/glb/Home_7.glb',
-//         'School': './mesh/glb/School.glb',
-//     };
-
-//     Object.entries(scenes).forEach(([sceneName, scenePath]) => {
-//         const button = document.createElement('button');
-//         button.textContent = `${sceneName}`;
-//         // button.style.margin = '10px';
-//         button.onclick = async () => {
-//             await loadModels(scenePath); // 使用非同步的場景加載
-
-//             document.body.removeChild(menu); // 清除選單
-//             console.log(` find the scene: ${sceneName}`);
-
-//             scene.position.set(0, 0, 0);// 本地位置
-//             const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
-//             //將本地座標轉換為世界座標
-//             scene.localToWorld(worldPosition);
-//             //將本地座標轉換為世界座標
-
-//             console.log(`本地座標場景位置:`, scene.position);
-//             console.log(`世界座標場景位置:`, worldPosition);
-
-//             currentPlayer = true; // 保存玩家角色到全域變數
-//             console.log(currentPlayer);
-
-//             }
-//             menu.appendChild(button);
-//         });
+            menu.appendChild(button);
+        });
 
 
     // // 假設場景中有目標點和玩家角色
