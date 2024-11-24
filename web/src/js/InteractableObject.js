@@ -25,6 +25,11 @@ const InteractableObject = [
         id: 'Bookshelf',
         chineseName: '書架',
         englishName: 'Bookshelf'
+    },
+    {
+        id: 'Sofa',
+        chineseName: '沙發',
+        englishName: 'Sofa'
     }
 ];
 

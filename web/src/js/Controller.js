@@ -27,6 +27,7 @@ class Controller {
         this.tables = [];
         this.counters = [];
         this.bookshelves = [];
+        this.sofas = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -59,6 +60,11 @@ class Controller {
     // 設置書架
     setBookshelves(bookshelves) {
         this.bookshelves = bookshelves;
+    }
+
+    // 設置沙發
+    setSofas(sofas) {
+        this.sofas = sofas;
     }
 
     //設置移動參數
@@ -415,7 +421,7 @@ class Controller {
             // console.log(object.name);
             const originalColor = object.material.emissive.clone();
 
-            if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
+            if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' || object.name === 'Sofa') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗
