@@ -33,9 +33,10 @@ const cannonDebugger = new CannonDebugger(scene, cannon_world, {
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
-// const connect = new Connect('ws://localhost:8080');
+const connect = new Connect('ws://localhost:8080');
 // const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
-const connect = new Connect('https://my-websocke-server3-485354531854.asia-east1.run.app');
+// const connect = new Connect('https://my-websocke-server3-485354531854.asia-east1.run.app');
+
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
 auth.onAuthStateChanged();
@@ -344,7 +345,7 @@ function animate() {
 
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
-    // cannonDebugger.update()
+    cannonDebugger.update()
 
     checkCollisionEnd()
 
@@ -539,10 +540,8 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Home_7.glb') {
+async function loadModels(scenePath = './mesh/glb/total.glb') {
     try {
-        // 清理舊場景
-        clearSceneModelsAndPhysics();
         init_scene();
         // 加載新場景
         console.log(`正在加載場景：${scenePath}`);
@@ -661,46 +660,121 @@ function showSceneOptions() {
     const menu = document.createElement('div');
     menu.id = 'scene_options';
 
+    // const scenes = {
+    //     'Library': './mesh/glb/Library_update_Final_6.glb',
+    //     'Home': './mesh/glb/Home_8.glb',
+    //     'School': './mesh/glb/School.glb',
+    // };
+    const scenes = [
+        'Library',
+        'Home',
+        'School',
+    ];
 
-    const scenes = {
-        'Library': './mesh/glb/Library_update_Final_6.glb',
-        'Home': './mesh/glb/Home_7.glb',
-        'School': './mesh/glb/School.glb',
-    };
+    scenes.forEach(
+        async (sceneName) => {
+            const button = document.createElement('button');
+            button.textContent = `${sceneName}`;
+            // button.style.margin = '10px';
+            button.onclick = async () => {
+                // 清理舊場景
+                // await loadModels(point); // 使用非同步的場景加載
 
-    Object.entries(scenes).forEach(([sceneName, scenePath]) => {
-        const button = document.createElement('button');
-        button.textContent = `${sceneName}`;
-        // button.style.margin = '10px';
-        button.onclick = async () => {
-            await loadModels(scenePath); // 使用非同步的場景加載
+                document.body.removeChild(menu); // 清除選單
+                console.log(` find the scene: ${sceneName}`);
 
-            document.body.removeChild(menu); // 清除選單
-            console.log(` find the scene: ${sceneName}`);
+                scene.position.set(0, 0, 0);// 本地位置
+                const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
+                //將本地座標轉換為世界座標
+                scene.localToWorld(worldPosition);
+                //將本地座標轉換為世界座標
 
-            scene.position.set(0, 0, 0);// 本地位置
-            const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
-            //將本地座標轉換為世界座標
-            scene.localToWorld(worldPosition);
-            //將本地座標轉換為世界座標
+                console.log(`本地座標場景位置:`, scene.position);
+                console.log(`世界座標場景位置:`, worldPosition);
 
-            console.log(`本地座標場景位置:`, scene.position);
-            console.log(`世界座標場景位置:`, worldPosition);
+                currentPlayer = true; // 保存玩家角色到全域變數
+                // console.log(currentPlayer);
 
-            currentPlayer = true; // 保存玩家角色到全域變數
-            console.log(currentPlayer);
+                // 將玩家移動到 (0, 0, 0)
+                if (button.textContent == 'Library') {
+                    // playerBody.position.set(1, 1, 0); // 設定玩家位置
+                    playerBody.position.set(0, 0, 0); // 將角色移動到目標位置
+                    console.log(`角色已移動到: ${sceneName}, 位置: `);
+                    console.log(`玩家位置:`, playerBody.position);
+                } else if (button.textContent == 'Home') {
+                    console.log(`角色已移動到: ${sceneName} `);
+                    playerBody.position.set(20, 0, 1); // 將角色移動到目標位置
+                    console.log(`玩家位置:`, playerBody.position);
 
-            // 將玩家移動到 (0, 0, 0)
-            if (currentPlayer) {
-                playerBody.position.set(1, 1, 0); // 設定玩家位置
-                console.log(`玩家位置:`, playerBody.position);
-            } else {
-                console.log(`玩家角色未初始化`);
-            }
+                } else if (button.textContent == 'School') {
+                    console.log(`角色已移動到: ${sceneName}`);
+                    playerBody.position.set(2, 0, 2);
+                    console.log(`玩家位置: `, playerBody.position);
 
-        }
-        menu.appendChild(button);
-    });
+                } else {
+                    console.log(`玩家角色未初始化`);
+                }
+
+//     const scenes = {
+//         'Library': './mesh/glb/Library_update_Final_6.glb',
+//         'Home': './mesh/glb/Home_7.glb',
+//         'School': './mesh/glb/School.glb',
+//     };
+
+//     Object.entries(scenes).forEach(([sceneName, scenePath]) => {
+//         const button = document.createElement('button');
+//         button.textContent = `${sceneName}`;
+//         // button.style.margin = '10px';
+//         button.onclick = async () => {
+//             await loadModels(scenePath); // 使用非同步的場景加載
+
+//             document.body.removeChild(menu); // 清除選單
+//             console.log(` find the scene: ${sceneName}`);
+
+//             scene.position.set(0, 0, 0);// 本地位置
+//             const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
+//             //將本地座標轉換為世界座標
+//             scene.localToWorld(worldPosition);
+//             //將本地座標轉換為世界座標
+
+//             console.log(`本地座標場景位置:`, scene.position);
+//             console.log(`世界座標場景位置:`, worldPosition);
+
+//             currentPlayer = true; // 保存玩家角色到全域變數
+//             console.log(currentPlayer);
+
+//             }
+//             menu.appendChild(button);
+//         });
+
+
+    // // 假設場景中有目標點和玩家角色
+    // const targetPoints =
+    // {
+    //     'library': 'new THREE.Vector3(0, 0, 0)',
+    //     'home': ' new THREE.Vector3(20, 0, 0) ',
+    //     'school': 'new THREE.Vector3(-20, 0, 0) '
+    // };
+
+    // Object.entries(targetPoints).forEach(([pointName, point]) => {
+    //     const button = document.createElement("button");
+    //     button.textContent = ` ${ pointName }`;
+    //     console.log(`目標點: ${ pointName }, 位置: ${ point }`);
+    //     document.body.removeChild(menu); // 清除選單
+
+    //     // 按下按鈕時移動玩家到該目標點
+    //     button.onclick = async () => {
+    //         if (currentPlayer) {
+    //             playerBody.position.copy(point); // 將角色移動到目標位置
+    //             console.log(`角色已移動到: ${ pointName }, 位置: `, point);
+    //         } else {
+    //             console.error("玩家角色未初始化！");
+    //         }
+    //     };
+
+    //     // 添加按鈕到頁面
+    //     menu.appendChild(button);
+    // });
 
     const closeButton = document.createElement('button');
     closeButton.textContent = '取消';

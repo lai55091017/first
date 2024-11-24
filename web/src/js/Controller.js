@@ -376,7 +376,9 @@ class Controller {
         raycaster.setFromCamera(mouse, this.camera);
         raycaster.layers.set(1);
         raycaster.precision = 0.00001;
+        raycaster.far = 8;// 調整射線的長度
         const intersects = raycaster.intersectObjects(this.scene.children, true);
+
 
         const crosshair = document.getElementById('crosshair');
 
@@ -403,18 +405,14 @@ class Controller {
         raycaster.setFromCamera(mouse, this.camera);
         raycaster.layers.set(1);
         raycaster.precision = 0.00001;
+        raycaster.far = 8;// 調整射線的長度
         // 檢查是否與門物件相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
         if (intersects.length > 0 && this.isClickable) {
             // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
-
-
-            const objectposition = intersects[0].point;//取得物件世界坐標
-
-            //世界位置：物體相對於整個場景的位置
-            console.log(`世界坐標碰撞點: x=${objectposition.x},y=${objectposition.x}, z=${objectposition.z}`);
+            console.log(object.name);
 
             this.isClickable = false; // 禁止点击操作
 
