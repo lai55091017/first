@@ -146,8 +146,8 @@ function init() {
 
 /*********************************** Websocket Event *********************************************/
 
-let playerBody
-let targetBody
+let playerBody;
+let targetBody;
 let currentPlayer = null; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
@@ -167,6 +167,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加物理剛體
             playerBody = Player_body(character.getMesh(), 0.5, 1.75);
+            // camera.userData.physicsBody = playerBody;
             camera.userData.physicsBody = playerBody;
 
             // // 偵測玩家碰撞
@@ -184,11 +185,20 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加角色
             camera.add(character);
-            currentPlayer = playerBody; // 保存玩家角色到全域變數
+            currentPlayer = true; // 保存玩家角色到全域變數
+            console.log(currentPlayer);
+            // 將玩家移動到 (0, 0, 0)
+            if (currentPlayer) {
+                playerBody.position.set(1, 1, 0); // 設定玩家位置
+                console.log(`玩家位置:`, playerBody.position);
+            } else {
+                console.log(`玩家角色未初始化`);
+            }
             animate();
 
         } else {
             scene.add(character);
+            console.log('其他玩家加入', uuid);
         }
     }
 }
@@ -290,12 +300,17 @@ function init_scene() {
     scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
 function init_camera() {
-    camera.fov = 75;
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.fov = 75;//設置相機的視野範圍,1超近-100超遠
+
+    camera.aspect = window.innerWidth / window.innerHeight;//是一個屬性，用於定義相機的長寬比（aspect ratio）
+
+    // near 表示最近的可見距離，far 表示最遠的可見距離
     camera.near = 0.1;
     camera.far = 100;
     camera.layers.enableAll();//相機能顯示所有的層
-    camera.updateProjectionMatrix();
+    camera.updateProjectionMatrix();//更新相機的投影矩陣
+    //投影矩陣 是將 3D 場景投影到 2D 屏幕上的數學模型，用於定義相機的視野範圍和投影方式
+    //當 camera.aspect 發生變化時，必須調用 camera.updateProjectionMatrix()，以重新計算相機的投影矩陣。
 }
 
 function init_renderer() {
@@ -314,8 +329,6 @@ function init_other() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
-
-
 
 function animate() {
 
@@ -535,17 +548,16 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
         console.log(`正在加載場景：${scenePath}`);
         let library = await icas.loadGLTF(scenePath); // 非同步加載場景文件
         scene.add(library.scene);
-        console.log('場景加載完成:', library.scene);
+        console.log(`場景加載完成: ${scenePath}`);
 
 
-        // 將玩家移動到 (0, 0, 0)
-        console.log(currentPlayer);
-        if (currentPlayer) {
-            currentPlayer.position.set(0, 0, 0); // 設定玩家位置
-            console.log('玩家已移動到 (0, 0, 0)');
-        } else {
-            console.warn('玩家角色未初始化，無法移動');
-        }
+        scene.position.set(0, 0, 0);// 本地位置
+        const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
+        //將本地座標轉換為世界座標
+        scene.localToWorld(worldPosition);
+
+        console.log(`本地座標場景位置:`, scene.position);
+        console.log(`世界座標場景位置:`, worldPosition);
 
         // 調試場景結構
         // library.scene.traverse((child) => {
@@ -629,42 +641,56 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
 }
 
 
-
+/*-----------------------------------場景切換--------------------------------------------------*/
 
 function showSceneOptions() {
     const menu = document.createElement('div');
     menu.id = 'scene_options';
-    // menu.style.position = 'absolute';
-    // menu.style.top = '50%';
-    // menu.style.left = '50%';
-    // menu.style.transform = 'translate(-50%, -50%)';
-    // menu.style.padding = '20px';
-    // menu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    // menu.style.color = 'white';
-    // menu.style.borderRadius = '10px';
-    // menu.style.textAlign = 'center';
-    // menu.style.zIndex = '1000';
+
 
     const scenes = {
         'Library': './mesh/glb/Library_update_Final_6.glb',
-        'Home': './mesh/glb/Home_7.glb',
-        'School': './mesh/glb/School_3.glb',
+        'Home': './mesh/glb/Home_8.glb',
+        'School': './mesh/glb/School.glb',
     };
 
     Object.entries(scenes).forEach(([sceneName, scenePath]) => {
         const button = document.createElement('button');
-        button.textContent = `切換到 ${sceneName}`;
-        button.style.margin = '10px';
+        button.textContent = `${sceneName}`;
+        // button.style.margin = '10px';
         button.onclick = async () => {
             await loadModels(scenePath); // 使用非同步的場景加載
+
             document.body.removeChild(menu); // 清除選單
-        };
+            console.log(` find the scene: ${sceneName}`);
+
+            scene.position.set(0, 0, 0);// 本地位置
+            const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
+            //將本地座標轉換為世界座標
+            scene.localToWorld(worldPosition);
+            //將本地座標轉換為世界座標
+
+            console.log(`本地座標場景位置:`, scene.position);
+            console.log(`世界座標場景位置:`, worldPosition);
+
+            currentPlayer = true; // 保存玩家角色到全域變數
+            console.log(currentPlayer);
+
+            // 將玩家移動到 (0, 0, 0)
+            if (currentPlayer) {
+                playerBody.position.set(1, 1, 0); // 設定玩家位置
+                console.log(`玩家位置:`, playerBody.position);
+            } else {
+                console.log(`玩家角色未初始化`);
+            }
+
+        }
         menu.appendChild(button);
     });
 
     const closeButton = document.createElement('button');
     closeButton.textContent = '取消';
-    closeButton.style.margin = '10px';
+    // closeButton.style.margin = '10px';
     closeButton.onclick = () => document.body.removeChild(menu);
     menu.appendChild(closeButton);
 
@@ -969,7 +995,7 @@ function updateGuessGrid() {
 
 // 同步更新鍵盤顏色
 function updateKeyboardStatus(letter, status) {
-    const key = document.querySelector(`.key[data-key="${letter}"]`);
+    const key = document.querySelector(`.key[data - key= "${letter}"]`);
     if (key) {
         // 檢查目前的狀態避免鍵盤被刷新覆蓋，調整優先級為綠(correct)>黃(present)>灰(absent)
         if (status === "correct") {
@@ -1032,7 +1058,7 @@ function submitGuess() {
 
     // 檢查是否猜對
     if (currentGuess === answer) {
-        alert(`You guessed the word ! The word was: ${answer} ( ${chineseAnswer} )`); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
+        alert(`You guessed the word! The word was: ${answer}(${chineseAnswer})`); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
         setTimeout(resetGame, 1000); // 1秒後刷新遊戲
         return;
     }
@@ -1042,7 +1068,7 @@ function submitGuess() {
     currentGuess = "";
 
     if (currentAttempt >= maxAttempts) {
-        alert(`Game over! The word was: ${answer} ( ${chineseAnswer} )`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
+        alert(`Game over! The word was: ${answer}(${chineseAnswer})`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
         setTimeout(resetGame, 1000); // 1秒後刷新遊戲
     }
 }
