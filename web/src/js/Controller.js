@@ -370,7 +370,9 @@ class Controller {
         raycaster.setFromCamera(mouse, this.camera);
         raycaster.layers.set(1);
         raycaster.precision = 0.00001;
+        raycaster.far = 8;// 調整射線的長度
         const intersects = raycaster.intersectObjects(this.scene.children, true);
+
 
         const crosshair = document.getElementById('crosshair');
 
@@ -397,6 +399,7 @@ class Controller {
         raycaster.setFromCamera(mouse, this.camera);
         raycaster.layers.set(1);
         raycaster.precision = 0.00001;
+        raycaster.far = 8;// 調整射線的長度
         // 檢查是否與門物件相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
