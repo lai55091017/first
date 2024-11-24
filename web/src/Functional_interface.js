@@ -539,7 +539,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
+async function loadModels(scenePath = './mesh/glb/Home_7.glb') {
     try {
         // 清理舊場景
         clearSceneModelsAndPhysics();
@@ -579,7 +579,8 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
                 chairs: [],
                 tables: [],
                 counters: [],
-                bookshelves: []
+                bookshelves: [],
+                sofas: []
             };
 
             // 使用正則表達式匹配物件名稱
@@ -588,10 +589,16 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
                     if (/LIB_Door_(Left|Right)/.test(child.name)) {
                         child.name = 'Door';
                         objects.doors.push(child);
+                    } else if (/.*Door_(L|R)/.test(child.name)) {
+                        child.name = 'Door';
+                        objects.doors.push(child);
                     } else if (/^Chair_\d+_\d+$/.test(child.name)) {
                         child.name = 'Chair';
                         objects.chairs.push(child);
                     } else if (/^LIB_Table_\d+$/.test(child.name)) {
+                        child.name = 'Table';
+                        objects.tables.push(child);
+                    } else if (/^.*_table/.test(child.name)) {
                         child.name = 'Table';
                         objects.tables.push(child);
                     } else if (/^counter_\d+$/.test(child.name)) {
@@ -600,17 +607,22 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
                     } else if (/^Bookshelf_\d+$/.test(child.name)) {
                         child.name = 'Bookshelf';
                         objects.bookshelves.push(child);
+                    } else if (/^Sofa_\d+$/.test(child.name)) {
+                        child.name = 'Sofa';
+                        objects.sofas.push(child);
                     }
                 }
             });
 
+            console.log('找到所有物件:', objects);
             // 確保找到所有關鍵物件
             if (
-                objects.doors.length === 2 &&
-                objects.chairs.length > 0 &&
-                objects.tables.length > 0 &&
-                objects.counters.length > 0 &&
-                objects.bookshelves.length > 0
+                objects.doors.length === 2 ||
+                objects.chairs.length > 0 ||
+                objects.tables.length >  0 ||
+                objects.counters.length >  0 ||
+                objects.bookshelves.length >  0 ||
+                objects.sofas.length >  0
             ) {
                 console.log('好消息，找到圖書館的所有物件了');
                 // 設置圖層
@@ -619,6 +631,7 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
                 objects.tables.forEach((table) => table.layers.set(1));
                 objects.counters.forEach((counter) => counter.layers.set(1));
                 objects.bookshelves.forEach((bookshelf) => bookshelf.layers.set(1));
+                objects.sofas.forEach((sofa) => sofa.layers.set(1));
 
                 // 傳遞到控制器
                 controller.setDoors(objects.doors[0], objects.doors[1]);
@@ -626,6 +639,7 @@ async function loadModels(scenePath = './mesh/glb/Library_update_Final_6.glb') {
                 controller.setTables(objects.tables);
                 controller.setCounters(objects.counters);
                 controller.setBookshelves(objects.bookshelves);
+                controller.setSofas(objects.sofas);
             } else {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
@@ -650,7 +664,7 @@ function showSceneOptions() {
 
     const scenes = {
         'Library': './mesh/glb/Library_update_Final_6.glb',
-        'Home': './mesh/glb/Home_8.glb',
+        'Home': './mesh/glb/Home_7.glb',
         'School': './mesh/glb/School.glb',
     };
 
