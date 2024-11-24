@@ -403,12 +403,7 @@ class Controller {
         if (intersects.length > 0 && this.isClickable) {
             // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
-
-
-            const objectposition = intersects[0].point;//取得物件世界坐標
-
-            //世界位置：物體相對於整個場景的位置
-            console.log(`世界坐標碰撞點: x=${objectposition.x},y=${objectposition.x}, z=${objectposition.z}`);
+            console.log(object.name);
 
             this.isClickable = false; // 禁止点击操作
 
