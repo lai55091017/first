@@ -358,7 +358,7 @@ class Controller {
             setTimeout(() => {
                 this.doorAnimation.closeDoors(); // 關門動畫
                 this.isOpen = false;  // 重置門的狀態
-            }, 5000); // 這裡的5000是指5秒後自動關門
+            }, 3000); // 這裡的5000是指5秒後自動關門
         }
 
         // 切換門的狀態
@@ -404,13 +404,18 @@ class Controller {
             // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
 
+
+            const objectposition = intersects[0].point;//取得物件世界坐標
+
+            //世界位置：物體相對於整個場景的位置
+            console.log(`世界坐標碰撞點: x=${objectposition.x},y=${objectposition.x}, z=${objectposition.z}`);
+
             this.isClickable = false; // 禁止点击操作
 
             //popupWindow先隱藏
             this.popupWindow.hide();
-            console.log(object.name);
+            // console.log(object.name);
             const originalColor = object.material.emissive.clone();
-
 
             if (object.name === 'Door' | object.name === 'Chair' | object.name === 'Table' | object.name === 'Counter' | object.name === 'Bookshelf') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光

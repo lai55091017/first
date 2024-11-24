@@ -15,7 +15,7 @@ class ICAS {
         this.gltfLoader = new GLTFLoader();
         this.jsonLoader = new THREE.ObjectLoader();
     }
-    
+
     // 新增FBX載入方法
     loadFBX(path) {
         return new Promise((resolve, reject) => {

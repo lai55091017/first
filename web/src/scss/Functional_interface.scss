@@ -8,7 +8,7 @@
     --message-item-avatar-margin: 15px;
     --background-color: #e0e1e2;
     --box-background-color: #ffffffbc;
-    --btn_color: #586380;
+    --btn_color: #425d8a;
     --hover_color: #d3e3fd;
 
 
@@ -33,7 +33,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: 'Fredoka';
     letter-spacing: 1px;
 }
 
@@ -92,7 +92,7 @@ body {
         .title {
             color: rgb(255, 255, 255);
             font-size: 5rem;
-            font-family: 'Impact';
+            font-weight: bolder;
         }
     }
 }
@@ -212,11 +212,28 @@ body {
     transform-origin: center bottom;
 }
 
+/*---------------------------------------字體---------------------------*/
+@font-face {
+    font-family: 'Rocher';
+    src: url(./text/RocherColorGX.ttf);
+
+}
+
+@font-palette-values --text {
+    font-family: Rocher;
+    base-palette: 9;
+}
+
+@font-face {
+    font-family: 'Fredoka';
+    src: url(./text/Fredoka/Fredoka-VariableFont_wdth\,wght.ttf);
+}
+
 /*---------------------------------------UI---------------------------*/
 .UI {
     position: fixed;
     top: 10px;
-    right: 10px;
+    right: 20px;
     display: flex;
     flex-direction: row;
     justify-items: center;
@@ -232,11 +249,14 @@ body {
         margin: 30px;
 
         .title {
+            font-palette: --text;
             color: rgb(255, 255, 255);
             font-size: 2.5rem;
             letter-spacing: 1px;
-            font-family: 'impact';
-            font-weight: lighter;
+            font-family: 'Rocher';
+            font-variation-settings: "BVEL" 100, "SHDW" 80;
+            //BVEL：字體的 bevel（浮雕）效果。
+            // SHDW：字體的 shadow（陰影）效果
         }
     }
 
@@ -247,7 +267,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 20px;
+        margin: 25px;
         flex-direction: column;
 
         a {
@@ -313,11 +333,10 @@ body {
                 width: 100%;
                 margin-left: 15px;
                 border: none;
-                background: transparent;
+                background: transparent; //透明
                 color: var(--title_color);
                 font-size: 24px;
                 font-weight: 500;
-                font-family: "Microsoft YaHei";
             }
         }
 
@@ -673,23 +692,36 @@ body {
 /****------------------------點擊模型出現跳窗----------------****/
 .model_info {
     position: absolute;
-    border: 3px solid #667293;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    padding: 20px;
-    background-color: var(--box-background-color);
-    width: 30vw;
-    bottom: 10px;
+    box-shadow: 0px 10px 0px var(--hover_color);
+    border-radius: 20px;
+    background: linear-gradient(to bottom, var(--btn_color), 25%, transparent 0%);
+    background-color: #ffffff;
     align-self: center;
+    bottom: 20px;
+    width: 30vw;
+    height: 30vh;
 
-    p {
+    h1 {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
-        margin: 30px;
         letter-spacing: 1px;
         font-size: 24px;
+        font-weight: bold;
+        color: #f0f6ff;
+        padding: 10px;
+    }
+
+    p {
+        margin: 30px 60px;
+        position: relative;
+        text-align: center;
+        display: flex;
+        justify-content: start;
+        align-items: start;
+        flex-direction: column;
+        letter-spacing: 1px;
+        font-size: 22px;
         font-weight: bold;
         color: var(--btn_color);
     }
