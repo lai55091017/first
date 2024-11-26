@@ -170,7 +170,6 @@ async function onPlayerJoin(data) {
             playerBody = Player_body(character.getMesh(), 0.5, 1.75);
             // camera.userData.physicsBody = playerBody;
             camera.userData.physicsBody = playerBody;
-
             // // 偵測玩家碰撞
             // body.addEventListener('collide', (event) => {
             //     const contact = event.contact;
@@ -388,16 +387,16 @@ function init_physics() {
     cannon_world.broadphase = new CANNON.NaiveBroadphase()
     cannon_world.solver.iterations = 10;
 
-    // 設定接觸事件
-    cannon_world.addEventListener('contact', (event) => {
-        console.log('接觸！');
-        // 處理接觸事件
-    });
+    // // 設定接觸事件
+    // cannon_world.addEventListener('contact', (event) => {
+    //     console.log('接觸！');
+    //     // 處理接觸事件
+    // });
 
-    cannon_world.addEventListener('endContact', (event) => {
-        console.log('結束接觸！');
-        // 處理結束接觸事件
-    });
+    // cannon_world.addEventListener('endContact', (event) => {
+    //     console.log('結束接觸！');
+    //     // 處理結束接觸事件
+    // });
 
 }
 
@@ -481,65 +480,65 @@ function checkCollisionEnd() {
 }
 
 //嚴重bug會刪到多人的物體
-function clearSceneModelsAndPhysics() {
-    // 白名單：保留的物件名稱（可以根據具體需求添加名稱）
-    const preservedNames = ['Player', 'PlayerModel', 'MainCamera', 'PlayerLight'];
+// function clearSceneModelsAndPhysics() {
+//     // 白名單：保留的物件名稱（可以根據具體需求添加名稱）
+//     const preservedNames = ['Player', 'PlayerModel', 'MainCamera', 'PlayerLight'];
 
-    function recursiveDispose(object) {
-        // 保留白名單中的物件
-        if (preservedNames.includes(object.name)) {
-            console.log(`保留物件: ${object.name}`);
-            return;
-        }
+//     function recursiveDispose(object) {
+//         // 保留白名單中的物件
+//         if (preservedNames.includes(object.name)) {
+//             console.log(`保留物件: ${object.name}`);
+//             return;
+//         }
 
-        // 遞歸清理子物件
-        while (object.children.length > 0) {
-            const child = object.children[0];
-            recursiveDispose(child); // 清理子物件
-            object.remove(child); // 從父物件中移除
-        }
+//         // 遞歸清理子物件
+//         while (object.children.length > 0) {
+//             const child = object.children[0];
+//             recursiveDispose(child); // 清理子物件
+//             object.remove(child); // 從父物件中移除
+//         }
 
-        // 如果是 Mesh，釋放其幾何體和材質
-        if (object instanceof THREE.Mesh) {
-            if (object.geometry) {
-                object.geometry.dispose();
-                // console.log(`已釋放幾何體: ${object.name}`);
-            }
-            if (object.material) {
-                if (Array.isArray(object.material)) {
-                    object.material.forEach((mat) => mat.dispose());
-                } else {
-                    object.material.dispose();
-                }
-                // console.log(`已釋放材質: ${object.name}`);
-            }
-        }
+//         // 如果是 Mesh，釋放其幾何體和材質
+//         if (object instanceof THREE.Mesh) {
+//             if (object.geometry) {
+//                 object.geometry.dispose();
+//                 // console.log(`已釋放幾何體: ${object.name}`);
+//             }
+//             if (object.material) {
+//                 if (Array.isArray(object.material)) {
+//                     object.material.forEach((mat) => mat.dispose());
+//                 } else {
+//                     object.material.dispose();
+//                 }
+//                 // console.log(`已釋放材質: ${object.name}`);
+//             }
+//         }
 
-        // 如果綁定了剛體，移除剛體
-        if (object.userData.physicsBody) {
-            const physicsBody = object.userData.physicsBody;
-            const index = cannon_world.bodies.indexOf(physicsBody);
-            if (index !== -1) {
-                cannon_world.bodies.splice(index, 1);
-                // console.log(`已從物理世界移除剛體: ${object.name}`);
-            }
-        }
+//         // 如果綁定了剛體，移除剛體
+//         if (object.userData.physicsBody) {
+//             const physicsBody = object.userData.physicsBody;
+//             const index = cannon_world.bodies.indexOf(physicsBody);
+//             if (index !== -1) {
+//                 cannon_world.bodies.splice(index, 1);
+//                 // console.log(`已從物理世界移除剛體: ${object.name}`);
+//             }
+//         }
 
-        // 從場景中移除物件
-        if (object.parent === scene) {
-            // console.log(`已從場景中移除容器: ${object.name}`);
-            scene.remove(object);
-        }
-    }
+//         // 從場景中移除物件
+//         if (object.parent === scene) {
+//             // console.log(`已從場景中移除容器: ${object.name}`);
+//             scene.remove(object);
+//         }
+//     }
 
-    // 遍歷場景的頂層物件
-    while (scene.children.length > 0) {
-        const object = scene.children[0];
-        recursiveDispose(object); // 清理每個頂層物件
-    }
+//     // 遍歷場景的頂層物件
+//     while (scene.children.length > 0) {
+//         const object = scene.children[0];
+//         recursiveDispose(object); // 清理每個頂層物件
+//     }
 
-    console.log('場景清理完成');
-}
+//     console.log('場景清理完成');
+// }
 
 
 // 導入場景模型2.0
@@ -595,8 +594,18 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 lectern: [],
                 blackboard: []
             };
-
-            // 使用正則表達式匹配物件名稱
+        
+            // 定義物件類型與對應正則表達式的映射
+            const regexMapping = [
+                { type: 'doors', regex: /^(LIB_Door_(Left|Right)|.*Door_(L|R))/, newName: 'Door' },
+                { type: 'chairs', regex: /^Chair_\d+_\d+$/, newName: 'Chair' },
+                { type: 'tables', regex: /^(LIB_Table_\d+|.*_table)$/, newName: 'Table' },
+                { type: 'counters', regex: /^counter_\d+$/, newName: 'Counter' },
+                { type: 'bookshelves', regex: /^Bookshelf_\d+$/, newName: 'Bookshelf' },
+                { type: 'sofas', regex: /^Sofa_\d+$/, newName: 'Sofa' }
+            ];
+        
+            // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
                     if (/^(Door_(L|R)_Home | LIB_Door_(Left|Right) | Door_School_(Left|Right))$/.test(child.name)) { // 門s
@@ -665,8 +674,22 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                     }
                 }
             });
-
+        
             console.log('找到所有物件:', objects);
+        
+            // 設置圖層與傳遞到控制器的邏輯
+            Object.keys(objects).forEach((key) => {
+                objects[key].forEach((item) => item.layers.set(1));
+            });
+        
+            // 傳遞物件到控制器
+            const [door1, door2] = objects.doors; // 假設至少有兩個門
+            controller.setDoors(door1, door2);
+            controller.setChairs(objects.chairs);
+            controller.setTables(objects.tables);
+            controller.setCounters(objects.counters);
+            controller.setBookshelves(objects.bookshelves);
+            controller.setSofas(objects.sofas);
             // 確保找到所有關鍵物件
             if (
                 objects.doors.length === 2 ||
@@ -729,6 +752,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
         }
+        
 
         // 在加載場景後執行處理
         processSceneObjects(library.scene);
@@ -745,12 +769,6 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
 function showSceneOptions() {
     const menu = document.createElement('div');
     menu.id = 'scene_options';
-
-    // const scenes = {
-    //     'Library': './mesh/glb/Library_update_Final_6.glb',
-    //     'Home': './mesh/glb/Home_8.glb',
-    //     'School': './mesh/glb/School.glb',
-    // };
     const scenes = [
         'Library',
         'Home',
@@ -806,38 +824,8 @@ function showSceneOptions() {
             menu.appendChild(button);
         });
 
-
-    // // 假設場景中有目標點和玩家角色
-    // const targetPoints =
-    // {
-    //     'library': 'new THREE.Vector3(0, 0, 0)',
-    //     'home': ' new THREE.Vector3(20, 0, 0) ',
-    //     'school': 'new THREE.Vector3(-20, 0, 0) '
-    // };
-
-    // Object.entries(targetPoints).forEach(([pointName, point]) => {
-    //     const button = document.createElement("button");
-    //     button.textContent = ` ${ pointName }`;
-    //     console.log(`目標點: ${ pointName }, 位置: ${ point }`);
-    //     document.body.removeChild(menu); // 清除選單
-
-    //     // 按下按鈕時移動玩家到該目標點
-    //     button.onclick = async () => {
-    //         if (currentPlayer) {
-    //             playerBody.position.copy(point); // 將角色移動到目標位置
-    //             console.log(`角色已移動到: ${ pointName }, 位置: `, point);
-    //         } else {
-    //             console.error("玩家角色未初始化！");
-    //         }
-    //     };
-
-    //     // 添加按鈕到頁面
-    //     menu.appendChild(button);
-    // });
-
     const closeButton = document.createElement('button');
     closeButton.textContent = '取消';
-    // closeButton.style.margin = '10px';
     closeButton.onclick = () => document.body.removeChild(menu);
     menu.appendChild(closeButton);
 
@@ -868,14 +856,6 @@ controller.__toggleDoor = function () {
 
 
 /*-----------------------------------暫停模式menu--------------------------------------------------*/
-
-const main_menu = $("#main_menu");
-const menu_btn = $(".btn");
-
-//toggle代表切換顯示和消失，fade代表淡入淡出，500(0.5秒)是淡入淡出的時間
-// menu_btn.on('click', async () => {
-//     main_menu.fadeToggle(500);
-// })
 
 const instruction = $("#instruction_container");
 

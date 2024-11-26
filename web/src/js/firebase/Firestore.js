@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { 
+import {
     getFirestore,
     doc,
     setDoc,
@@ -7,15 +7,17 @@ import {
     arrayUnion,
     arrayRemove,
     getDoc,
-    writeBatch
+    writeBatch,
+    collection, query, where, orderBy, getDocs
 } from 'firebase/firestore';
-import { 
+import {
     getAuth,
     onAuthStateChanged
 } from 'firebase/auth';
 
 class Firestore {
     constructor() {
+
         // Firebase 設定
         this.firebaseConfig = {
             apiKey: "AIzaSyCQjbkj3r9cPL_alEoZRfnx7-nCEgjZasc",
@@ -27,7 +29,7 @@ class Firestore {
             appId: "1:485354531854:web:569d6af236aa3d8889e05f",
             measurementId: "G-5ZTY53LH0R"
         };
-          
+
         // 檢查應用是否已初始化
         if (!getApps().length) {
             this.app = initializeApp(this.firebaseConfig);
@@ -76,7 +78,7 @@ class Firestore {
     async add_user_card(card_data) {
         try {
             await this.__ensureAuth(); // 確保用戶狀態已更新
-            this.batch.update(doc(this.db, "users", this.uid),{
+            this.batch.update(doc(this.db, "users", this.uid), {
                 card: arrayUnion(...card_data.card)
             });
             console.log("更新用戶數據成功");
@@ -89,7 +91,7 @@ class Firestore {
     async delete_user_card(card_data) {
         try {
             await this.__ensureAuth(); // 確保用戶狀態已更新
-            this.batch.update(doc(this.db, "users", this.uid),{
+            this.batch.update(doc(this.db, "users", this.uid), {
                 card: arrayRemove(...card_data.card)
             });
             console.log(card_data);
@@ -102,20 +104,20 @@ class Firestore {
     // 新增一個用於更新卡片的函數
     async update_user_card(card_data) {
         try {
-        await this.__ensureAuth();
-        // 你可以在這裡自定義更新邏輯，例如逐個更新卡片
-        for (let card of card_data.card) {
-            // 假設你有一些特定的欄位來標識卡片，可以在這裡更新
-            this.batch.update(doc(this.db, "users", this.uid), {
-            card: arrayUnion(card) // 或使用你的邏輯來更新卡片
-            });
-        }
-        console.log("卡片更新成功");
+            await this.__ensureAuth();
+            // 你可以在這裡自定義更新邏輯，例如逐個更新卡片
+            for (let card of card_data.card) {
+                // 假設你有一些特定的欄位來標識卡片，可以在這裡更新
+                this.batch.update(doc(this.db, "users", this.uid), {
+                    card: arrayUnion(card) // 或使用你的邏輯來更新卡片
+                });
+            }
+            console.log("卡片更新成功");
         } catch (error) {
-        console.error("卡片更新失敗:", error);
+            console.error("卡片更新失敗:", error);
         }
     }
-    
+
 
     // 取得用戶資料
     async get_user_data() {
@@ -138,11 +140,12 @@ class Firestore {
         try {
             this.batch.commit();
             this.batch = writeBatch(this.db);
-          } catch (error) {
+        } catch (error) {
             console.error("寫入資料庫失敗:", error);
             this.batch = writeBatch(this.db);
-          }
+        }
     }
+    
 
 }
 
