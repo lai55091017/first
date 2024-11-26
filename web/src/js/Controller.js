@@ -23,6 +23,7 @@ class Controller {
         this.isOpen = false;
         this.libDoorL = null;
         this.libDoorR = null;
+        this.doors = {}; // 新增用來存放門的物件
         this.chairs = [];
         this.tables = [];
         this.counters = [];
@@ -45,13 +46,14 @@ class Controller {
     }
 
     // 設置門和初始化動畫
-    setDoors(libDoorL, libDoorR) {
-        this.libDoorL = libDoorL;
-        this.libDoorR = libDoorR;
-        this.doorAnimation = new DoorAnimation(libDoorL, libDoorR);
+// 設置門
+setDoors(leftDoor, rightDoor, doorType) {
+    // 存儲每對門物件，以 doorType 作為鍵名
+    this.doors[doorType] = { left: leftDoor, right: rightDoor };
 
-        console.log('已將門從FI.js傳遞至Ctrlr.js')
-    }
+    // 可以根據需要為每對門設置動畫
+    console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
+}
 
     // 設置椅子
     setChairs(chairs) {
@@ -179,7 +181,11 @@ class Controller {
             'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
-            'KeyF': () => { this.__toggleDoor(); } // F鍵可以開關門
+            'KeyF': () => {
+                this.__toggleDoor('home');    // 開關家裡的門
+                this.__toggleDoor('library'); // 開關圖書館的門
+                this.__toggleDoor('school');  // 開關學校的門
+             } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -412,28 +418,22 @@ class Controller {
         }
     }
 
-    // 開關門方法
-    __toggleDoor() {
-        if (!this.doorAnimation) {
-            console.error('門未初始化');
+    // 開關門的方法（以對應的門對為參數）
+    __toggleDoor(doorType) {
+        const doors = this.doors[doorType];
+        if (!doors) {
+            console.error(`門類型 ${doorType} 尚未初始化`);
             return;
         }
 
+        // 使用 DoorAnimation 來開關門
+        const { left, right } = doors;
+        this.doorAnimation = new DoorAnimation(left, right);
         if (this.isOpen) {
-            // 關門
             this.doorAnimation.closeDoors();
         } else {
-            // 開門
             this.doorAnimation.openDoors();
-
-            // 5秒後自動關門
-            setTimeout(() => {
-                this.doorAnimation.closeDoors(); // 關門動畫
-                this.isOpen = false;  // 重置門的狀態
-            }, 3000); // 這裡的5000是指5秒後自動關門
         }
-
-        // 切換門的狀態
         this.isOpen = !this.isOpen;
     }
     __onMouseMove() {
