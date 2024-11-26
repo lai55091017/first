@@ -2,9 +2,75 @@ import "./scss/information.scss";
 import "./scss/menu.scss";
 import * as menu from './js/menu.js';
 import Firestore from "./js/firebase/Firestore.js";
+import "./js/firebase/Search";
 
 
 const fs = new Firestore;
+// /*------------------------------------搜尋功能-----------------------------------------*/
+
+// const express = require("express");
+// const app = express();
+
+// app.get("/search", async (req, res) => {
+//     const queryText = req.query.q; // 獲取搜尋字母或字符串
+
+//     if (!queryText) {
+//         return res.status(400).send("缺少搜尋參數");
+//     }
+
+//     try {
+//         const wordsRef = collection(db, "words"); // 替換為您的 Firestore 集合名稱
+//         const q = query(
+//             wordsRef,
+//             where("word", ">=", queryText), // 開始的範圍
+//             where("word", "<=", queryText + "\uf8ff"), // 結束範圍
+//             orderBy("word") // 按字母順序排序
+//         );
+
+//         const querySnapshot = await getDocs(q);
+
+//         const results = [];
+//         querySnapshot.forEach((doc) => {
+//             results.push(doc.data().word);
+//         });
+
+//         res.json(results);
+//     } catch (error) {
+//         console.error("搜尋錯誤:", error);
+//         res.status(500).send("搜尋失敗");
+//     }
+// });
+
+// app.listen(port, () => {
+//     console.log(`伺服器正在運行在 http://localhost:${port}`);
+// });
+
+// async function handleSearch(query) {
+//     const resultsDiv = document.getElementById("results");
+//     resultsDiv.innerHTML = ''; // 清空現有結果
+
+//     if (!query.trim()) return; // 如果輸入為空則不處理
+
+//     try {
+//         const response = await fetch(`/search?q=${query}`);
+//         if (!response.ok) throw new Error("搜尋失敗");
+
+//         const results = await response.json();
+
+//         // 顯示結果
+//         if (results.length > 0) {
+//             resultsDiv.innerHTML = results
+//                 .map(word => `<div>${word}</div>`)
+//                 .join('');
+//         } else {
+//             resultsDiv.innerHTML = '<div>未找到結果</div>';
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         resultsDiv.innerHTML = '<div>搜尋出錯，請稍後重試</div>';
+//     }
+// }
+
 
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -25,14 +91,13 @@ document.getElementById('card_form').addEventListener('submit', function (event)
     // 清空表單
     document.getElementById('card_form').reset();
 
-
     // 將卡片寫入資料庫
     fs.add_user_card({
         "card": [{ words: englishText, translate: chineseText }]
     })
 
-
 });
+
 
 let card_number = 0;
 function newCard(englishText, chineseText) {
@@ -42,6 +107,7 @@ function newCard(englishText, chineseText) {
 
     // 將新卡片添加到容器
     document.querySelector('.contair').appendChild(newCard);
+
 
     // 設置卡片內容
     newCard.innerHTML = `
@@ -58,11 +124,10 @@ function newCard(englishText, chineseText) {
             <path d="M 10 2 L 9 3 L 4 3 L 4 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 22 L 19 22 L 19 7 L 5 7 z M 8 9 L 10 9 L 10 20 L 8 20 L 8 9 z M 14 9 L 16 9 L 16 20 L 14 20 L 14 9 z"></path>
             </svg>
             </button>
-        </div>
-        
+     </div>
         <div id="edit_form">
             <label for="english_text">英文</label>
-            <input type="text" id="edit_english_text${card_number}" value="${englishText}" required><br>
+            <input type="text" id="edit_english_text${card_number}" value="${englishText}" placeholder="輸入英文" pattern="[a-zA-Z\s]+" title="只能輸入英文字母" required><br>
             <label for="chinese_text">中文</label>
             <input type="text"  id="edit_chinese_text${card_number}" value="${chineseText}" required><br>
             <button id="save_btn">保存</button>
@@ -165,7 +230,6 @@ function newCard(englishText, chineseText) {
     deleteButton.addEventListener('click', function (event) {
         event.stopPropagation();  // 阻止事件冒泡，避免触发 dialog 显示
         newCard.remove();  // 删除卡片
-
         // 刪除卡片資料
         fs.delete_user_card({
             "card": [{ words: englishText, translate: chineseText }]
