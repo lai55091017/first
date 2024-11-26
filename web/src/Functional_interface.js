@@ -349,7 +349,7 @@ function animate() {
     checkCollisionEnd()
 
     // 傳送錨點
-    console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
+    // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
 
     // 更新模型的位置和旋轉
     scene.traverse(function (object) {
@@ -595,16 +595,6 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 blackboard: []
             };
         
-            // 定義物件類型與對應正則表達式的映射
-            const regexMapping = [
-                { type: 'doors', regex: /^(LIB_Door_(Left|Right)|.*Door_(L|R))/, newName: 'Door' },
-                { type: 'chairs', regex: /^Chair_\d+_\d+$/, newName: 'Chair' },
-                { type: 'tables', regex: /^(LIB_Table_\d+|.*_table)$/, newName: 'Table' },
-                { type: 'counters', regex: /^counter_\d+$/, newName: 'Counter' },
-                { type: 'bookshelves', regex: /^Bookshelf_\d+$/, newName: 'Bookshelf' },
-                { type: 'sofas', regex: /^Sofa_\d+$/, newName: 'Sofa' }
-            ];
-        
             // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
@@ -677,19 +667,6 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
         
             console.log('找到所有物件:', objects);
         
-            // 設置圖層與傳遞到控制器的邏輯
-            Object.keys(objects).forEach((key) => {
-                objects[key].forEach((item) => item.layers.set(1));
-            });
-        
-            // 傳遞物件到控制器
-            const [door1, door2] = objects.doors; // 假設至少有兩個門
-            controller.setDoors(door1, door2);
-            controller.setChairs(objects.chairs);
-            controller.setTables(objects.tables);
-            controller.setCounters(objects.counters);
-            controller.setBookshelves(objects.bookshelves);
-            controller.setSofas(objects.sofas);
             // 確保找到所有關鍵物件
             if (
                 objects.doors.length === 2 ||
