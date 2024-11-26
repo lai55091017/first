@@ -597,7 +597,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
         
             // 定義物件類型與對應正則表達式的映射
             const regexMapping = [
-                { type: 'doors', regex: /^(Door_(L|R)_Home|LIB_Door_(Left|Right)|Door_School_(Left|Right)|Mesh254.*)$/, newName: 'Door' },
+                { type: 'doors', regex: /^(Door_(L|R)_Home|LIB_Door_(Left|Right)|Door_School_(Left|Right))$/, newName: 'Door' },
                 { type: 'chairs', regex: /^.*Chair.*/, newName: 'Chair' },
                 { type: 'tables', regex: /^(LIB_Table_\d+|.*_table|Table_.*|Bedroom_Desk)$/, newName: 'Table' },
                 { type: 'counters', regex: /^counter\d+$/, newName: 'Counter' },
