@@ -643,7 +643,9 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_4.glb') {
                 );
         
                 // 傳遞到控制器
-                controller.setDoors(objects.doors[0], objects.doors[1]);
+                controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
+                controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
+                controller.setDoors(objects.doors[4], objects.doors[5], 'school'); // 學校的門
                 controller.setChairs(objects.chairs);
                 controller.setTables(objects.tables);
                 controller.setCounters(objects.counters);
@@ -747,23 +749,21 @@ function showSceneOptions() {
 
 
 
-controller.__toggleDoor = function () {
-    if (!this.doorAnimation) {
-        console.error('門未初始化');
-        return;
+
+// 監測：isopen屬性來切換選單
+Object.defineProperty(controller, 'isOpen', {
+    get() {
+        return this._isOpen; // 返回內部屬性值
+    },
+    set(value) {
+        this._isOpen = value; // 設定內部屬性值
+
+        if (value) {
+            // 如果 isOpen 為 true，顯示場景切換選單
+            showSceneOptions();
+        }
     }
-
-    if (this.isOpen) {
-        this.doorAnimation.closeDoors();
-        // showSceneOptions(this); // 顯示場景切換選單
-    } else {
-        this.doorAnimation.openDoors();
-        showSceneOptions(this); // 顯示場景切換選單
-    }
-
-    this.isOpen = !this.isOpen;
-};
-
+});
 
 
 
