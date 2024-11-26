@@ -28,6 +28,17 @@ class Controller {
         this.counters = [];
         this.bookshelves = [];
         this.sofas = [];
+        this.fridge = [];
+        this.bar = [];
+        this.tv = [];
+        this.tub = [];
+        this.toilet = [];
+        this.sink = [];
+        this.bed = [];
+        this.wardrobe = [];
+        this.podium = [];
+        this.lectern = [];
+        this.blackboard = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -65,6 +76,61 @@ class Controller {
     // 設置沙發
     setSofas(sofas) {
         this.sofas = sofas;
+    }
+
+    // 設置冰箱
+    setFridge(fridge) {
+        this.fridge = fridge;
+    }
+
+    // 設置吧台
+    setBar(bar) {
+        this.bar = bar;
+    }
+
+    // 設置電視
+    setTV(tv) {
+        this.tv = tv;
+    }
+
+    // 設置浴缸
+    setTub(tub) {
+        this.tub = tub;
+    }
+
+    // 設置馬桶
+    setToilet(toilet) {
+        this.toilet = toilet;
+    }
+
+    // 設置洗手槽
+    setSink(sink) {
+        this.sink = sink;
+    }
+
+    // 設置床
+    setBed(bed) {
+        this.bed = bed;
+    }
+
+    // 設置衣櫥
+    setWardrobe(wardrobe) {
+        this.wardrobe = wardrobe;
+    }
+
+    // 設置講台
+    setPodium(podium) {
+        this.podium = podium;
+    }
+
+    // 設置講桌
+    setLectern(lectern) {
+        this.lectern = lectern;
+    }
+
+    // 設置黑板
+    setBlackboard(blackboard) {
+        this.blackboard = blackboard;
     }
 
     //設置移動參數
@@ -421,7 +487,10 @@ class Controller {
             // console.log(object.name);
             const originalColor = object.material.emissive.clone();
 
-            if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' || object.name === 'Sofa') {
+            if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' ||
+                object.name === 'Sofa' || object.name === 'Fridge' || object.name === 'Bar' || object.name === 'TV' || object.name === 'Tub' ||
+                object.name === 'Toilet' || object.name === 'Sink' || object.name === 'Bed' || object.name === 'Wardrobe' || object.name === 'Podium' ||
+                object.name === 'Lectern' || object.name === 'Blackboard') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗

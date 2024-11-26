@@ -190,7 +190,7 @@ async function onPlayerJoin(data) {
             console.log(currentPlayer);
             // 將玩家移動到 (0, 0, 0)
             if (currentPlayer) {
-                playerBody.position.set(1, 1, 0); // 設定玩家位置
+                playerBody.position.set(14, 1, -3.5); // 設定玩家位置
                 console.log(`玩家位置:`, playerBody.position);
             } else {
                 console.log(`玩家角色未初始化`);
@@ -349,6 +349,9 @@ function animate() {
 
     checkCollisionEnd()
 
+    // 傳送錨點
+    console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
+
     // 更新模型的位置和旋轉
     scene.traverse(function (object) {
         if (object.userData.physicsBody) {
@@ -380,7 +383,7 @@ function animate() {
 /*********************************** Physics *********************************************/
 function init_physics() {
 
-    cannon_world.gravity.set(0, -9.82, 0);
+    cannon_world.gravity.set(0, -9.8, 0);
     // 碰撞偵測
     cannon_world.broadphase = new CANNON.NaiveBroadphase()
     cannon_world.solver.iterations = 10;
@@ -540,7 +543,7 @@ function clearSceneModelsAndPhysics() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/total.glb') {
+async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
     try {
         init_scene();
         // 加載新場景
@@ -579,36 +582,86 @@ async function loadModels(scenePath = './mesh/glb/total.glb') {
                 tables: [],
                 counters: [],
                 bookshelves: [],
-                sofas: []
+                sofas: [],
+                fridge: [],
+                bar: [],
+                tv: [],
+                tub: [],
+                toilet: [],
+                sink: [],
+                bed: [],
+                wardrobe: [],
+                podium: [],
+                lectern: [],
+                blackboard: []
             };
 
             // 使用正則表達式匹配物件名稱
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
-                    if (/LIB_Door_(Left|Right)/.test(child.name)) {
+                    if (/^(Door_(L|R)_Home | LIB_Door_(Left|Right) | Door_School_(Left|Right))$/.test(child.name)) { // 門s
                         child.name = 'Door';
                         objects.doors.push(child);
-                    } else if (/.*Door_(L|R)/.test(child.name)) {
+                    } else if (/^Mesh254.*/.test(child.name)) { // 門
                         child.name = 'Door';
                         objects.doors.push(child);
-                    } else if (/^Chair_\d+_\d+$/.test(child.name)) {
+                    } else if (/^.*Chair.*/.test(child.name)) { // 椅子
                         child.name = 'Chair';
                         objects.chairs.push(child);
-                    } else if (/^LIB_Table_\d+$/.test(child.name)) {
+                    } else if (/^LIB_Table_\d+$/.test(child.name)) { // 桌子_圖書館
                         child.name = 'Table';
                         objects.tables.push(child);
-                    } else if (/^.*_table/.test(child.name)) {
+                    } else if (/^.*_table/.test(child.name)) { // 桌子_家
                         child.name = 'Table';
                         objects.tables.push(child);
-                    } else if (/^counter_\d+$/.test(child.name)) {
+                    } else if (/^Table_.*/.test(child.name)) { // 桌子_學校
+                        child.name = 'Table';
+                        objects.tables.push(child);
+                    } else if (/^Bedroom_Desk/.test(child.name)) { // 桌子_臥室
+                        child.name = 'Table';
+                        objects.tables.push(child);
+                    } else if (/^counter\d+$/.test(child.name)) { // 櫃台
                         child.name = 'Counter';
                         objects.counters.push(child);
-                    } else if (/^Bookshelf_\d+$/.test(child.name)) {
+                    } else if (/^.*Bookshelf\d+(_\d+)*$/.test(child.name)) { // 書架
                         child.name = 'Bookshelf';
                         objects.bookshelves.push(child);
-                    } else if (/^Sofa_\d+$/.test(child.name)) {
+                    } else if (/^Sofa_\d+$/.test(child.name)) { // 沙發
                         child.name = 'Sofa';
                         objects.sofas.push(child);
+                    } else if (/^Kitchen_fridge/.test(child.name)) { // 冰箱
+                        child.name = 'Fridge';
+                        objects.fridge.push(child);
+                    } else if (/^Kitchen_bar_\d+$/.test(child.name)) { // 吧台
+                        child.name = 'Bar';
+                        objects.bar.push(child);
+                    } else if (/^TV_\d+$/.test(child.name)) { // 電視
+                        child.name = 'TV';
+                        objects.tv.push(child);
+                    } else if (/^Toilet_Tub/.test(child.name)) { // 浴缸
+                        child.name = 'Tub';
+                        objects.tub.push(child);
+                    } else if (/^Toilet_toilet/.test(child.name)) { // 馬桶
+                        child.name = 'Toilet';
+                        objects.toilet.push(child);
+                    } else if (/^.*sink.*/.test(child.name)) { // 洗碗機
+                        child.name = 'Sink';
+                        objects.sink.push(child);
+                    } else if (/^Bedroom_Bed_.*/.test(child.name)) { // 床
+                        child.name = 'Bed';
+                        objects.bed.push(child);
+                    } else if (/^Bedroom_wardrobe_.*/.test(child.name)) { // 衣櫃
+                        child.name = 'Wardrobe';
+                        objects.wardrobe.push(child);
+                    } else if (/^Podium/.test(child.name)) { // 講台
+                        child.name = 'Podium';
+                        objects.podium.push(child);
+                    } else if (/^Lectern/.test(child.name)) { // 講桌
+                        child.name = 'Lectern';
+                        objects.lectern.push(child);
+                    } else if (/^School_Blackboard_\d+$/.test(child.name)) { // 黑板
+                        child.name = 'Blackboard';
+                        objects.blackboard.push(child);
                     }
                 }
             });
@@ -621,7 +674,18 @@ async function loadModels(scenePath = './mesh/glb/total.glb') {
                 objects.tables.length > 0 ||
                 objects.counters.length > 0 ||
                 objects.bookshelves.length > 0 ||
-                objects.sofas.length > 0
+                objects.sofas.length > 0 ||
+                objects.fridge.length > 0 ||
+                objects.bar.length > 0 ||
+                objects.tv.length > 0 ||
+                objects.tub.length > 0 ||
+                objects.toilet.length > 0 ||
+                objects.sink.length > 0 ||
+                objects.bed.length > 0 ||
+                objects.wardrobe.length > 0 ||
+                objects.podium.length > 0 ||
+                objects.lectern.length > 0 ||
+                objects.blackboard.length > 0
             ) {
                 console.log('好消息，找到圖書館的所有物件了');
                 // 設置圖層
@@ -631,6 +695,17 @@ async function loadModels(scenePath = './mesh/glb/total.glb') {
                 objects.counters.forEach((counter) => counter.layers.set(1));
                 objects.bookshelves.forEach((bookshelf) => bookshelf.layers.set(1));
                 objects.sofas.forEach((sofa) => sofa.layers.set(1));
+                objects.fridge.forEach((fridge) => fridge.layers.set(1));
+                objects.bar.forEach((bar) => bar.layers.set(1));
+                objects.tv.forEach((tv) => tv.layers.set(1));
+                objects.tub.forEach((tub) => tub.layers.set(1));
+                objects.toilet.forEach((toilet) => toilet.layers.set(1));
+                objects.sink.forEach((sink) => sink.layers.set(1));
+                objects.bed.forEach((bed) => bed.layers.set(1));
+                objects.wardrobe.forEach((wardrobe) => wardrobe.layers.set(1));
+                objects.podium.forEach((podium) => podium.layers.set(1));
+                objects.lectern.forEach((lectern) => lectern.layers.set(1));
+                objects.blackboard.forEach((blackboard) => blackboard.layers.set(1));
 
                 // 傳遞到控制器
                 controller.setDoors(objects.doors[0], objects.doors[1]);
@@ -639,6 +714,17 @@ async function loadModels(scenePath = './mesh/glb/total.glb') {
                 controller.setCounters(objects.counters);
                 controller.setBookshelves(objects.bookshelves);
                 controller.setSofas(objects.sofas);
+                controller.setFridge(objects.fridge);
+                controller.setBar(objects.bar);
+                controller.setTV(objects.tv);
+                controller.setTub(objects.tub);
+                controller.setToilet(objects.toilet);
+                controller.setSink(objects.sink);
+                controller.setBed(objects.bed);
+                controller.setWardrobe(objects.wardrobe);
+                controller.setPodium(objects.podium);
+                controller.setLectern(objects.lectern);
+                controller.setBlackboard(objects.blackboard);
             } else {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
@@ -695,20 +781,21 @@ function showSceneOptions() {
                 currentPlayer = true; // 保存玩家角色到全域變數
                 // console.log(currentPlayer);
 
+                // 傳送錨點
                 // 將玩家移動到 (0, 0, 0)
-                if (button.textContent == 'Library') {
+                if (button.textContent == 'Home') {
                     // playerBody.position.set(1, 1, 0); // 設定玩家位置
-                    playerBody.position.set(0, 0, 0); // 將角色移動到目標位置
+                    playerBody.position.set(-2.5, 1, 3.5); // 將角色移動到目標位置
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
                     console.log(`玩家位置:`, playerBody.position);
-                } else if (button.textContent == 'Home') {
+                } else if (button.textContent == 'Library') {
                     console.log(`角色已移動到: ${sceneName} `);
-                    playerBody.position.set(20, 0, 1); // 將角色移動到目標位置
+                    playerBody.position.set(-31.5, 1, 4); // 將角色移動到目標位置
                     console.log(`玩家位置:`, playerBody.position);
 
                 } else if (button.textContent == 'School') {
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(2, 0, 2);
+                    playerBody.position.set(-62, 1, 5);
                     console.log(`玩家位置: `, playerBody.position);
 
                 } else {
@@ -767,6 +854,7 @@ controller.__toggleDoor = function () {
 
     if (this.isOpen) {
         this.doorAnimation.closeDoors();
+        // showSceneOptions(this); // 顯示場景切換選單
     } else {
         this.doorAnimation.openDoors();
         showSceneOptions(this); // 顯示場景切換選單
