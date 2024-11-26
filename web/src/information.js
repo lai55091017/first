@@ -6,72 +6,6 @@ import "./js/firebase/Search";
 
 
 const fs = new Firestore;
-// /*------------------------------------搜尋功能-----------------------------------------*/
-
-// const express = require("express");
-// const app = express();
-
-// app.get("/search", async (req, res) => {
-//     const queryText = req.query.q; // 獲取搜尋字母或字符串
-
-//     if (!queryText) {
-//         return res.status(400).send("缺少搜尋參數");
-//     }
-
-//     try {
-//         const wordsRef = collection(db, "words"); // 替換為您的 Firestore 集合名稱
-//         const q = query(
-//             wordsRef,
-//             where("word", ">=", queryText), // 開始的範圍
-//             where("word", "<=", queryText + "\uf8ff"), // 結束範圍
-//             orderBy("word") // 按字母順序排序
-//         );
-
-//         const querySnapshot = await getDocs(q);
-
-//         const results = [];
-//         querySnapshot.forEach((doc) => {
-//             results.push(doc.data().word);
-//         });
-
-//         res.json(results);
-//     } catch (error) {
-//         console.error("搜尋錯誤:", error);
-//         res.status(500).send("搜尋失敗");
-//     }
-// });
-
-// app.listen(port, () => {
-//     console.log(`伺服器正在運行在 http://localhost:${port}`);
-// });
-
-// async function handleSearch(query) {
-//     const resultsDiv = document.getElementById("results");
-//     resultsDiv.innerHTML = ''; // 清空現有結果
-
-//     if (!query.trim()) return; // 如果輸入為空則不處理
-
-//     try {
-//         const response = await fetch(`/search?q=${query}`);
-//         if (!response.ok) throw new Error("搜尋失敗");
-
-//         const results = await response.json();
-
-//         // 顯示結果
-//         if (results.length > 0) {
-//             resultsDiv.innerHTML = results
-//                 .map(word => `<div>${word}</div>`)
-//                 .join('');
-//         } else {
-//             resultsDiv.innerHTML = '<div>未找到結果</div>';
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         resultsDiv.innerHTML = '<div>搜尋出錯，請稍後重試</div>';
-//     }
-// }
-
-
 //----------------------loading動畫--------------
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
@@ -294,20 +228,131 @@ fs.get_user_data().then(data => {
     }
 })
 
-// 監聽頁面可見性變化時觸發
-document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "hidden") {
+// // 監聽頁面可見性變化時觸發
+// document.addEventListener("visibilitychange", function () {
+//     if (document.visibilityState === "hidden") {
+//         fs.commit_data();
+//     }
+// });
+
+
+// // 使用監聽頁面切換作為額外保險(有問題無法存資料)
+// window.addEventListener("beforeunload", function () {
+//     fs.commit_data();
+// });
+
+// //滑鼠移到menu_container上面就執行
+// document.getElementById('menu_container').addEventListener('mouseover', function () {
+//     fs.commit_data();
+// });
+
+//---------------儲存按鈕-----------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    let hasUnsavedChanges = false; // 標記是否有未保存的變動
+
+    // 綁定「儲存」按鈕事件
+    document.getElementById("save_button").addEventListener("click", function () {
+        // 模擬保存邏輯，例如更新資料庫
+        console.log("變動已保存到資料庫");
         fs.commit_data();
+
+        // 將狀態設為已保存
+        hasUnsavedChanges = false;
+    });
+
+    // 模擬單字卡或資料庫變動
+    function simulateChange() {
+        hasUnsavedChanges = true;
+        console.log("偵測到變動，需要保存");
     }
-});
 
-// 使用監聽頁面切換作為額外保險(有問題無法存資料)
-window.addEventListener("beforeunload", function () {
-    fs.commit_data();
-});
+    // 示例：監控輸入框的變動
+    document.getElementById("english_text").addEventListener("change", simulateChange);
+    document.querySelector(".contair").addEventListener("change", simulateChange);
+    // 示例：模擬單字卡操作時的變動
+    // document.querySelector(".save_btn").addEventListener("click", simulateChange);
 
-//滑鼠移到menu_container上面就執行
-document.getElementById('menu_container').addEventListener('mouseover', function () {
-    fs.commit_data();
+    // 在用戶嘗試離開頁面時提示
+    window.addEventListener("beforeunload", function (event) {
+        if (hasUnsavedChanges) {
+            // 提示用戶
+            event.preventDefault();
+            event.returnValue = "您有未保存的變動，確定要離開嗎？"; // 部分瀏覽器需要設置 returnValue
+        }
+    });
+});
+// /*------------------------------------搜尋功能-----------------------------------------*/
+// JavaScript 部分
+document.addEventListener("DOMContentLoaded", () => {
+    const sortOptions = document.getElementById('sortOptions');
+
+    const searchBar = document.getElementById('searchBar');
+    const container = document.querySelector('.contair');
+
+    // 共用函數：根據排序選項進行排序
+    function sortCards(cards, sortOption) {
+        if (sortOption === "a_z") {
+            return cards.sort((a, b) => a.words.localeCompare(b.words)); // 按字母排序
+        }
+        return cards; // 原有排序
+    }
+    // ------------------共用函數：搜尋功能--------------------------
+    function performSearch() {
+        const query = searchBar.value.trim().toLowerCase(); // 獲取搜尋內容並轉小寫
+
+        fs.get_user_data()
+            .then(data => {
+                // 過濾卡片
+                const filteredCards = data.card.filter(card =>
+                    card.words.toLowerCase().includes(query)
+                );
+
+                // 取得目前的排序選項
+                const sortOption = sortOptions.value;
+
+                // 根據選項排序並渲染卡片
+                const sortedCards = sortCards(filteredCards, sortOption);
+                renderCards(sortedCards);
+            })
+            .catch(error => console.error("搜尋錯誤:", error));
+
+    }
+
+
+    // 共用函數：渲染卡片
+    function renderCards(cards) {
+        container.innerHTML = ""; // 清空卡片容器
+        cards.forEach(card => newCard(card.words, card.translate)); // 渲染卡片
+    }
+    searchBar.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+
+    // 排序選項變更事件
+    sortOptions.addEventListener('change', () => {
+        console.log("排序選項被更改");
+        fs.get_user_data()
+            .then(data => {
+                // 搜尋框是否有內容
+                const query = searchBar.value.trim().toLowerCase();
+
+                // 過濾（如果有搜尋內容）
+                let cards = data.card;
+                if (query) {
+                    cards = cards.filter(card =>
+                        card.words.toLowerCase().includes(query)
+                    );
+                }
+
+                // 根據選項排序並渲染卡片
+                const sortOption = sortOptions.value;
+                const sortedCards = sortCards(cards, sortOption);
+                renderCards(sortedCards);
+            })
+            .catch(error => console.error("排序錯誤:", error));
+    });
 });
 

@@ -29,24 +29,39 @@
         <div class="form_container">
             <h2>建立新的單詞卡</h2>
             <form id="card_form">
-                <label for="english_text">詞語</label>
+                <label for="english_text">詞語:</label>
                 <input type="text" id="english_text" placeholder="輸入英文" pattern="[a-zA-Z\s]+" title="只能輸入英文字母"
                     autocomplete="off" required>
-                <label for="chinese_text">翻譯</label>
+                <label for="chinese_text">解釋:</label>
                 <input type="text" id="chinese_text" placeholder="新增一段描述或翻譯.." required>
                 <div class="button_container">
-                    <button class="btn" type="submit">新增卡片</button>
-                    <!-- <button class="btn">新增圖表</button> -->
+                    <button class="btn" id="add_button" type="submit">新增卡片</button>
+                    <button class="btn" id="cancel_button" type="reset">取消</button>
+                    <button class="btn" id="save_button" type="button">儲存</button>
                 </div>
             </form>
+            <!-- 搜尋欄和排序 -->
+            <div class="controls">
+                <div class="search">
+                    <label for="sort">查詢:</label>
+                    <div class="search_bar">
+                        <span class="search_icon"><svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px"
+                                fill="#000000" viewBox="0 0 256 256">
+                                <path
+                                    d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z">
+                                </path>
+                            </svg> </span>
+                        <input type="text" id="searchBar" placeholder="搜尋單字..." />
+                    </div>
+                </div>
+                <select id="sortOptions">
+                    <option value="original">原有排序</option>
+                    <option value="a_z">字母排序</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <!-- 搜尋欄 -->
-    <!-- <div>
-        <input type="text" id="searchBar" placeholder="搜尋 a-z 的資料..." oninput="handleSearch(this.value)" />
-    </div>
-    <div id="results"></div> -->
 
     <!-- 卡片區 -->
     <div class="cardcontent">

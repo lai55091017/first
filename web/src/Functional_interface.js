@@ -594,7 +594,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 lectern: [],
                 blackboard: []
             };
-        
+
             // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
@@ -664,9 +664,9 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                     }
                 }
             });
-        
+
             console.log('找到所有物件:', objects);
-        
+
             // 確保找到所有關鍵物件
             if (
                 objects.doors.length === 2 ||
@@ -729,7 +729,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
         }
-        
+
 
         // 在加載場景後執行處理
         processSceneObjects(library.scene);
