@@ -46,14 +46,14 @@ class Controller {
     }
 
     // 設置門和初始化動畫
-// 設置門
-setDoors(leftDoor, rightDoor, doorType) {
-    // 存儲每對門物件，以 doorType 作為鍵名
-    this.doors[doorType] = { left: leftDoor, right: rightDoor };
+    // 設置門
+    setDoors(leftDoor, rightDoor, doorType) {
+        // 存儲每對門物件，以 doorType 作為鍵名
+        this.doors[doorType] = { left: leftDoor, right: rightDoor };
 
-    // 可以根據需要為每對門設置動畫
-    console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
-}
+        // 可以根據需要為每對門設置動畫
+        console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
+    }
 
     // 設置椅子
     setChairs(chairs) {
@@ -185,7 +185,7 @@ setDoors(leftDoor, rightDoor, doorType) {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-             } // F鍵可以開關門
+            } // F鍵可以開關門
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -382,12 +382,30 @@ setDoors(leftDoor, rightDoor, doorType) {
                 document.getElementById('blocker').style.display = powerswitch ? 'block' : 'none'; // 黑色遮罩
                 document.getElementById('crosshair').style.display = powerswitch ? 'none' : 'block'; // 十字准心
                 document.getElementById('menu').style.display = powerswitch ? 'block' : 'none'; // 菜单
-                document.getElementById('main_menu').style.display = powerswitch ? 'block' : 'none';
+                const mainMenu = $('#main_menu');
+                if (powerswitch) {
+                    // 顯示並應用淡入動畫
+                    mainMenu
+                        .removeClass('animate__fadeOutDown') // 確保移除隱藏動畫
+                        .addClass('animate__fadeInUp')    // 添加顯示動畫
+                        .css('display', 'block');      // 顯示元素
+                } else {
+                    // 隱藏並應用淡出動畫
+                    mainMenu
+                        .removeClass('animate__fadeInUp')  // 確保移除顯示動畫
+                        .addClass('animate__fadeOutDown');   // 添加隱藏動畫
+
+                    // 延遲動畫結束後隱藏元素
+                    setTimeout(() => {
+                        mainMenu.css('display', 'none');
+                    }, 200); // 動畫時間：1秒（根據 Animate.css 的默認動畫時長設置）
+                }
                 break;
             case "chatroom":
                 document.getElementById('message_input').style.display = powerswitch ? 'block' : 'none';
                 document.getElementById('chat_box').style.display = powerswitch ? 'block' : 'none';
                 document.getElementById('content').style.display = powerswitch ? 'block' : 'none';
+
                 break;
         }
 
@@ -482,8 +500,7 @@ setDoors(leftDoor, rightDoor, doorType) {
 
             this.isClickable = false; // 禁止点击操作
 
-            //popupWindow先隱藏
-            this.popupWindow.hide();
+
             // console.log(object.name);
             const originalColor = object.material.emissive.clone();
 
@@ -498,7 +515,8 @@ setDoors(leftDoor, rightDoor, doorType) {
                 this.popupWindow.show(
                     ITO.chineseName,
                     ITO.englishName,
-                    { x: event.clientX, y: event.clientY });
+                    // { x: event.clientX, y: event.clientY }
+                );
 
                 const englishName = InteractableObject.find(item => item.id === object.name).englishName;
                 this.popupWindow.speak(englishName);
@@ -507,7 +525,7 @@ setDoors(leftDoor, rightDoor, doorType) {
                     this.isClickable = true;
                     this.popupWindow.hide();
                     object.material.emissive = originalColor;
-                }, 3000);
+                }, 5000);
             } else {
                 console.log('無可互動物件');
 
