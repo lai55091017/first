@@ -595,72 +595,36 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 blackboard: []
             };
         
+            // 定義物件類型與對應正則表達式的映射
+            const regexMapping = [
+                { type: 'doors', regex: /^(Door_(L|R)_Home|LIB_Door_(Left|Right)|Door_School_(Left|Right)|Mesh254.*)$/, newName: 'Door' },
+                { type: 'chairs', regex: /^.*Chair.*/, newName: 'Chair' },
+                { type: 'tables', regex: /^(LIB_Table_\d+|.*_table|Table_.*|Bedroom_Desk)$/, newName: 'Table' },
+                { type: 'counters', regex: /^counter\d+$/, newName: 'Counter' },
+                { type: 'bookshelves', regex: /^.*Bookshelf\d+(_\d+)*$/, newName: 'Bookshelf' },
+                { type: 'sofas', regex: /^Sofa_\d+$/, newName: 'Sofa' },
+                { type: 'fridge', regex: /^Kitchen_fridge$/, newName: 'Fridge' },
+                { type: 'bar', regex: /^Kitchen_bar_\d+$/, newName: 'Bar' },
+                { type: 'tv', regex: /^TV_\d+$/, newName: 'TV' },
+                { type: 'tub', regex: /^Toilet_Tub$/, newName: 'Tub' },
+                { type: 'toilet', regex: /^Toilet_toilet$/, newName: 'Toilet' },
+                { type: 'sink', regex: /^.*sink.*$/, newName: 'Sink' },
+                { type: 'bed', regex: /^Bedroom_Bed_.*$/, newName: 'Bed' },
+                { type: 'wardrobe', regex: /^Bedroom_wardrobe_.*$/, newName: 'Wardrobe' },
+                { type: 'podium', regex: /^Podium$/, newName: 'Podium' },
+                { type: 'lectern', regex: /^Lectern$/, newName: 'Lectern' },
+                { type: 'blackboard', regex: /^School_Blackboard_\d+$/, newName: 'Blackboard' }
+            ];
+        
             // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
-                    if (/^(Door_(L|R)_Home | LIB_Door_(Left|Right) | Door_School_(Left|Right))$/.test(child.name)) { // 門s
-                        child.name = 'Door';
-                        objects.doors.push(child);
-                    } else if (/^Mesh254.*/.test(child.name)) { // 門
-                        child.name = 'Door';
-                        objects.doors.push(child);
-                    } else if (/^.*Chair.*/.test(child.name)) { // 椅子
-                        child.name = 'Chair';
-                        objects.chairs.push(child);
-                    } else if (/^LIB_Table_\d+$/.test(child.name)) { // 桌子_圖書館
-                        child.name = 'Table';
-                        objects.tables.push(child);
-                    } else if (/^.*_table/.test(child.name)) { // 桌子_家
-                        child.name = 'Table';
-                        objects.tables.push(child);
-                    } else if (/^Table_.*/.test(child.name)) { // 桌子_學校
-                        child.name = 'Table';
-                        objects.tables.push(child);
-                    } else if (/^Bedroom_Desk/.test(child.name)) { // 桌子_臥室
-                        child.name = 'Table';
-                        objects.tables.push(child);
-                    } else if (/^counter\d+$/.test(child.name)) { // 櫃台
-                        child.name = 'Counter';
-                        objects.counters.push(child);
-                    } else if (/^.*Bookshelf\d+(_\d+)*$/.test(child.name)) { // 書架
-                        child.name = 'Bookshelf';
-                        objects.bookshelves.push(child);
-                    } else if (/^Sofa_\d+$/.test(child.name)) { // 沙發
-                        child.name = 'Sofa';
-                        objects.sofas.push(child);
-                    } else if (/^Kitchen_fridge/.test(child.name)) { // 冰箱
-                        child.name = 'Fridge';
-                        objects.fridge.push(child);
-                    } else if (/^Kitchen_bar_\d+$/.test(child.name)) { // 吧台
-                        child.name = 'Bar';
-                        objects.bar.push(child);
-                    } else if (/^TV_\d+$/.test(child.name)) { // 電視
-                        child.name = 'TV';
-                        objects.tv.push(child);
-                    } else if (/^Toilet_Tub/.test(child.name)) { // 浴缸
-                        child.name = 'Tub';
-                        objects.tub.push(child);
-                    } else if (/^Toilet_toilet/.test(child.name)) { // 馬桶
-                        child.name = 'Toilet';
-                        objects.toilet.push(child);
-                    } else if (/^.*sink.*/.test(child.name)) { // 洗碗機
-                        child.name = 'Sink';
-                        objects.sink.push(child);
-                    } else if (/^Bedroom_Bed_.*/.test(child.name)) { // 床
-                        child.name = 'Bed';
-                        objects.bed.push(child);
-                    } else if (/^Bedroom_wardrobe_.*/.test(child.name)) { // 衣櫃
-                        child.name = 'Wardrobe';
-                        objects.wardrobe.push(child);
-                    } else if (/^Podium/.test(child.name)) { // 講台
-                        child.name = 'Podium';
-                        objects.podium.push(child);
-                    } else if (/^Lectern/.test(child.name)) { // 講桌
-                        child.name = 'Lectern';
-                        objects.lectern.push(child);
-                    } else if (/^School_Blackboard_\d+$/.test(child.name)) { // 黑板
-                        child.name = 'Blackboard';
-                        objects.blackboard.push(child);
+                    for (const { type, regex, newName } of regexMapping) {
+                        if (regex.test(child.name)) {
+                            child.name = newName; // 更新名稱
+                            objects[type].push(child); // 添加到對應類型
+                            break;
+                        }
                     }
                 }
             });
@@ -668,45 +632,16 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
             console.log('找到所有物件:', objects);
         
             // 確保找到所有關鍵物件
-            if (
-                objects.doors.length === 2 ||
-                objects.chairs.length > 0 ||
-                objects.tables.length > 0 ||
-                objects.counters.length > 0 ||
-                objects.bookshelves.length > 0 ||
-                objects.sofas.length > 0 ||
-                objects.fridge.length > 0 ||
-                objects.bar.length > 0 ||
-                objects.tv.length > 0 ||
-                objects.tub.length > 0 ||
-                objects.toilet.length > 0 ||
-                objects.sink.length > 0 ||
-                objects.bed.length > 0 ||
-                objects.wardrobe.length > 0 ||
-                objects.podium.length > 0 ||
-                objects.lectern.length > 0 ||
-                objects.blackboard.length > 0
-            ) {
+            const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
+        
+            if (hasAllObjects) {
                 console.log('好消息，找到圖書館的所有物件了');
-                // 設置圖層
-                objects.doors.forEach((door) => door.layers.set(1));
-                objects.chairs.forEach((chair) => chair.layers.set(1));
-                objects.tables.forEach((table) => table.layers.set(1));
-                objects.counters.forEach((counter) => counter.layers.set(1));
-                objects.bookshelves.forEach((bookshelf) => bookshelf.layers.set(1));
-                objects.sofas.forEach((sofa) => sofa.layers.set(1));
-                objects.fridge.forEach((fridge) => fridge.layers.set(1));
-                objects.bar.forEach((bar) => bar.layers.set(1));
-                objects.tv.forEach((tv) => tv.layers.set(1));
-                objects.tub.forEach((tub) => tub.layers.set(1));
-                objects.toilet.forEach((toilet) => toilet.layers.set(1));
-                objects.sink.forEach((sink) => sink.layers.set(1));
-                objects.bed.forEach((bed) => bed.layers.set(1));
-                objects.wardrobe.forEach((wardrobe) => wardrobe.layers.set(1));
-                objects.podium.forEach((podium) => podium.layers.set(1));
-                objects.lectern.forEach((lectern) => lectern.layers.set(1));
-                objects.blackboard.forEach((blackboard) => blackboard.layers.set(1));
-
+        
+                // 統一設置圖層
+                Object.values(objects).forEach((list) =>
+                    list.forEach((item) => item.layers.set(1))
+                );
+        
                 // 傳遞到控制器
                 controller.setDoors(objects.doors[0], objects.doors[1]);
                 controller.setChairs(objects.chairs);
@@ -729,6 +664,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_2.glb') {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
         }
+        
         
 
         // 在加載場景後執行處理
