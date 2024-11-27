@@ -236,7 +236,7 @@ body {
     right: 20px;
     display: flex;
     flex-direction: row;
-    justify-items: center;
+    justify-content: space-between;
 
     .ui_logo {
         position: fixed;
@@ -254,7 +254,7 @@ body {
             font-size: 2.5rem;
             letter-spacing: 1px;
             font-family: 'Rocher';
-            font-variation-settings: "BVEL" 100, "SHDW" 80;
+            font-variation-settings: "BVEL" 0, "SHDW" 300;
             //BVEL：字體的 bevel（浮雕）效果。
             // SHDW：字體的 shadow（陰影）效果
         }
@@ -644,45 +644,56 @@ body {
     /*列表樣式為空*/
     transition: .2s;
     /*上右下左邊距 */
-    left: 35vw;
-    top: 25vh;
+    bottom: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    align-self: center;
+    background-color: #3b3a3a94;
+    padding: 20px 40px;
+    border: var(--background-color)3px solid;
 
     .btn {
-        width: 500px;
-        height: 60px;
+        width: 20vw;
+        height: 10vh;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 40px 0;
+        margin-top: 40px;
         /*上右下左邊距 */
         transition: .2s;
-        // border-radius: 5px;
-        background-color: #a5a5a5af;
-        box-shadow: #363636cb 5px 5px 5px;
+        background-color: var(--background-color);
+        box-shadow: var(--btn_color) 3px 3px 0px;
         cursor: pointer;
-        border-radius: 5px;
+        // border-color: var(--hover_color);
         border: none;
+        border-radius: 20px;
 
         a {
             cursor: pointer;
-            color: #ffffff;
+            color: var(--btn_color);
             font-weight: bold;
-            font-family: '微軟正黑體';
-            letter-spacing: 8px;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         &:hover {
+            a {
+                color: #fffffd;
+            }
 
+            box-shadow: var(--background-color) 5px 5px 0px;
             transition: .2s;
             // height: 50px;
-            text-shadow: 0 0 10px #69e0ff, 0 0 20px #69e0ff, 0 0 10px #69e0ff;
-            background: linear-gradient(to right, #c9c9c9c5 10%, transparent 100%);
+            text-shadow: 0 0 10px #69e0ff,
+            0 0 20px #69e0ff,
+            0 0 10px #69e0ff;
+            background: linear-gradient(to right, #638aceae, 30%, #949499 100%);
             /*background往上顯示顏色還有逐漸變透明位置和比例*/
             // background-color: #8d8c8c;
             font-size: 110%;
-            transform: translate(-20px);
+            transform: translate(-10px, -10px);
 
         }
     }

@@ -5,15 +5,12 @@ import * as THREE from 'three';
 class PopupWindow {
     constructor() {
         this.popup = document.createElement('div');
-        this.popup.className = 'model_info';
-        // this.popup.style.position = 'absolute'; // 設定彈窗為絕對位置(absolute)，如果有問題再試試看fixed
-        // this.popup.style.background = 'rgba(0, 0, 0, 0.8)'; // 背景為透明度80%的黑底
-        // this.popup.style.color = 'white'; // 顏色為白色
-        // this.popup.style.padding = '10px'; // 內留白為10px
-        // this.popup.style.borderRadius = '5px'; // 圓角5px，不是必需的，只是為了讓它看起來沒那麼尖銳
-        this.popup.style.display = 'none'; // 初始為隱藏(因為是互動後才彈出所以要先隱藏)
+        this.popup.className = 'model_info animate__animated'; // 基礎動畫類
         document.body.appendChild(this.popup);
+        //popupWindow先隱藏
+        this.popup.style.display = 'none';
     }
+
 
     show(chineseName, englishName, position) {
         this.popup.innerHTML = `
@@ -23,11 +20,23 @@ class PopupWindow {
         `; // 這裡使用的是``而不是''，``可以創建多行字串、使用${}直接插入變數或表達式。而''只能創建單行字串且需使用+來串接變數
         // this.popup.style.left = `${position.x}px`;
         // this.popup.style.top = `${position.y}px`;
-        this.popup.style.display = 'block'; // 顯示彈窗
+
+        // 顯示並加入動畫
+        $(this.popup)
+            .removeClass('animate__zoomOut') // 確保移除隱藏動畫
+            .addClass('animate__zoomIn')    // 添加顯示動畫
+            .css('display', 'block');       // 顯示元素
+
     }
 
     hide() {
-        this.popup.style.display = 'none'; // 隱藏彈窗
+
+        $(this.popup)
+            .removeClass('animate__zoomIn')  // 確保移除顯示動畫
+            .addClass('animate__zoomOut')   // 添加隱藏動畫
+            .setTimeout(() => {
+                this.popup.style.display = 'none';
+            }, 200);
     }
 
     speak(text) {

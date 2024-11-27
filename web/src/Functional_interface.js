@@ -522,7 +522,7 @@ async function loadModels() {
                 gasstoves: [],
                 shelf: [],
             };
-        
+
             // 定義物件類型與對應正則表達式的映射
             const regexMapping = [
                 { type: 'doors', regex: /^(Door_(L|R)_Home|LIB_Door_(Left|Right)|Door_School_(Left|Right))$/, newName: 'Door' },
@@ -548,7 +548,7 @@ async function loadModels() {
                 { type: 'gasstoves', regex: /^Kitchen_gas_stove_\d+$/, newName: 'Gas stove' },
                 { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
             ];
-        
+
 
             // 遍歷場景中的物件
             scene.traverse((child) => {
@@ -567,15 +567,15 @@ async function loadModels() {
 
             // 確保找到所有關鍵物件
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
-        
+
             if (hasAllObjects) {
                 console.log('好消息，找到圖書館的所有物件了');
-        
+
                 // 統一設置圖層
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
-        
+
                 // 傳遞到控制器
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
@@ -605,7 +605,7 @@ async function loadModels() {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
         }
-        
+
 
         // 在加載場景後執行處理
         processSceneObjects(library.scene);
