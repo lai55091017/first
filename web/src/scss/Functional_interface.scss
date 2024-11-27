@@ -647,21 +647,21 @@ body {
     bottom: 10vh;
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
     align-self: center;
     background-color: #3b3a3a94;
     padding: 20px 40px;
-    border-radius: 20px;    
+    border: var(--background-color)3px solid;
 
     .btn {
-        width: 15vw;
+        width: 20vw;
         height: 10vh;
         position: relative;
         display: flex;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
         margin-top: 40px;
-        padding-left: 40px;
         /*上右下左邊距 */
         transition: .2s;
         background-color: var(--background-color);
@@ -669,14 +669,13 @@ body {
         cursor: pointer;
         // border-color: var(--hover_color);
         border: none;
-        border-radius: 40px;
+        border-radius: 0px;
 
         a {
             cursor: pointer;
             color: var(--btn_color);
             font-weight: bold;
-            font-size: 16px;
-
+            font-size: 20px;
         }
 
         &:hover {
