@@ -81,15 +81,20 @@ class WordleGame {
                 "wall", "fan", "chalk", "clock", "book", "pen", "notebook", "computer", "restroom", "library", "platform", "playground", "backpack", "bookcase", "mirror"
             ],
         };
+
         this.maxAttempts = 6; // 最大嘗試次數
         this.currentAttempt = 0; // 當前嘗試次數
         this.currentGuess = ""; // 玩家當前猜測的單字
-        this.initGame(); // 初始化遊戲
-        this.initEventListeners()
+        this.isKeyboardEnabled = false; // 是否啟用鍵盤輸入
+
         this.guessGrid = guessGrid; // 猜測格的 DOM 元素
         this.keyboard = keyboard; // 鍵盤的 DOM 元素
         this.boxes = guessGrid.querySelectorAll(".letter-box");
         this.submitGuess = this.submitGuess.bind(this);
+
+        this.initGame(); // 初始化遊戲
+        this.bindEvents();
+        this.GameUI();
     }
 
     /**
@@ -110,6 +115,8 @@ class WordleGame {
         this.answer = this.wordList[Math.floor(Math.random() * this.wordList.length)].toUpperCase(); // 隨機選擇答案
         this.chineseAnswer = this.getChineseMeaning(this.answer); // 取得答案的中文意思
         console.log(`主題: ${randomTheme}, 答案: ${this.answer}`); // 測試用：顯示隨機主題和單字
+        // 更新標題顯示選定的主題名稱
+        document.querySelector("h1").textContent = `本次的主題是 ${randomTheme}`;
     }
 
     resetGame() {
@@ -289,17 +296,29 @@ class WordleGame {
         }
     }
 
-    // 初始化鍵盤事件
-    initEventListeners() {
+    // 啟用鍵盤輸入
+    enableKeyboard() {
+        this.isKeyboardEnabled = true;
+    }
+
+    // 禁用鍵盤輸入
+    disableKeyboard() {
+        this.isKeyboardEnabled = false;
+    }
+
+
+    // 綁定鍵盤事件
+    bindEvents() {
         document.addEventListener("keydown", (event) => {
+            // 檢查鍵盤是否啟用
+            if (!this.isKeyboardEnabled) return;
+    
             const key = event.key.toUpperCase();
-        
-            // 遊戲結束後禁止輸入
+    
             if (this.currentAttempt >= this.maxAttempts || this.currentGuess === this.answer) {
-                return; // 停止處理事件
+                return;
             }
-        
-            // 根據輸入執行相應的操作
+    
             switch (key) {
                 case "ENTER":
                     this.submitGuess();
@@ -308,15 +327,14 @@ class WordleGame {
                     this.handleKeyPress("BACKSPACE");
                     break;
                 default:
-                    // 僅處理 A~Z 的字母輸入
                     if (/^[A-Z]$/.test(key)) {
                         this.handleKeyPress(key);
                     }
                     break;
             }
         });
-        
     }
+    
     
 }
 

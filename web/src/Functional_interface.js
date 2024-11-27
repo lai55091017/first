@@ -736,14 +736,8 @@ $(document).ready(function () {
 // 選擇HTML元素
 const guessGrid = document.getElementById("guess-grid");
 const keyboard = document.getElementById("keyboard");
-
 const wordle_game = new wordlegame(guessGrid, keyboard);
 
-// 更新標題顯示選定的主題名稱
-document.querySelector("h1").textContent = `本次的主題是 ${wordle_game.randomTheme}`;
 
-// 測試用，顯示隨機到的主題和單字，完成後記得刪(不然可以直接從控制台看到答案)
-console.log(`主題: ${wordle_game.randomTheme}, 答案: ${wordle_game.answer}`);
-
-wordle_game.GameUI()
-
+// wordle_game.disableKeyboard();// 禁用鍵盤
+wordle_game.enableKeyboard(); // 啟用鍵盤
