@@ -592,7 +592,12 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_4.glb') {
                 wardrobe: [],
                 podium: [],
                 lectern: [],
-                blackboard: []
+                blackboard: [],
+                tvshelves: [],
+                rangehood: [],
+                cabinets: [],
+                gasstoves: [],
+                shelf: [],
             };
         
             // 定義物件類型與對應正則表達式的映射
@@ -613,7 +618,12 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_4.glb') {
                 { type: 'wardrobe', regex: /^Bedroom_wardrobe_.*$/, newName: 'Wardrobe' },
                 { type: 'podium', regex: /^Podium$/, newName: 'Podium' },
                 { type: 'lectern', regex: /^Lectern$/, newName: 'Lectern' },
-                { type: 'blackboard', regex: /^School_Blackboard_\d+$/, newName: 'Blackboard' }
+                { type: 'blackboard', regex: /^School_Blackboard_\d+$/, newName: 'Blackboard' },
+                { type: 'tvshelves', regex: /^TV_shelf_\d+$/, newName: 'TV Shelf' },
+                { type: 'rangehood', regex: /^Kitchen_range_hood/, newName: 'Range hood' },
+                { type: 'cabinets', regex: /^Kitchen_cabinet_.*/, newName: 'Cabinet' },
+                { type: 'gasstoves', regex: /^Kitchen_gas_stove_\d+$/, newName: 'Gas stove' },
+                { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
             ];
         
 
@@ -663,6 +673,11 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_4.glb') {
                 controller.setPodium(objects.podium);
                 controller.setLectern(objects.lectern);
                 controller.setBlackboard(objects.blackboard);
+                controller.setTVShelves(objects.tvshelves);
+                controller.setRangehood(objects.rangehood);
+                controller.setCabinets(objects.cabinets);
+                controller.setGasstoves(objects.gasstoves);
+                controller.setShelf(objects.shelf);
             } else {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
