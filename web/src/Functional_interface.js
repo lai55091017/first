@@ -169,17 +169,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加物理剛體
             playerBody = Player_body(character.getMesh(), 0.5, 1.75);
-            // camera.userData.physicsBody = playerBody;
             camera.userData.physicsBody = playerBody;
-            // // 偵測玩家碰撞
-            // body.addEventListener('collide', (event) => {
-            //     const contact = event.contact;
-            //     // const collidedObject = contact.other;
-            //     console.log(contact.bi.id);
-            //     if (contact.bi.id === 21) {
-            //         console.log('碰撞到門');
-            //     }
-            // });
 
             // 註冊玩家的碰撞事件
             playerBody.addEventListener('collide', handlePlayerCollision);
@@ -359,30 +349,6 @@ function animate() {
     // 傳送錨點
     // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
 
-    // 更新模型的位置和旋轉
-    scene.traverse(function (object) {
-        if (object.userData.physicsBody) {
-            const body = object.userData.physicsBody;
-
-            // const worldPosition = new THREE.Vector3();
-            // object.localToWorld(worldPosition);
-
-            // if (object.name === 'Entry') {
-            //     body.position.x = camera.position.x;
-            //     body.position.y = camera.position.y - controller.playerHight / 2;
-            //     body.position.z = camera.position.z;
-
-            //     console.log(body);
-
-            //     body.rotation.copy(camera.quaternion);
-            // }
-            // object.position.copy(body.position);
-            // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
-
-
-        }
-    });
-
     renderer.render(scene, camera);
 
 }
@@ -459,7 +425,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
 
 }
 
-// 追踪玩家與特定物體 (targetBody) 的碰撞狀態
+// 追踪玩家與特定物體 的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
     const otherBody = event.body;
@@ -648,7 +614,6 @@ function showSceneOptions() {
                 // 傳送錨點
                 // 將玩家移動到 (0, 0, 0)
                 if (button.textContent == 'Home') {
-                    // playerBody.position.set(1, 1, 0); // 設定玩家位置
                     playerBody.position.set(-2.5, 1, 3.5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
