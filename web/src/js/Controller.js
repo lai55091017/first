@@ -401,6 +401,7 @@ class Controller {
             if (this.isGame) {
                 this.__toggleGameUI("blocker", true);
                 document.removeEventListener('keydown', this.__chatroom);
+                this.isGame = false;
             }
         });
     }

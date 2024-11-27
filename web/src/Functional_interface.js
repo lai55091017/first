@@ -190,6 +190,7 @@ async function onPlayerJoin(data) {
             console.log(currentPlayer);
             // 將玩家移動到 (0, 0, 0)
             if (currentPlayer) {
+                camera.rotation.set(0, 3, 0);
                 playerBody.position.set(14, 1, -3.5); // 設定玩家位置
                 console.log(`玩家位置:`, playerBody.position);
             } else {
@@ -337,6 +338,12 @@ function animate() {
     const time = performance.now();
     const delta = (time - prevTime) / 1000;
     prevTime = time;
+
+    // 玩家移動
+    // console.log(playerBody.position);
+
+    // 玩家旋轉
+    // console.log(camera.rotation);
 
     const playerData = controller.update(delta);
 
@@ -643,16 +650,19 @@ function showSceneOptions() {
                 if (button.textContent == 'Home') {
                     // playerBody.position.set(1, 1, 0); // 設定玩家位置
                     playerBody.position.set(-2.5, 1, 3.5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
                     console.log(`玩家位置:`, playerBody.position);
                 } else if (button.textContent == 'Library') {
                     console.log(`角色已移動到: ${sceneName} `);
                     playerBody.position.set(-31.5, 1, 4); // 將角色移動到目標位置
                     console.log(`玩家位置:`, playerBody.position);
+                    camera.rotation.set(0, 0, 0);
 
                 } else if (button.textContent == 'School') {
                     console.log(`角色已移動到: ${sceneName}`);
                     playerBody.position.set(-62, 1, 5);
+                    camera.rotation.set(0, 0, 0);
                     console.log(`玩家位置: `, playerBody.position);
 
                 } else {
@@ -707,9 +717,10 @@ const WordleGame = $("#WordleGame");
 WordleGame.hide();
 
 $('#Game').on('click', async () => {
+    wordle_game.enableKeyboard(); // 啟用鍵盤
     WordleGame.fadeToggle(500);
 })
-
+// 傳送錨點
 
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
 //$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
@@ -724,6 +735,7 @@ $(document).ready(function () {
                 instruction.fadeToggle(500);
                 break;
             case 'close_wordlegame'://id=close_wordlegame
+                wordle_game.disableKeyboard();// 禁用鍵盤
                 WordleGame.fadeToggle(500);
                 break;
             default:
@@ -737,7 +749,3 @@ $(document).ready(function () {
 const guessGrid = document.getElementById("guess-grid");
 const keyboard = document.getElementById("keyboard");
 const wordle_game = new wordlegame(guessGrid, keyboard);
-
-
-// wordle_game.disableKeyboard();// 禁用鍵盤
-wordle_game.enableKeyboard(); // 啟用鍵盤
