@@ -40,6 +40,11 @@ class Controller {
         this.podium = [];
         this.lectern = [];
         this.blackboard = [];
+        this.tvshelves = [];
+        this.rangehood = [];
+        this.cabinets = [];
+        this.gasstoves = [];
+        this.shelf = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -133,6 +138,31 @@ class Controller {
     // 設置黑板
     setBlackboard(blackboard) {
         this.blackboard = blackboard;
+    }
+
+    // 設置電視書架
+    setTVShelves(tvshelves) {
+        this.tvshelves = tvshelves;
+    }
+
+    // 設置抽油煙機
+    setRangehood(rangehood) {
+        this.rangehood = rangehood;
+    }
+
+    // 設置櫃子
+    setCabinets(cabinets) {
+        this.cabinets = cabinets;
+    }
+
+    // 設置瓦斯爐
+    setGasstoves(gasstoves) {
+        this.gasstoves = gasstoves;
+    }
+
+    // 設置廁所架
+    setShelf(shelf) {
+        this.shelf = shelf;
     }
 
     //設置移動參數
@@ -507,7 +537,8 @@ class Controller {
             if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' ||
                 object.name === 'Sofa' || object.name === 'Fridge' || object.name === 'Bar' || object.name === 'TV' || object.name === 'Tub' ||
                 object.name === 'Toilet' || object.name === 'Sink' || object.name === 'Bed' || object.name === 'Wardrobe' || object.name === 'Podium' ||
-                object.name === 'Lectern' || object.name === 'Blackboard') {
+                object.name === 'Lectern' || object.name === 'Blackboard' || object.name === 'TV Shelf' || object.name === 'Range hood' || object.name === 'Cabinet' ||
+                object.name === 'Gas stove' || object.name === 'Toilet shelf') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗

@@ -86,6 +86,31 @@ const InteractableObject = [
         chineseName: '黑板',
         englishName: 'Blackboard'
     },
+    {
+        id: 'TV Shelf',
+        chineseName: '電視櫃',
+        englishName: 'TV Shelf'
+    },
+    {
+        id: 'Range hood',
+        chineseName: '抽油煙機',
+        englishName: 'Range hood'
+    },
+    {
+        id: 'Cabinet',
+        chineseName: '櫥櫃',
+        englishName: 'Cabinet'
+    },
+    {
+        id: 'Gas stove',
+        chineseName: '瓦斯機',
+        englishName: 'Gas stove'
+    },
+    {
+        id: 'Toilet shelf',
+        chineseName: '廁所置物架',
+        englishName: 'Toilet shelf'
+    },
 ];
 
 
