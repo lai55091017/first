@@ -542,7 +542,7 @@ function checkCollisionEnd() {
 
 
 // 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Three_SCENE_4.glb') {
+async function loadModels(scenePath = './mesh/glb/Three_SCENE_5.glb') {
     try {
         init_scene();
         // 加載新場景
