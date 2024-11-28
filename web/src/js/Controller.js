@@ -24,27 +24,6 @@ class Controller {
         this.libDoorL = null;
         this.libDoorR = null;
         this.doors = {}; // 新增用來存放門的物件
-        // this.chairs = [];
-        // this.tables = [];
-        // this.counters = [];
-        // this.bookshelves = [];
-        // this.sofas = [];
-        // this.fridge = [];
-        // this.bar = [];
-        // this.tv = [];
-        // this.tub = [];
-        // this.toilet = [];
-        // this.sink = [];
-        // this.bed = [];
-        // this.wardrobe = [];
-        // this.podium = [];
-        // this.lectern = [];
-        // this.blackboard = [];
-        // this.tvshelves = [];
-        // this.rangehood = [];
-        // this.cabinets = [];
-        // this.gasstoves = [];
-        // this.shelf = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -110,7 +89,8 @@ class Controller {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-            } // F鍵可以開關門
+            }, // F鍵可以開關門
+            'KeyM': () => { this.__toggleGameUI("chatroom", true); }, // M鍵可以開關聊天室
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -436,7 +416,7 @@ class Controller {
                 object.name === 'Sofa' || object.name === 'Fridge' || object.name === 'Bar' || object.name === 'TV' || object.name === 'Tub' ||
                 object.name === 'Toilet' || object.name === 'Sink' || object.name === 'Bed' || object.name === 'Wardrobe' || object.name === 'Podium' ||
                 object.name === 'Lectern' || object.name === 'Blackboard' || object.name === 'TV Shelf' || object.name === 'Range hood' || object.name === 'Cabinet' ||
-                object.name === 'Gas stove' || object.name === 'Toilet shelf') {
+                object.name === 'Gas stove' || object.name === 'Toilet shelf' || object.name === 'Labtop'|| object.name === 'Book') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗
