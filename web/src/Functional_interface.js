@@ -287,7 +287,7 @@ function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
     scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
-    scene.add(new THREE.DirectionalLight(0xffffff, 3));
+    // scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
 // 初始化相機
 function init_camera() {
