@@ -492,6 +492,8 @@ async function loadModels() {
                 cabinets: [],
                 gasstoves: [],
                 shelf: [],
+                labtop: [],
+                books: []
             };
 
             // 定義物件類型與對應正則表達式的映射
@@ -518,6 +520,8 @@ async function loadModels() {
                 { type: 'cabinets', regex: /^Kitchen_cabinet_.*/, newName: 'Cabinet' },
                 { type: 'gasstoves', regex: /^Kitchen_gas_stove_\d+$/, newName: 'Gas stove' },
                 { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
+                { type: 'labtop', regex: /^Office_Labtop.*/, newName: 'Labtop' },
+                { type: 'books', regex: /^Book_.*/, newName: 'Book' }
             ];
 
 
@@ -590,19 +594,19 @@ function showSceneOptions() {
                 // 傳送錨點
                 // 將玩家移動到 (0, 0, 0)
                 if (button.textContent == 'Home') {
-                    playerBody.position.set(-2.5, 1, 3.5); // 將角色移動到目標位置
+                    playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
                     console.log(`玩家位置:`, playerBody.position);
                 } else if (button.textContent == 'Library') {
                     console.log(`角色已移動到: ${sceneName} `);
-                    playerBody.position.set(-31.5, 1, 4); // 將角色移動到目標位置
+                    playerBody.position.set(-31.5, 1.5, 4); // 將角色移動到目標位置
                     console.log(`玩家位置:`, playerBody.position);
                     camera.rotation.set(0, 0, 0);
 
                 } else if (button.textContent == 'School') {
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(-62, 1, 5);
+                    playerBody.position.set(-62, 1.5, 5);
                     camera.rotation.set(0, 0, 0);
                     console.log(`玩家位置: `, playerBody.position);
 
