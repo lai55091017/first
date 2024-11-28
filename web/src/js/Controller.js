@@ -145,62 +145,6 @@ class Controller {
         });
     }
 
-
-    //更新角色
-    // update(delta) {
-
-    //     const player = this.camera;
-    //     const playerPosition = player.position;
-    //     // const playerBody = player.userData.physicsBody;
-    //     // console.log(playerBody);
-
-    //     // if (!playerBody) return;
-
-    //     // 随着时间速度会因摩擦力减小
-    //     this.velocity.x -= this.velocity.x * this.moveFriction * delta;
-    //     this.velocity.z -= this.velocity.z * this.moveFriction * delta;
-    //     this.velocity.y -= 9.8 * this.gravity * delta;
-
-    //     // 玩家移动方向
-    //     this.direction.z = Number(this.movingForward) - Number(this.movingBackward);
-    //     this.direction.x = Number(this.movingRight) - Number(this.movingLeft);
-    //     this.direction.normalize();
-
-    //     // 更新玩家的移动速度
-    //     if (this.movingForward || this.movingBackward) {
-    //         this.velocity.z -= this.direction.z * this.moveDistance * delta
-    //     };
-    //     if (this.movingLeft || this.movingRight){
-    //         this.velocity.x -= this.direction.x * this.moveDistance * delta
-    //     };
-
-    //     // 玩家移动
-    //     this.controls.moveRight(- this.velocity.x * delta);
-    //     this.controls.moveForward(- this.velocity.z * delta);
-
-    //     // 防止角色穿牆
-    //     // this.__handleCollisions(playerBody);
-
-    //     // 跳躍
-    //     playerPosition.y += this.velocity.y * delta;
-    //     if (playerPosition.y < this.playerHight) {
-    //         this.velocity.y = 0;
-    //         playerPosition.y = this.playerHight;
-    //         this.canJump = true;
-    //     }
-
-    //     // 計算速度
-    //     const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
-    //     this.speed = speed; // 更新速度變數
-
-    //     const characterData = player.children[0].children[0].userData;
-    //     const { currentActionName, previousActionName } = characterData;
-    //     const rotation = this.__getRotationShaveXZ(player);
-    //     const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
-    //     return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
-
-    // } 
-
     update(delta) {
         const player = this.camera;
         const playerPosition = player.position;
@@ -375,14 +319,14 @@ class Controller {
 
 
         if (intersects.length > 0) {
-            crosshair.style.borderColor = '#ff0000d4'; // 设置十字准心的颜色
+            crosshair.style.borderColor = '#ff0000d4'; // 設置十字準心的顏色
             crosshair.style.transform = 'scale(1.5)'; // 放大 1.5 倍
-            crosshair.style.transition = 'all 0.3s ease'; // 平滑过渡效果
+            crosshair.style.transition = 'all 0.3s ease'; // 平滑過渡效果
             crosshair.classList.add('active');
         }
         else {
-            crosshair.style.borderColor = 'white'; // 恢复颜色
-            crosshair.style.transform = 'scale(1)'; // 恢复原始大小
+            crosshair.style.borderColor = 'white'; // 回復原始顏色
+            crosshair.style.transform = 'scale(1)'; // 回復原始大小
             crosshair.classList.remove('active'); // 移除
         }
     }
@@ -406,7 +350,7 @@ class Controller {
             const object = intersects[0].object;// 獲取相交的物件
             console.log(object.name);
 
-            this.isClickable = false; // 禁止点击操作
+            this.isClickable = false; // 禁止點擊操作
 
 
             // console.log(object.name);

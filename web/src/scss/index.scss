@@ -79,28 +79,22 @@ body {
                     height: 40px;
                     width: 300px;
                     font-size: 14px;
-                    transition: 0.2s;
-                    /* 邊框顏色過度效果 */
+                    transition: 0.2s; /* 邊框顏色過度效果 */
                     background-color: #fbfbfb88;
-                    border: 1px solid #808283;
-                    /* 輸入框邊框大小 */
+                    border: 1px solid #808283; /* 輸入框邊框大小 */
                     border-radius: 5px;
                     outline: none;
 
                     &:hover {
                         // box-shadow: 0px 0px 0px 3px #d3e3fd;  /* 輸入框聚焦時的陰影效果 */
-                        transition: 0.2s;
-                        /* 邊框顏色過度效果 */
+                        transition: 0.2s; /* 邊框顏色過度效果 */
                         background-color: #d3e3fd;
                     }
 
                     &:focus {
-                        border-color: #656565;
-                        /* 輸入框聚焦石的顏色 */
-                        box-shadow: 0px 0px 0px 3px #a3c2f5;
-                        /* 輸入框聚焦時的陰影效果 */
-                        transition: 0.2s;
-                        /* 邊框顏色過度效果 */
+                        border-color: #656565; /* 輸入框聚焦時的顏色 */
+                        box-shadow: 0px 0px 0px 3px #a3c2f5; /* 輸入框聚焦時的陰影效果 */
+                        transition: 0.2s; /* 邊框顏色過度效果 */
                         background-color: #ffffff;
                     }
                 }

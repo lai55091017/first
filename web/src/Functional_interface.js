@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         context: 'sendMessage',
                         message: messageText,
                         username: fs.username,
-                        timestamp: formattedDateTime,   //时间戳
+                        timestamp: formattedDateTime,   // 儲存時間戳(即時間資訊)
                     }
 
                     try {
@@ -105,14 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-//格式化當前時間
+// 格式化當前時間
 function currentTime() {
     return new Promise((resolve, reject) => {
-        // 获取当前时间
+        // 獲取當前時間
         const currentTime = new Date();
-        // 获取年月日时分秒
+        // 獲取年、月、日、時、分、秒
         const year = currentTime.getFullYear();
-        const month = currentTime.getMonth() + 1; // 月份从 0 开始，需要加 1
+        const month = currentTime.getMonth() + 1; // 月份從0開始，需要加1
         const date = currentTime.getDate();
         const hours = currentTime.getHours();
         const minutes = currentTime.getMinutes();
@@ -127,6 +127,7 @@ function currentTime() {
 
 }
 
+// 初始化
 function init() {
     init_scene();
     init_camera();
@@ -143,11 +144,9 @@ function init() {
 
     // 導入(載入)模型
     loadModels();
-    // loadModels1();
 }
 
 /*********************************** Websocket Event *********************************************/
-
 let playerBody;
 let targetBody;
 let currentPlayer = false; // 定義全域變數來存儲當前玩家角色
@@ -270,9 +269,9 @@ function onPlayerMessage(data) {
             // 容器的可见高度
             const scrollableHeight = chatBox.scrollHeight - chatBox.clientHeight;
 
-            // 如果用户没有手动向上滚动（即滚动条接近底部），则自动滚动到底部
+            // 如果用户没有手動向上滾動（即滾動條接近底部），則自動滾動到底部
             if (chatBox.scrollTop >= scrollableHeight - 500) {
-                chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+                chatBox.scrollTop = chatBox.scrollHeight; // 滾動到底部
             }
 
             // 输出调试信息
@@ -283,12 +282,14 @@ function onPlayerMessage(data) {
 }
 
 /*********************************** Three.js *********************************************/
+// 初始化場景
 function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
     scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
     scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
+// 初始化相機
 function init_camera() {
     camera.fov = 75;//設置相機的視野範圍,1超近-100超遠
 
@@ -302,14 +303,14 @@ function init_camera() {
     //投影矩陣 是將 3D 場景投影到 2D 屏幕上的數學模型，用於定義相機的視野範圍和投影方式
     //當 camera.aspect 發生變化時，必須調用 camera.updateProjectionMatrix()，以重新計算相機的投影矩陣。
 }
-
+// 初始化渲染器
 function init_renderer() {
     const canvas = renderer.domElement;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(canvas);
 }
-
+// 初始化其他
 function init_other() {
     window.addEventListener('resize', resize);
     window.addEventListener('fullscreenchange', resize);
@@ -319,7 +320,7 @@ function init_other() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
-
+// 動畫
 function animate() {
 
     requestAnimationFrame(animate);
@@ -327,10 +328,10 @@ function animate() {
     const delta = (time - prevTime) / 1000;
     prevTime = time;
 
-    // 玩家移動
+    // 玩家移動值
     // console.log(playerBody.position);
 
-    // 玩家旋轉
+    // 玩家旋轉值
     // console.log(camera.rotation);
 
     const playerData = controller.update(delta);
@@ -352,6 +353,7 @@ function animate() {
 }
 
 /*********************************** Physics *********************************************/
+// 初始化物理引擎
 function init_physics() {
 
     cannon_world.gravity.set(0, -9.8, 0);
@@ -423,7 +425,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
 
 }
 
-// 追踪玩家與特定物體 的碰撞狀態
+// 追踪玩家與特定物體的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
     const otherBody = event.body;
@@ -571,7 +573,7 @@ async function loadModels() {
 
 
 /*-----------------------------------場景切換--------------------------------------------------*/
-
+// 顯示場景切換選單
 function showSceneOptions() {
     const menu = document.createElement('div');
     menu.id = 'scene_options';
@@ -593,20 +595,20 @@ function showSceneOptions() {
 
                 // 傳送錨點
                 // 將玩家移動到 (0, 0, 0)
-                if (button.textContent == 'Home') {
+                if (button.textContent == 'Home') { // 家裡
                     playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
                     console.log(`玩家位置:`, playerBody.position);
-                } else if (button.textContent == 'Library') {
+                } else if (button.textContent == 'Library') { // 圖書館
                     console.log(`角色已移動到: ${sceneName} `);
                     playerBody.position.set(-31.5, 1.5, 4); // 將角色移動到目標位置
                     console.log(`玩家位置:`, playerBody.position);
                     camera.rotation.set(0, 0, 0);
 
-                } else if (button.textContent == 'School') {
+                } else if (button.textContent == 'School') { // 學校
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(-62, 1.5, 5);
+                    playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
                     console.log(`玩家位置: `, playerBody.position);
 
@@ -689,7 +691,6 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-
 // 選擇HTML元素
 const guessGrid = document.getElementById("guess-grid");
 const keyboard = document.getElementById("keyboard");

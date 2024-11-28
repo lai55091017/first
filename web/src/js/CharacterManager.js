@@ -96,19 +96,11 @@ class CharacterManager {
     }
 
     // 獲取角色的速度
-    // 新版，這個是return meshContainer.userData.speed
+    // 新版是return meshContainer.userData.speed，舊版是return playerController.speed
     __getSpeed(meshContainer) {
         // 假設 meshContainer 有一個 speed 屬性，該屬性會隨時間更新
         return meshContainer.userData.speed || 0;
     }
-
-    /*
-        舊版，這個是return playerController.speed
-        __getSpeed(meshContainer) {
-        // 假設 meshContainer 有一個 speed 屬性，該屬性會隨時間更新
-        return playerController.speed || 0;
-    }
-    */
 
     // 偵測角色速度並設定相應的動作
     __detectSpeedAndSetAction(mesh, speed) {

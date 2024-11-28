@@ -5,7 +5,7 @@ class DoorAnimation {
     constructor(libDoorL, libDoorR) {
         this.libDoorL = libDoorL;
         this.libDoorR = libDoorR;
-        this.duration = 1000; // 1000為動畫時間也就是1秒，1500就是1.5秒
+        this.duration = 1000; // 1000為動畫時間也就是1秒，1500就是1.5秒，剩下的依此類推
     }
 
     // 開門

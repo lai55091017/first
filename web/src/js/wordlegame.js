@@ -1,8 +1,8 @@
 class WordleGame {
     constructor(guessGrid, keyboard) {
-        /**
-         * 建構函式
-         * 初始化遊戲資料，包括單字對應中文意思、主題及其他變數。
+        /*
+            建構函式
+            初始化遊戲資料，包括單字對應中文意思、主題及其他變數。
          */
         this.wordMeanings = {
             apple: "蘋果",
@@ -97,15 +97,14 @@ class WordleGame {
         this.GameUI();
     }
 
-    /**
-     * 根據單字取得其對應的中文意思
-     * @param {string} word - 英文字母組成的單字
-     * @returns {string} 對應的中文意思，若無匹配則返回 "未知"
+    /*
+        根據單字取得其對應的中文意思
+        @param {string} word - 英文字母組成的單字
+        @returns {string} 對應的中文意思，若無匹配則返回 "未知"
      */
     getChineseMeaning(word) {
         return this.wordMeanings[word.toLowerCase()] || "未知";
     }
-
 
     // 隨機選擇一個主題和單字作為答案，並記錄中文意思。
     initGame() {
@@ -159,7 +158,7 @@ class WordleGame {
         });
     }
 
-
+    // 處理鍵盤輸入
     handleKeyPress(letter) {
         if (letter === "BACKSPACE") {
             this.currentGuess = this.currentGuess.slice(0, -1); // 刪除最後一個輸入的字母
@@ -169,6 +168,7 @@ class WordleGame {
         this.updateGuessGrid()
     }
 
+    // 創建遊戲UI
     GameUI() {
         // 讓一行的格子數和答案長度相同
         const columns = this.answer.length; // 行=答案長度
@@ -226,7 +226,7 @@ class WordleGame {
         }
     }
 
-
+    // 送出答案
     submitGuess() {
         if (this.currentGuess.length !== this.answer.length) {
             alert("請輸入一個長度正確的單字");
