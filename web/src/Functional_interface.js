@@ -343,7 +343,7 @@ function animate() {
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
     cannonDebugger.update()
 
-    checkCollisionEnd()
+    // checkCollisionEnd()
 
     // 傳送錨點
     // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
