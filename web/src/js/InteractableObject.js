@@ -103,7 +103,7 @@ const InteractableObject = [
     },
     {
         id: 'Gas stove',
-        chineseName: '瓦斯機',
+        chineseName: '瓦斯爐',
         englishName: 'Gas stove'
     },
     {
@@ -111,6 +111,16 @@ const InteractableObject = [
         chineseName: '廁所置物架',
         englishName: 'Toilet shelf'
     },
+    {
+        id: 'Labtop',
+        chineseName: '筆電',
+        englishName: 'Labtop'
+    },
+    {
+        id: 'Book',
+        chineseName: '書籍',
+        englishName: 'Book'
+    }
 ];
 
 

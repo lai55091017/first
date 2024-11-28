@@ -2,7 +2,7 @@ import "./scss/information.scss";
 import "./scss/menu.scss";
 import * as menu from './js/menu.js';
 import Firestore from "./js/firebase/Firestore.js";
-import "./js/firebase/Search";
+// import "./js/firebase/Search";
 
 
 const fs = new Firestore;
@@ -162,7 +162,7 @@ function newCard(englishText, chineseText) {
     }
     // 刪除按鈕
     deleteButton.addEventListener('click', function (event) {
-        event.stopPropagation();  // 阻止事件冒泡，避免触发 dialog 显示
+        event.stopPropagation();  // 阻止事件冒泡，避免觸發 dialog 顯示
         newCard.remove();  // 删除卡片
         // 刪除卡片資料
         fs.delete_user_card({

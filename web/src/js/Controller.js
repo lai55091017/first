@@ -3,6 +3,7 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import DoorAnimation from './DoorAnimation';
 import InteractableObject from './InteractableObject';
 import PopupWindow from './PopupWindow';
+import WordleGame from './wordlegame';
 import { doc } from 'firebase/firestore';
 
 class Controller {
@@ -24,30 +25,22 @@ class Controller {
         this.libDoorL = null;
         this.libDoorR = null;
         this.doors = {}; // 新增用來存放門的物件
-        this.chairs = [];
-        this.tables = [];
-        this.counters = [];
-        this.bookshelves = [];
-        this.sofas = [];
-        this.fridge = [];
-        this.bar = [];
-        this.tv = [];
-        this.tub = [];
-        this.toilet = [];
-        this.sink = [];
-        this.bed = [];
-        this.wardrobe = [];
-        this.podium = [];
-        this.lectern = [];
-        this.blackboard = [];
-        this.tvshelves = [];
-        this.rangehood = [];
-        this.cabinets = [];
-        this.gasstoves = [];
-        this.shelf = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
+
+        // 確保頁面加載完成再初始化 guessGrid 和 keyboard
+        document.addEventListener("DOMContentLoaded", () => {
+            this.guessGrid = document.getElementById("guess-grid");
+            this.keyboard = document.getElementById("keyboard");
+
+            // 檢查元素是否存在
+            if (this.guessGrid && this.keyboard) {
+                this.wordle_game = new WordleGame(this.guessGrid, this.keyboard); // 傳遞DOM元素到Wordle遊戲類
+            } else {
+                console.error("找不到 guess-grid 或 keyboard 元素！");
+            }
+        });
     }
 
     // 設置門和初始化動畫
@@ -58,111 +51,6 @@ class Controller {
 
         // 可以根據需要為每對門設置動畫
         console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
-    }
-
-    // 設置椅子
-    setChairs(chairs) {
-        this.chairs = chairs;
-    }
-
-    // 設置桌子
-    setTables(tables) {
-        this.tables = tables;
-    }
-
-    // 設置櫃台
-    setCounters(counters) {
-        this.counters = counters;
-    }
-
-    // 設置書架
-    setBookshelves(bookshelves) {
-        this.bookshelves = bookshelves;
-    }
-
-    // 設置沙發
-    setSofas(sofas) {
-        this.sofas = sofas;
-    }
-
-    // 設置冰箱
-    setFridge(fridge) {
-        this.fridge = fridge;
-    }
-
-    // 設置吧台
-    setBar(bar) {
-        this.bar = bar;
-    }
-
-    // 設置電視
-    setTV(tv) {
-        this.tv = tv;
-    }
-
-    // 設置浴缸
-    setTub(tub) {
-        this.tub = tub;
-    }
-
-    // 設置馬桶
-    setToilet(toilet) {
-        this.toilet = toilet;
-    }
-
-    // 設置洗手槽
-    setSink(sink) {
-        this.sink = sink;
-    }
-
-    // 設置床
-    setBed(bed) {
-        this.bed = bed;
-    }
-
-    // 設置衣櫥
-    setWardrobe(wardrobe) {
-        this.wardrobe = wardrobe;
-    }
-
-    // 設置講台
-    setPodium(podium) {
-        this.podium = podium;
-    }
-
-    // 設置講桌
-    setLectern(lectern) {
-        this.lectern = lectern;
-    }
-
-    // 設置黑板
-    setBlackboard(blackboard) {
-        this.blackboard = blackboard;
-    }
-
-    // 設置電視書架
-    setTVShelves(tvshelves) {
-        this.tvshelves = tvshelves;
-    }
-
-    // 設置抽油煙機
-    setRangehood(rangehood) {
-        this.rangehood = rangehood;
-    }
-
-    // 設置櫃子
-    setCabinets(cabinets) {
-        this.cabinets = cabinets;
-    }
-
-    // 設置瓦斯爐
-    setGasstoves(gasstoves) {
-        this.gasstoves = gasstoves;
-    }
-
-    // 設置廁所架
-    setShelf(shelf) {
-        this.shelf = shelf;
     }
 
     //設置移動參數
@@ -215,7 +103,8 @@ class Controller {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-            } // F鍵可以開關門
+            }, // F鍵可以開關門
+            'KeyM': () => { this.__toggleGameUI("chatroom", true); }, // M鍵可以開關聊天室
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -269,62 +158,6 @@ class Controller {
             }
         });
     }
-
-
-    //更新角色
-    // update(delta) {
-
-    //     const player = this.camera;
-    //     const playerPosition = player.position;
-    //     // const playerBody = player.userData.physicsBody;
-    //     // console.log(playerBody);
-
-    //     // if (!playerBody) return;
-
-    //     // 随着时间速度会因摩擦力减小
-    //     this.velocity.x -= this.velocity.x * this.moveFriction * delta;
-    //     this.velocity.z -= this.velocity.z * this.moveFriction * delta;
-    //     this.velocity.y -= 9.8 * this.gravity * delta;
-
-    //     // 玩家移动方向
-    //     this.direction.z = Number(this.movingForward) - Number(this.movingBackward);
-    //     this.direction.x = Number(this.movingRight) - Number(this.movingLeft);
-    //     this.direction.normalize();
-
-    //     // 更新玩家的移动速度
-    //     if (this.movingForward || this.movingBackward) {
-    //         this.velocity.z -= this.direction.z * this.moveDistance * delta
-    //     };
-    //     if (this.movingLeft || this.movingRight){
-    //         this.velocity.x -= this.direction.x * this.moveDistance * delta
-    //     };
-
-    //     // 玩家移动
-    //     this.controls.moveRight(- this.velocity.x * delta);
-    //     this.controls.moveForward(- this.velocity.z * delta);
-
-    //     // 防止角色穿牆
-    //     // this.__handleCollisions(playerBody);
-
-    //     // 跳躍
-    //     playerPosition.y += this.velocity.y * delta;
-    //     if (playerPosition.y < this.playerHight) {
-    //         this.velocity.y = 0;
-    //         playerPosition.y = this.playerHight;
-    //         this.canJump = true;
-    //     }
-
-    //     // 計算速度
-    //     const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z);
-    //     this.speed = speed; // 更新速度變數
-
-    //     const characterData = player.children[0].children[0].userData;
-    //     const { currentActionName, previousActionName } = characterData;
-    //     const rotation = this.__getRotationShaveXZ(player);
-    //     const position = new THREE.Vector3(playerPosition.x, playerPosition.y - this.playerHight, playerPosition.z)
-    //     return { context: 'playerMove', position, rotation, currentActionName, previousActionName };
-
-    // } 
 
     update(delta) {
         const player = this.camera;
@@ -401,6 +234,7 @@ class Controller {
             if (this.isGame) {
                 this.__toggleGameUI("blocker", true);
                 document.removeEventListener('keydown', this.__chatroom);
+                this.isGame = false;
             }
         });
     }
@@ -468,14 +302,14 @@ class Controller {
 
     // 開關門的方法（以對應的門對為參數）
     __toggleDoor(doorType) {
-        const doors = this.doors[doorType];
-        if (!doors) {
+        const door = this.doors[doorType];
+        if (!door) {
             console.error(`門類型 ${doorType} 尚未初始化`);
             return;
         }
 
         // 使用 DoorAnimation 來開關門
-        const { left, right } = doors;
+        const { left, right } = door;
         this.doorAnimation = new DoorAnimation(left, right);
         if (this.isOpen) {
             this.doorAnimation.closeDoors();
@@ -484,6 +318,7 @@ class Controller {
         }
         this.isOpen = !this.isOpen;
     }
+
     __onMouseMove() {
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(0, 0);
@@ -498,19 +333,20 @@ class Controller {
 
 
         if (intersects.length > 0) {
-            crosshair.style.borderColor = '#ff0000d4'; // 设置十字准心的颜色
+            crosshair.style.borderColor = '#ff0000d4'; // 設置十字準心的顏色
             crosshair.style.transform = 'scale(1.5)'; // 放大 1.5 倍
-            crosshair.style.transition = 'all 0.3s ease'; // 平滑过渡效果
+            crosshair.style.transition = 'all 0.3s ease'; // 平滑過渡效果
             crosshair.classList.add('active');
         }
         else {
-            crosshair.style.borderColor = 'white'; // 恢复颜色
-            crosshair.style.transform = 'scale(1)'; // 恢复原始大小
+            crosshair.style.borderColor = 'white'; // 回復原始顏色
+            crosshair.style.transform = 'scale(1)'; // 回復原始大小
             crosshair.classList.remove('active'); // 移除
         }
     }
 
-    __onMouseDown(event) {
+    __onMouseDown() {
+        if (!this.isGame) return;
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(0, 0);
@@ -528,17 +364,28 @@ class Controller {
             const object = intersects[0].object;// 獲取相交的物件
             console.log(object.name);
 
-            this.isClickable = false; // 禁止点击操作
+            this.isClickable = false; // 禁止點擊操作
 
 
             // console.log(object.name);
             const originalColor = object.material.emissive.clone();
 
+            // 如果點擊的是 Labtop，啟動 WordleGame
+            if (object.name === 'Labtop') {
+                console.log('啟動 WordleGame');
+                // 顯示 WordleGame 元素
+                this.WordleGame.fadeToggle(500); // 顯示或隱藏 WordleGame
+                // 確保已正確初始化 WordleGame
+                if (typeof this.wordle_game !== 'undefined' && this.wordle_game.enableKeyboard) {
+                    this.wordle_game.enableKeyboard(); // 啟用鍵盤
+                }
+            }
+
             if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' ||
                 object.name === 'Sofa' || object.name === 'Fridge' || object.name === 'Bar' || object.name === 'TV' || object.name === 'Tub' ||
                 object.name === 'Toilet' || object.name === 'Sink' || object.name === 'Bed' || object.name === 'Wardrobe' || object.name === 'Podium' ||
                 object.name === 'Lectern' || object.name === 'Blackboard' || object.name === 'TV Shelf' || object.name === 'Range hood' || object.name === 'Cabinet' ||
-                object.name === 'Gas stove' || object.name === 'Toilet shelf') {
+                object.name === 'Gas stove' || object.name === 'Toilet shelf' || object.name === 'Labtop'|| object.name === 'Book') {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗

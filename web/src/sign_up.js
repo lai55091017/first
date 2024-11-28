@@ -3,7 +3,7 @@ import Auth from './js/firebase/auth';
 import "./scss/sign_up.scss";
 import Firestore from './js/firebase/Firestore';
 
-// 初始化 Firebase 应用
+// 初始化 Firebase 應用
 const auth = new Auth;
 const fs = new Firestore;
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // 调用注册函数并等待其完成
+            // 調用註冊函數並等待其完成
             auth.register(email, password).then((result) => {
                 if (result == "Firebase: Password should be at least 6 characters (auth/weak-password).") {
                     error_message.innerHTML = "密碼不足六個字"
@@ -36,16 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
 
-            // 等待一小段时间（例如100毫秒），确保当前用户对象已经更新
+            // 等待一小段時間（例如 100 毫秒），確保當前用戶對象已經更新
             await new Promise(resolve => setTimeout(resolve, 2000))
 
-            // 保存用户数据
+            // 保存用戶數據
             fs.new_user_data(userdata)
 
 
         } catch (error) {
-            // 处理注册过程中的错误
-            console.error("注册过程中出错：", error);
+            // 處理註冊過程中的錯誤
+            console.error("註冊過程發生了錯誤：", error);
         }
     });
 })

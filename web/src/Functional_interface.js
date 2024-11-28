@@ -11,6 +11,7 @@ import Connect from './js/Connect.js';
 import CharacterManager from './js/CharacterManager.js';
 import ICAS from './js/ImportCharacterAndScene.js';
 import * as menu from './js/menu.js';
+import wordlegame from "./js/wordlegame.js";
 
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         context: 'sendMessage',
                         message: messageText,
                         username: fs.username,
-                        timestamp: formattedDateTime,   //时间戳
+                        timestamp: formattedDateTime,   // 儲存時間戳(即時間資訊)
                     }
 
                     try {
@@ -104,14 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-//格式化當前時間
+// 格式化當前時間
 function currentTime() {
     return new Promise((resolve, reject) => {
-        // 获取当前时间
+        // 獲取當前時間
         const currentTime = new Date();
-        // 获取年月日时分秒
+        // 獲取年、月、日、時、分、秒
         const year = currentTime.getFullYear();
-        const month = currentTime.getMonth() + 1; // 月份从 0 开始，需要加 1
+        const month = currentTime.getMonth() + 1; // 月份從0開始，需要加1
         const date = currentTime.getDate();
         const hours = currentTime.getHours();
         const minutes = currentTime.getMinutes();
@@ -126,6 +127,7 @@ function currentTime() {
 
 }
 
+// 初始化
 function init() {
     init_scene();
     init_camera();
@@ -142,14 +144,12 @@ function init() {
 
     // 導入(載入)模型
     loadModels();
-    // loadModels1();
 }
 
 /*********************************** Websocket Event *********************************************/
-
 let playerBody;
 let targetBody;
-let currentPlayer = null; // 定義全域變數來存儲當前玩家角色
+let currentPlayer = false; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -168,17 +168,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加物理剛體
             playerBody = Player_body(character.getMesh(), 0.5, 1.75);
-            // camera.userData.physicsBody = playerBody;
             camera.userData.physicsBody = playerBody;
-            // // 偵測玩家碰撞
-            // body.addEventListener('collide', (event) => {
-            //     const contact = event.contact;
-            //     // const collidedObject = contact.other;
-            //     console.log(contact.bi.id);
-            //     if (contact.bi.id === 21) {
-            //         console.log('碰撞到門');
-            //     }
-            // });
 
             // 註冊玩家的碰撞事件
             playerBody.addEventListener('collide', handlePlayerCollision);
@@ -186,11 +176,10 @@ async function onPlayerJoin(data) {
             // 為玩家添加角色
             camera.add(character);
             currentPlayer = true; // 保存玩家角色到全域變數
-            console.log(currentPlayer);
             // 將玩家移動到 (0, 0, 0)
             if (currentPlayer) {
+                camera.rotation.set(0, 3, 0);
                 playerBody.position.set(14, 1, -3.5); // 設定玩家位置
-                console.log(`玩家位置:`, playerBody.position);
             } else {
                 console.log(`玩家角色未初始化`);
             }
@@ -280,9 +269,9 @@ function onPlayerMessage(data) {
             // 容器的可见高度
             const scrollableHeight = chatBox.scrollHeight - chatBox.clientHeight;
 
-            // 如果用户没有手动向上滚动（即滚动条接近底部），则自动滚动到底部
+            // 如果用户没有手動向上滾動（即滾動條接近底部），則自動滾動到底部
             if (chatBox.scrollTop >= scrollableHeight - 500) {
-                chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+                chatBox.scrollTop = chatBox.scrollHeight; // 滾動到底部
             }
 
             // 输出调试信息
@@ -293,12 +282,14 @@ function onPlayerMessage(data) {
 }
 
 /*********************************** Three.js *********************************************/
+// 初始化場景
 function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
     scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
-    scene.add(new THREE.DirectionalLight(0xffffff, 3));
+    // scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
+// 初始化相機
 function init_camera() {
     camera.fov = 75;//設置相機的視野範圍,1超近-100超遠
 
@@ -312,14 +303,14 @@ function init_camera() {
     //投影矩陣 是將 3D 場景投影到 2D 屏幕上的數學模型，用於定義相機的視野範圍和投影方式
     //當 camera.aspect 發生變化時，必須調用 camera.updateProjectionMatrix()，以重新計算相機的投影矩陣。
 }
-
+// 初始化渲染器
 function init_renderer() {
     const canvas = renderer.domElement;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(canvas);
 }
-
+// 初始化其他
 function init_other() {
     window.addEventListener('resize', resize);
     window.addEventListener('fullscreenchange', resize);
@@ -329,13 +320,19 @@ function init_other() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
-
+// 動畫
 function animate() {
 
     requestAnimationFrame(animate);
     const time = performance.now();
     const delta = (time - prevTime) / 1000;
     prevTime = time;
+
+    // 玩家移動值
+    // console.log(playerBody.position);
+
+    // 玩家旋轉值
+    // console.log(camera.rotation);
 
     const playerData = controller.update(delta);
 
@@ -344,42 +341,19 @@ function animate() {
 
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
-    cannonDebugger.update()
+    // cannonDebugger.update()
 
     checkCollisionEnd()
 
     // 傳送錨點
     // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
 
-    // 更新模型的位置和旋轉
-    scene.traverse(function (object) {
-        if (object.userData.physicsBody) {
-            const body = object.userData.physicsBody;
-
-            // const worldPosition = new THREE.Vector3();
-            // object.localToWorld(worldPosition);
-
-            // if (object.name === 'Entry') {
-            //     body.position.x = camera.position.x;
-            //     body.position.y = camera.position.y - controller.playerHight / 2;
-            //     body.position.z = camera.position.z;
-
-            //     console.log(body);
-
-            //     body.rotation.copy(camera.quaternion);
-            // }
-            // object.position.copy(body.position);
-            // object.quaternion.copy(body.quaternion); // 因為兩者pivot point不同所以無法同步
-
-
-        }
-    });
-
     renderer.render(scene, camera);
 
 }
 
 /*********************************** Physics *********************************************/
+// 初始化物理引擎
 function init_physics() {
 
     cannon_world.gravity.set(0, -9.8, 0);
@@ -451,7 +425,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
 
 }
 
-// 追踪玩家與特定物體 (targetBody) 的碰撞狀態
+// 追踪玩家與特定物體的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
     const otherBody = event.body;
@@ -479,91 +453,13 @@ function checkCollisionEnd() {
     }
 }
 
-//嚴重bug會刪到多人的物體
-// function clearSceneModelsAndPhysics() {
-//     // 白名單：保留的物件名稱（可以根據具體需求添加名稱）
-//     const preservedNames = ['Player', 'PlayerModel', 'MainCamera', 'PlayerLight'];
-
-//     function recursiveDispose(object) {
-//         // 保留白名單中的物件
-//         if (preservedNames.includes(object.name)) {
-//             console.log(`保留物件: ${object.name}`);
-//             return;
-//         }
-
-//         // 遞歸清理子物件
-//         while (object.children.length > 0) {
-//             const child = object.children[0];
-//             recursiveDispose(child); // 清理子物件
-//             object.remove(child); // 從父物件中移除
-//         }
-
-//         // 如果是 Mesh，釋放其幾何體和材質
-//         if (object instanceof THREE.Mesh) {
-//             if (object.geometry) {
-//                 object.geometry.dispose();
-//                 // console.log(`已釋放幾何體: ${object.name}`);
-//             }
-//             if (object.material) {
-//                 if (Array.isArray(object.material)) {
-//                     object.material.forEach((mat) => mat.dispose());
-//                 } else {
-//                     object.material.dispose();
-//                 }
-//                 // console.log(`已釋放材質: ${object.name}`);
-//             }
-//         }
-
-//         // 如果綁定了剛體，移除剛體
-//         if (object.userData.physicsBody) {
-//             const physicsBody = object.userData.physicsBody;
-//             const index = cannon_world.bodies.indexOf(physicsBody);
-//             if (index !== -1) {
-//                 cannon_world.bodies.splice(index, 1);
-//                 // console.log(`已從物理世界移除剛體: ${object.name}`);
-//             }
-//         }
-
-//         // 從場景中移除物件
-//         if (object.parent === scene) {
-//             // console.log(`已從場景中移除容器: ${object.name}`);
-//             scene.remove(object);
-//         }
-//     }
-
-//     // 遍歷場景的頂層物件
-//     while (scene.children.length > 0) {
-//         const object = scene.children[0];
-//         recursiveDispose(object); // 清理每個頂層物件
-//     }
-
-//     console.log('場景清理完成');
-// }
-
-
-// 導入場景模型2.0
-async function loadModels(scenePath = './mesh/glb/Three_SCENE_6.glb') {
+// 導入場景模型
+async function loadModels() {
     try {
         init_scene();
         // 加載新場景
-        console.log(`正在加載場景：${scenePath}`);
-        let library = await icas.loadGLTF(scenePath); // 非同步加載場景文件
+        let library = await icas.loadGLTF('./mesh/glb/Three_SCENE_9.glb');
         scene.add(library.scene);
-        console.log(`場景加載完成: ${scenePath}`);
-
-
-        scene.position.set(0, 0, 0);// 本地位置
-        const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
-        //將本地座標轉換為世界座標
-        scene.localToWorld(worldPosition);
-
-        console.log(`本地座標場景位置:`, scene.position);
-        console.log(`世界座標場景位置:`, worldPosition);
-
-        // 調試場景結構
-        // library.scene.traverse((child) => {
-        //     console.log(`加載的場景物件: ${child.name}, 類型: ${child.constructor.name}`);
-        // });
 
         // 綁定物理引擎
         library.scene.traverse((child) => {
@@ -598,6 +494,8 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_6.glb') {
                 cabinets: [],
                 gasstoves: [],
                 shelf: [],
+                labtop: [],
+                books: []
             };
 
             // 定義物件類型與對應正則表達式的映射
@@ -624,6 +522,8 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_6.glb') {
                 { type: 'cabinets', regex: /^Kitchen_cabinet_.*/, newName: 'Cabinet' },
                 { type: 'gasstoves', regex: /^Kitchen_gas_stove_\d+$/, newName: 'Gas stove' },
                 { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
+                { type: 'labtop', regex: /^Office_Labtop.*/, newName: 'Labtop' },
+                { type: 'books', regex: /^Book_.*/, newName: 'Book' }
             ];
 
 
@@ -646,38 +546,16 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_6.glb') {
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
 
             if (hasAllObjects) {
-                console.log('好消息，找到圖書館的所有物件了');
 
                 // 統一設置圖層
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
 
-                // 傳遞到控制器
+                // 設定互動物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
                 controller.setDoors(objects.doors[4], objects.doors[5], 'school'); // 學校的門
-                controller.setChairs(objects.chairs);
-                controller.setTables(objects.tables);
-                controller.setCounters(objects.counters);
-                controller.setBookshelves(objects.bookshelves);
-                controller.setSofas(objects.sofas);
-                controller.setFridge(objects.fridge);
-                controller.setBar(objects.bar);
-                controller.setTV(objects.tv);
-                controller.setTub(objects.tub);
-                controller.setToilet(objects.toilet);
-                controller.setSink(objects.sink);
-                controller.setBed(objects.bed);
-                controller.setWardrobe(objects.wardrobe);
-                controller.setPodium(objects.podium);
-                controller.setLectern(objects.lectern);
-                controller.setBlackboard(objects.blackboard);
-                controller.setTVShelves(objects.tvshelves);
-                controller.setRangehood(objects.rangehood);
-                controller.setCabinets(objects.cabinets);
-                controller.setGasstoves(objects.gasstoves);
-                controller.setShelf(objects.shelf);
             } else {
                 console.log('壞消息，某些關鍵物件遺失!');
             }
@@ -695,7 +573,7 @@ async function loadModels(scenePath = './mesh/glb/Three_SCENE_6.glb') {
 
 
 /*-----------------------------------場景切換--------------------------------------------------*/
-
+// 顯示場景切換選單
 function showSceneOptions() {
     const menu = document.createElement('div');
     menu.id = 'scene_options';
@@ -711,39 +589,27 @@ function showSceneOptions() {
             button.textContent = `${sceneName}`;
             // button.style.margin = '10px';
             button.onclick = async () => {
-                // 清理舊場景
-                // await loadModels(point); // 使用非同步的場景加載
 
                 document.body.removeChild(menu); // 清除選單
                 console.log(` find the scene: ${sceneName}`);
 
-                scene.position.set(0, 0, 0);// 本地位置
-                const worldPosition = new THREE.Vector3(0, 0, 0);// 世界位置
-                //將本地座標轉換為世界座標
-                scene.localToWorld(worldPosition);
-                //將本地座標轉換為世界座標
-
-                console.log(`本地座標場景位置:`, scene.position);
-                console.log(`世界座標場景位置:`, worldPosition);
-
-                currentPlayer = true; // 保存玩家角色到全域變數
-                // console.log(currentPlayer);
-
                 // 傳送錨點
                 // 將玩家移動到 (0, 0, 0)
-                if (button.textContent == 'Home') {
-                    // playerBody.position.set(1, 1, 0); // 設定玩家位置
-                    playerBody.position.set(-2.5, 1, 3.5); // 將角色移動到目標位置
+                if (button.textContent == 'Home') { // 家裡
+                    playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
                     console.log(`角色已移動到: ${sceneName}, 位置: `);
                     console.log(`玩家位置:`, playerBody.position);
-                } else if (button.textContent == 'Library') {
+                } else if (button.textContent == 'Library') { // 圖書館
                     console.log(`角色已移動到: ${sceneName} `);
-                    playerBody.position.set(-31.5, 1, 4); // 將角色移動到目標位置
+                    playerBody.position.set(-31.5, 1.5, 4); // 將角色移動到目標位置
                     console.log(`玩家位置:`, playerBody.position);
+                    camera.rotation.set(0, 0, 0);
 
-                } else if (button.textContent == 'School') {
+                } else if (button.textContent == 'School') { // 學校
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(-62, 1, 5);
+                    playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
                     console.log(`玩家位置: `, playerBody.position);
 
                 } else {
@@ -798,9 +664,10 @@ const WordleGame = $("#WordleGame");
 WordleGame.hide();
 
 $('#Game').on('click', async () => {
+    wordle_game.enableKeyboard(); // 啟用鍵盤
     WordleGame.fadeToggle(500);
 })
-
+// 傳送錨點
 
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
 //$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
@@ -815,6 +682,7 @@ $(document).ready(function () {
                 instruction.fadeToggle(500);
                 break;
             case 'close_wordlegame'://id=close_wordlegame
+                wordle_game.disableKeyboard();// 禁用鍵盤
                 WordleGame.fadeToggle(500);
                 break;
             default:
@@ -823,324 +691,7 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-
-// 定義單字和它的中文意思
-const wordMeanings = {
-    apple: "蘋果",
-    banana: "香蕉",
-    grape: "葡萄",
-    orange: "橘子",
-    guava: "芭樂",
-    dog: "狗",
-    cat: "貓",
-    cow: "牛",
-    pig: "豬",
-    bird: "鳥",
-    sheep: "羊",
-    chicken: "雞",
-    pencil: "鉛筆",
-    eraser: "橡皮擦",
-    ruler: "尺",
-    fork: "叉子",
-    spoon: "湯匙",
-    america: "美國",
-    china: "中國",
-    taiwan: "台灣",
-    japan: "日本",
-    korea: "韓國",
-    rice: "飯",
-    noodle: "麵",
-    soup: "湯",
-    meat: "肉",
-    bed: "床",
-    bread: "麵包",
-    bedroom: "臥室",
-    kitchen: "廚房",
-    livingroom: "客廳",
-    bathroom: "浴室",
-    balcony: "陽台",
-    socket: "插座",
-    sofa: "沙發",
-    tv: "電視",
-    wardrobe: "衣櫃",
-    fridge: "冰箱",
-    table: "桌子",
-    chair: "椅子",
-    window: "窗戶",
-    blackboard: "黑板",
-    door: "門",
-    school: "學校",
-    classroom: "教室",
-    teacher: "老師",
-    student: "同學",
-    class: "班級",
-    homework: "作業",
-    wall: "牆壁",
-    fan: "電扇",
-    chalk: "粉筆",
-    clock: "時鐘",
-    book: "書",
-    pen: "筆",
-    pencil: "鉛筆",
-    eraser: "橡皮擦",
-    notebook: "筆記本",
-    computer: "電腦",
-    restroom: "洗手間",
-    library: "圖書館",
-    platform: "司令台",
-    playground: "操場",
-    backpack: "背包",
-    bookcase: "書櫃",
-    mirror: "鏡子",
-
-};
-
-// 獲得中文意思
-function getChineseMeaning(word) {
-    return wordMeanings[word.toLowerCase()] || "未知";
-};
-
-// 單字主題和對應的單字庫
-const themes = {
-    // 解釋："key": ["value0", "value1", "value2"] key就相當於目錄的名字，value就是key裡面的值，這樣可以方便獲取相關資料
-    "水果": ["apple", "banana", "grape", "orange", "guava"],
-    "動物": ["dog", "cat", "cow", "pig", "bird", "sheep", "chicken"],
-    "工具": ["pencil", "eraser", "ruler", "fork", "spoon"],
-    "國家": ["america", "china", "taiwan", "japan", "korea"],
-    "食物": ["rice", "noodle", "soup", "meat", "bread"],
-    "家裡": ["bed", "bedroom", "kitchen", "livingroom", "bathroom", "balcony", "socket", "sofa", "tv", "wardrobe", "fridge"],
-    "學校": ["table", "chair", "window", "blackboard", "door", "school", "classroom", "teacher", "student", "class", "homework",
-        "wall", "fan", "chalk", "clock", "book", "pen", "pencil", "eraser", "notebook", "computer", "restroom", "library", "platform", "playground", "backpack", "bookcase", "mirror"
-    ],
-
-};
-
-// 隨機選擇一個主題和對應的單字庫
-const themeNames = Object.keys(themes);
-const randomTheme = themeNames[Math.floor(Math.random() * themeNames.length)];
-const wordList = themes[randomTheme];  // 取得隨機選中的單字庫
-let answer = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase(); // 從單字庫中選擇隨機一個單字作謎底
-let chineseAnswer = getChineseMeaning(answer); // 獲取答案的中文意思
-
-// 更新標題顯示選定的主題名稱
-document.querySelector("h1").textContent = `本次的主題是 ${randomTheme}`;
-
-// 測試用，顯示隨機到的主題和單字，完成後記得刪(不然可以直接從控制台看到答案)
-console.log(`主題: ${randomTheme}, 答案: ${answer}`);
-
-// 遊戲設定(參數)
-const maxAttempts = 6; // 最大嘗試次數
-let currentAttempt = 0;
-let currentGuess = "";
-
 // 選擇HTML元素
 const guessGrid = document.getElementById("guess-grid");
 const keyboard = document.getElementById("keyboard");
-
-// ------------------------------遊戲UI部分------------------------------
-// 初始化，遊戲介面
-function initGame() {
-    // 讓一行的格子數和答案長度相同
-    const columns = answer.length; // 行=答案長度
-    guessGrid.style.gridTemplateColumns = `repeat(${columns}, 50px)`;
-
-    // 創建格子
-    for (let i = 0; i < maxAttempts; i++) {
-        for (let j = 0; j < answer.length; j++) {
-            const box = document.createElement("div");
-            box.classList.add("letter-box");
-            guessGrid.appendChild(box);
-        }
-    }
-
-    // 創建虛擬鍵盤
-    const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    let count = 0;
-
-    keys.forEach(letter => {
-        const key = document.createElement("div");
-        key.classList.add("key");
-        key.textContent = letter;
-        key.onclick = () => handleKeyPress(letter);
-        key.setAttribute("data-key", letter);
-        keyboard.appendChild(key);
-
-        // 虛擬鍵盤每7個字母就換行，7*4 (26個英文字母+退回鍵+提交鍵)
-        count++;
-        if (count % 7 === 0) {
-            keyboard.appendChild(document.createElement("br"));
-        }
-    });
-
-    // 加入退回鍵和提交鍵
-    const backspaceKey = document.createElement("div");
-    backspaceKey.classList.add("key");
-    backspaceKey.textContent = "退回";
-    backspaceKey.onclick = () => handleKeyPress("BACKSPACE");
-    keyboard.appendChild(backspaceKey);
-
-    const submitKey = document.createElement("div");
-    submitKey.classList.add("key");
-    submitKey.textContent = "提交";
-    submitKey.onclick = submitGuess; // 直接連接提交函數
-    keyboard.appendChild(submitKey);
-}
-
-// ------------------------------遊戲運行部分------------------------------
-// 重新開始遊戲的初始化，清空上局遊戲的相關變數 (處理問題1)
-function resetGame() {
-    currentAttempt = 0;
-    currentGuess = "";
-
-    // 隨機選擇主題和單字庫
-    const randomTheme = themeNames[Math.floor(Math.random() * themeNames.length)];
-    const wordList = themes[randomTheme];
-    answer = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
-    chineseAnswer = getChineseMeaning(answer);
-
-    // 測試用：顯示隨機主題和單字
-    console.log(`主題: ${randomTheme}, 答案: ${answer}`);
-
-    // 更新標題顯示選定的主題名稱
-    document.querySelector("h1").textContent = `本次的主題是 ${randomTheme}`;
-
-    // 清空現有的格子
-    guessGrid.innerHTML = "";
-
-    // 清空上一局遊戲的虛擬鍵盤
-    keyboard.innerHTML = "";
-
-    // 重新初始化遊戲，根據新答案生成正確數量的格子
-    initGame();
-
-    // 清除方塊內文字和內容
-    const boxes = document.querySelectorAll(".letter-box");
-    boxes.forEach(box => {
-        box.textContent = "";
-        box.classList.remove("correct", "present", "absent");
-    });
-
-    // 重置虛擬鍵盤的顏色
-    const keys = document.querySelectorAll(".key");
-    keys.forEach(key => {
-        key.classList.remove("correct", "present", "absent"); // 清除狀態
-        key.style.backgroundColor = "#ffffff"; // 重置格的顏色
-        key.style.color = "#333"; // 重置字的顏色
-    });
-}
-
-// 處理鍵盤的輸入，包括添加字母和退回鍵
-function handleKeyPress(letter) {
-    if (letter === "BACKSPACE") {
-        currentGuess = currentGuess.slice(0, -1); // 刪除最後一個輸入的字母
-    } else if (currentGuess.length < answer.length) {
-        currentGuess += letter;  // 添加單字
-    }
-    updateGuessGrid();  // 更新當前猜測的單字格顯示
-}
-
-// 更新當前猜測的單字格顯示
-function updateGuessGrid() {
-    const boxes = guessGrid.querySelectorAll(".letter-box");
-    const offset = currentAttempt * answer.length;
-    // 清空目前顯示的字母格
-    for (let i = 0; i < answer.length; i++) {
-        boxes[offset + i].textContent = currentGuess[i] || ""; // 如果有字母就顯示，否則清空
-    }
-}
-
-// 同步更新鍵盤顏色
-function updateKeyboardStatus(letter, status) {
-    const key = document.querySelector(`.key[data - key= "${letter}"]`);
-    if (key) {
-        // 檢查目前的狀態避免鍵盤被刷新覆蓋，調整優先級為綠(correct)>黃(present)>灰(absent)
-        if (status === "correct") {
-            key.style.backgroundColor = "#6aaa64"; // 虛擬鍵盤顏色設為綠色，字母正確，位置正確
-            key.style.color = "#fff";
-        } else if (status === "present" && !key.classList.contains("correct")) {
-            if (key.style.backgroundColor !== "rgb(106, 170, 100)") { // 避免覆蓋 correct 顏色
-                key.style.backgroundColor = "#c9b458"; // 虛擬鍵盤顏色設為黃色，字母正確，位置錯誤
-                key.style.color = "#fff";
-            }
-        } else if (status === "absent" && !key.classList.contains("correct") && !key.classList.contains("present")) {
-            if (key.style.backgroundColor !== "rgb(106, 170, 100)" && key.style.backgroundColor !== "rgb(201, 180, 88)") {
-                key.style.backgroundColor = "#787c7e"; // 虛擬鍵盤顏色設為灰色，字母錯誤
-                key.style.color = "#fff";
-            }
-        }
-    }
-}
-
-
-// 提交答案並檢查是否正確
-function submitGuess() {
-    // if (currentGuess.length !== answer.length) {
-    //     alert("Please enter a word with the correct length."); // 若提交的單字和答案長度不同則告訴用戶 " 請輸入一個長度正確的單字 "
-    //     return;
-    // }
-
-    const boxes = guessGrid.querySelectorAll(".letter-box");
-    const offset = currentAttempt * answer.length;
-
-    // 臨時保存答案 (處理問題3)
-    const answerLetters = answer.split("");
-    const guessLetters = currentGuess.split("");
-
-    // 第一輪：檢查綠色
-    for (let i = 0; i < guessLetters.length; i++) {
-        const box = boxes[offset + i];
-        if (guessLetters[i] === answerLetters[i]) {
-            box.classList.add("correct");
-            answerLetters[i] = null; // 將已匹配的字母設為 null，避免重複計算
-            updateKeyboardStatus(guessLetters[i], "correct"); // 同步鍵盤顏色
-        }
-    }
-
-    // 第二輪：檢查黃色
-    for (let i = 0; i < guessLetters.length; i++) {
-        const box = boxes[offset + i];
-        if (!box.classList.contains("correct")) { // 避免重複標記綠色
-            const letterIndex = answerLetters.indexOf(guessLetters[i]);
-            if (letterIndex !== -1) {
-                box.classList.add("present");
-                answerLetters[letterIndex] = null; // 標記已匹配的字母
-                updateKeyboardStatus(guessLetters[i], "present"); // 同步鍵盤顏色
-            } else {
-                box.classList.add("absent"); // 不包含的字母
-                updateKeyboardStatus(guessLetters[i], "absent"); // 同步鍵盤顏色
-            }
-        }
-    }
-
-    // 檢查是否猜對
-    if (currentGuess === answer) {
-        alert(`You guessed the word! The word was: ${answer}(${chineseAnswer})`); // 若猜的單字和答案匹配則告訴用戶 " 恭喜！你猜對了 "
-        setTimeout(resetGame, 1000); // 1秒後刷新遊戲
-        return;
-    }
-
-    // 重置當前猜測並增加次數
-    currentAttempt++;
-    currentGuess = "";
-
-    if (currentAttempt >= maxAttempts) {
-        alert(`Game over! The word was: ${answer}(${chineseAnswer})`); // 如果猜測次數>最大猜測次數就告訴用戶 "遊戲結束！這個單字是_____。"
-        setTimeout(resetGame, 1000); // 1秒後刷新遊戲
-    }
-}
-
-// 添加鍵盤事件監聽 (處理問題4)
-document.addEventListener("keydown", (event) => {
-    const key = event.key.toUpperCase();
-
-    if (key === "ENTER") {
-        submitGuess();
-    } else if (key === "BACKSPACE") {
-        handleKeyPress("BACKSPACE");
-    } else if (/^[A-Z]$/.test(key)) { // 只允許輸入字母 A~Z
-        handleKeyPress(key);
-    }
-});
-
-// 初始化，遊戲
-initGame();
+const wordle_game = new wordlegame(guessGrid, keyboard);

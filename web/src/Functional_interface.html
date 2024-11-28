@@ -15,10 +15,10 @@
                 <div class="title">English Teaching</div>
             </div>
             <div class="load">
-                <hr />
-                <hr />
-                <hr />
-                <hr />
+                <hr/>
+                <hr/>
+                <hr/>
+                <hr/>
             </div>
         </div>
     </div>
@@ -35,32 +35,8 @@
                     <div class="info"></div>
                 </div>
             </div>
-            <div id="chat_box">
-                <!-- 只要有訊息就會出現 -->
-                <!-- <div id="message">訊息</div> -->
-                <!-- <div id="message_date">時間</div> -->
-
-                <!-- 自己輸出訊息就會出現 -->
-                <!-- <div class="message message_item" index="0" data-draggable="true">
-                    <div class="avatar"><img
-                            src="https://patchwiki.biligame.com/images/sr/c/c4/06fupomr900c72ymsn6pgq8m4c077r7.png"
-                            alt=""></div>
-                    <div class="message_item">
-                        <div class="name">
-                            <span>托帕</span>
-                        </div>
-                        <div class="text_box">
-                            <div class="text" id="message" contenteditable="false">
-                                愿此行，终sssssssssssssssssssssssssssssssssssssssssssssssss抵群星</div>
-                            <div class="time" id="message_date">時間 2024 9/7</div>
-                        </div>
-                    </div>
-                    </div> -->
-            </div>
+            <div id="chat_box"></div>
             <div id="input_box">
-                <!-- <div data-v-0493a0ed="" class="avatar" title="選擇角色"><img
-                        src="https://patchwiki.biligame.com/images/sr/d/d9/q1kzn8lehteph6x95tlyzjzf9re3ek8.png" alt="">
-                </div> -->
                 <input type="text" id="message_input" placeholder="輸入訊息..">
                 <button id="send_button"></button>
             </div>
@@ -151,21 +127,14 @@
 
 
     <dialog id="WordleGame">
-        <h1>朝陽Wordle Beta版</h1>
+        <h1>猜單字 Guess Word</h1>
 
         <!-- 猜單字區域 -->
-        <div id="guess-grid">
-            <!-- 每一行代表用戶(玩家)猜單字的一次的結果 -->
-            <!-- 使用JavaScript動態生成格子 -->
-        </div>
+        <div id="guess-grid"></div>
 
         <!-- 虛擬鍵盤 -->
-        <div id="keyboard">
-            <!-- 一樣使用JS來動態生成 -->
-        </div>
+        <div id="keyboard"></div>
 
-        <!-- 下面放JS文件來連接，注意名字是否正確 -->
-        <!-- <script src="WordleGame.js"></script> -->
         <button class="close" id="close_wordlegame">
             <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24"
                 viewBox="0 0 30 30">

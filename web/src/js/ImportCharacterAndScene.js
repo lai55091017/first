@@ -5,7 +5,6 @@ import { reject } from 'lodash';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-// 測試
 
 class ICAS {
     constructor(scene, camera) {

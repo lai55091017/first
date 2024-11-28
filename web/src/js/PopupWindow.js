@@ -1,7 +1,5 @@
 // PopupWindow.js 這個是彈窗功能
 
-import * as THREE from 'three';
-
 class PopupWindow {
     constructor() {
         this.popup = document.createElement('div');
