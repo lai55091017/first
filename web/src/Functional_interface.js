@@ -150,7 +150,7 @@ function init() {
 
 let playerBody;
 let targetBody;
-let currentPlayer = null; // 定義全域變數來存儲當前玩家角色
+let currentPlayer = false; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -177,12 +177,10 @@ async function onPlayerJoin(data) {
             // 為玩家添加角色
             camera.add(character);
             currentPlayer = true; // 保存玩家角色到全域變數
-            console.log(currentPlayer);
             // 將玩家移動到 (0, 0, 0)
             if (currentPlayer) {
                 camera.rotation.set(0, 3, 0);
                 playerBody.position.set(14, 1, -3.5); // 設定玩家位置
-                console.log(`玩家位置:`, playerBody.position);
             } else {
                 console.log(`玩家角色未初始化`);
             }
@@ -453,7 +451,7 @@ function checkCollisionEnd() {
     }
 }
 
-// 導入場景模型2.0
+// 導入場景模型
 async function loadModels() {
     try {
         init_scene();
@@ -542,38 +540,16 @@ async function loadModels() {
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
 
             if (hasAllObjects) {
-                console.log('好消息，找到圖書館的所有物件了');
 
                 // 統一設置圖層
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
 
-                // 傳遞到控制器
+                // 設定互動物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
                 controller.setDoors(objects.doors[4], objects.doors[5], 'school'); // 學校的門
-                controller.setChairs(objects.chairs);
-                controller.setTables(objects.tables);
-                controller.setCounters(objects.counters);
-                controller.setBookshelves(objects.bookshelves);
-                controller.setSofas(objects.sofas);
-                controller.setFridge(objects.fridge);
-                controller.setBar(objects.bar);
-                controller.setTV(objects.tv);
-                controller.setTub(objects.tub);
-                controller.setToilet(objects.toilet);
-                controller.setSink(objects.sink);
-                controller.setBed(objects.bed);
-                controller.setWardrobe(objects.wardrobe);
-                controller.setPodium(objects.podium);
-                controller.setLectern(objects.lectern);
-                controller.setBlackboard(objects.blackboard);
-                controller.setTVShelves(objects.tvshelves);
-                controller.setRangehood(objects.rangehood);
-                controller.setCabinets(objects.cabinets);
-                controller.setGasstoves(objects.gasstoves);
-                controller.setShelf(objects.shelf);
             } else {
                 console.log('壞消息，某些關鍵物件遺失!');
             }

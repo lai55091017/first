@@ -2,7 +2,7 @@ import "./scss/information.scss";
 import "./scss/menu.scss";
 import * as menu from './js/menu.js';
 import Firestore from "./js/firebase/Firestore.js";
-import "./js/firebase/Search";
+// import "./js/firebase/Search";
 
 
 const fs = new Firestore;

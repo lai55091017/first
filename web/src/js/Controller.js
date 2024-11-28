@@ -24,27 +24,27 @@ class Controller {
         this.libDoorL = null;
         this.libDoorR = null;
         this.doors = {}; // 新增用來存放門的物件
-        this.chairs = [];
-        this.tables = [];
-        this.counters = [];
-        this.bookshelves = [];
-        this.sofas = [];
-        this.fridge = [];
-        this.bar = [];
-        this.tv = [];
-        this.tub = [];
-        this.toilet = [];
-        this.sink = [];
-        this.bed = [];
-        this.wardrobe = [];
-        this.podium = [];
-        this.lectern = [];
-        this.blackboard = [];
-        this.tvshelves = [];
-        this.rangehood = [];
-        this.cabinets = [];
-        this.gasstoves = [];
-        this.shelf = [];
+        // this.chairs = [];
+        // this.tables = [];
+        // this.counters = [];
+        // this.bookshelves = [];
+        // this.sofas = [];
+        // this.fridge = [];
+        // this.bar = [];
+        // this.tv = [];
+        // this.tub = [];
+        // this.toilet = [];
+        // this.sink = [];
+        // this.bed = [];
+        // this.wardrobe = [];
+        // this.podium = [];
+        // this.lectern = [];
+        // this.blackboard = [];
+        // this.tvshelves = [];
+        // this.rangehood = [];
+        // this.cabinets = [];
+        // this.gasstoves = [];
+        // this.shelf = [];
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
@@ -58,111 +58,6 @@ class Controller {
 
         // 可以根據需要為每對門設置動畫
         console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
-    }
-
-    // 設置椅子
-    setChairs(chairs) {
-        this.chairs = chairs;
-    }
-
-    // 設置桌子
-    setTables(tables) {
-        this.tables = tables;
-    }
-
-    // 設置櫃台
-    setCounters(counters) {
-        this.counters = counters;
-    }
-
-    // 設置書架
-    setBookshelves(bookshelves) {
-        this.bookshelves = bookshelves;
-    }
-
-    // 設置沙發
-    setSofas(sofas) {
-        this.sofas = sofas;
-    }
-
-    // 設置冰箱
-    setFridge(fridge) {
-        this.fridge = fridge;
-    }
-
-    // 設置吧台
-    setBar(bar) {
-        this.bar = bar;
-    }
-
-    // 設置電視
-    setTV(tv) {
-        this.tv = tv;
-    }
-
-    // 設置浴缸
-    setTub(tub) {
-        this.tub = tub;
-    }
-
-    // 設置馬桶
-    setToilet(toilet) {
-        this.toilet = toilet;
-    }
-
-    // 設置洗手槽
-    setSink(sink) {
-        this.sink = sink;
-    }
-
-    // 設置床
-    setBed(bed) {
-        this.bed = bed;
-    }
-
-    // 設置衣櫥
-    setWardrobe(wardrobe) {
-        this.wardrobe = wardrobe;
-    }
-
-    // 設置講台
-    setPodium(podium) {
-        this.podium = podium;
-    }
-
-    // 設置講桌
-    setLectern(lectern) {
-        this.lectern = lectern;
-    }
-
-    // 設置黑板
-    setBlackboard(blackboard) {
-        this.blackboard = blackboard;
-    }
-
-    // 設置電視書架
-    setTVShelves(tvshelves) {
-        this.tvshelves = tvshelves;
-    }
-
-    // 設置抽油煙機
-    setRangehood(rangehood) {
-        this.rangehood = rangehood;
-    }
-
-    // 設置櫃子
-    setCabinets(cabinets) {
-        this.cabinets = cabinets;
-    }
-
-    // 設置瓦斯爐
-    setGasstoves(gasstoves) {
-        this.gasstoves = gasstoves;
-    }
-
-    // 設置廁所架
-    setShelf(shelf) {
-        this.shelf = shelf;
     }
 
     //設置移動參數
@@ -469,14 +364,14 @@ class Controller {
 
     // 開關門的方法（以對應的門對為參數）
     __toggleDoor(doorType) {
-        const doors = this.doors[doorType];
-        if (!doors) {
+        const door = this.doors[doorType];
+        if (!door) {
             console.error(`門類型 ${doorType} 尚未初始化`);
             return;
         }
 
         // 使用 DoorAnimation 來開關門
-        const { left, right } = doors;
+        const { left, right } = door;
         this.doorAnimation = new DoorAnimation(left, right);
         if (this.isOpen) {
             this.doorAnimation.closeDoors();
@@ -485,6 +380,7 @@ class Controller {
         }
         this.isOpen = !this.isOpen;
     }
+
     __onMouseMove() {
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(0, 0);
@@ -511,7 +407,8 @@ class Controller {
         }
     }
 
-    __onMouseDown(event) {
+    __onMouseDown() {
+        if (!this.isGame) return;
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(0, 0);
