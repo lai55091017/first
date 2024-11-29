@@ -99,12 +99,11 @@ class Controller {
             'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
-            'KeyF': () => {
+            'KeyM': () => {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-            }, // F鍵可以開關門
-            'KeyM': () => { this.__toggleGameUI("chatroom", true); }, // M鍵可以開關聊天室
+            }
         }
         if (actions[event.code]) actions[event.code]();
     };

@@ -544,16 +544,6 @@ async function loadModels() {
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
-                // const targetId = 20;
-                // let foundObject;
-                // for (const prop in objects) {
-                // if (Array.isArray(objects[prop])) {
-                //     foundObject = objects[prop].find((obj) => obj.id === targetId);
-                //     if (foundObject) {
-                //     break;
-                //     }
-                // }
-                // }
                 // 設定互動物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
