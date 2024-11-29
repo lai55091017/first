@@ -179,7 +179,7 @@ async function onPlayerJoin(data) {
             // 將玩家移動到 (0, 0, 0)
             if (currentPlayer) {
                 camera.rotation.set(0, 3, 0);
-                playerBody.position.set(14, 1, -3.5); // 設定玩家位置
+
             } else {
                 console.log(`玩家角色未初始化`);
             }
@@ -468,7 +468,7 @@ async function loadModels() {
                 // console.log(`綁定剛體到物件: ${child.name}`);
             }
         });
-
+        playerBody.position.set(14, 1, -3.5); // 設定玩家位置
         // 處理場景中特定物件
         function processSceneObjects(scene) {
             const objects = {
