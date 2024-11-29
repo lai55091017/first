@@ -49,9 +49,6 @@ $(window).on("load", function () {
 $('#info').on("click", function () {
     auth.switch_page('information.html');
 })
-// $('#continue').on("click", function () {
-//     controller.setupBlocker(blocker);
-// })
 document.addEventListener('DOMContentLoaded', () => {
     // 讀取菜單
     fetch('menu.html')
@@ -176,13 +173,6 @@ async function onPlayerJoin(data) {
             // 為玩家添加角色
             camera.add(character);
             currentPlayer = true; // 保存玩家角色到全域變數
-            // 將玩家移動到 (0, 0, 0)
-            if (currentPlayer) {
-                camera.rotation.set(0, 3, 0);
-                playerBody.position.set(14, 1, -3.5); // 設定玩家位置
-            } else {
-                console.log(`玩家角色未初始化`);
-            }
             animate();
 
         } else {
@@ -328,6 +318,8 @@ function animate() {
     const delta = (time - prevTime) / 1000;
     prevTime = time;
 
+    // 傳送錨點
+
     // 玩家移動值
     // console.log(playerBody.position);
 
@@ -341,12 +333,12 @@ function animate() {
 
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
+    // 顯示鋼體
     // cannonDebugger.update()
 
     checkCollisionEnd()
 
-    // 傳送錨點
-    // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
+
 
     renderer.render(scene, camera);
 
@@ -360,18 +352,6 @@ function init_physics() {
     // 碰撞偵測
     cannon_world.broadphase = new CANNON.NaiveBroadphase()
     cannon_world.solver.iterations = 10;
-
-    // // 設定接觸事件
-    // cannon_world.addEventListener('contact', (event) => {
-    //     console.log('接觸！');
-    //     // 處理接觸事件
-    // });
-
-    // cannon_world.addEventListener('endContact', (event) => {
-    //     console.log('結束接觸！');
-    //     // 處理結束接觸事件
-    // });
-
 }
 
 // 創建剛體(方塊) 大小以模型為準
@@ -396,8 +376,6 @@ function create_physics_body_box(model) {
 
     // 將剛體存儲在模型的 userData 屬性中
     model.userData.physicsBody = body;
-
-    return body;
 
 }
 // 玩家剛體(圓柱體)
@@ -428,6 +406,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
 // 追踪玩家與特定物體的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
+    // console.log(targetBody, event.body);
     const otherBody = event.body;
     if (otherBody === targetBody) {
         if (!isCollidingWithTarget) {
@@ -468,6 +447,20 @@ async function loadModels() {
                 // console.log(`綁定剛體到物件: ${child.name}`);
             }
         });
+
+        //從 CANNON 世界中訪問所有剛體
+        const allBodies = cannon_world.bodies;
+        console.log("剛體數量:", allBodies.length);
+        //綁定特定鋼體
+        targetBody = allBodies[19]
+
+        // 調整玩家位置
+        if (currentPlayer) {
+            camera.rotation.set(0, 3, 0);
+            playerBody.position.set(14, 1.5, -3.5); // 設定玩家位置
+        } else {
+            console.log(`玩家角色未初始化`);
+        }
 
         // 處理場景中特定物件
         function processSceneObjects(scene) {
@@ -540,7 +533,7 @@ async function loadModels() {
                 }
             });
 
-            console.log('找到所有物件:', objects);
+            console.log('找到所有物件:', objects.doors);
 
             // 確保找到所有關鍵物件
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
@@ -551,7 +544,16 @@ async function loadModels() {
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
-
+                // const targetId = 20;
+                // let foundObject;
+                // for (const prop in objects) {
+                // if (Array.isArray(objects[prop])) {
+                //     foundObject = objects[prop].find((obj) => obj.id === targetId);
+                //     if (foundObject) {
+                //     break;
+                //     }
+                // }
+                // }
                 // 設定互動物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
