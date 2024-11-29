@@ -49,9 +49,6 @@ $(window).on("load", function () {
 $('#info').on("click", function () {
     auth.switch_page('information.html');
 })
-// $('#continue').on("click", function () {
-//     controller.setupBlocker(blocker);
-// })
 document.addEventListener('DOMContentLoaded', () => {
     // 讀取菜單
     fetch('menu.html')
@@ -176,13 +173,6 @@ async function onPlayerJoin(data) {
             // 為玩家添加角色
             camera.add(character);
             currentPlayer = true; // 保存玩家角色到全域變數
-            // 將玩家移動到 (0, 0, 0)
-            if (currentPlayer) {
-                camera.rotation.set(0, 3, 0);
-
-            } else {
-                console.log(`玩家角色未初始化`);
-            }
             animate();
 
         } else {
@@ -328,6 +318,8 @@ function animate() {
     const delta = (time - prevTime) / 1000;
     prevTime = time;
 
+    // 傳送錨點
+
     // 玩家移動值
     // console.log(playerBody.position);
 
@@ -341,12 +333,12 @@ function animate() {
 
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
+    // 顯示鋼體
     // cannonDebugger.update()
 
     checkCollisionEnd()
 
-    // 傳送錨點
-    // console.log(playerBody.position.x, playerBody.position.y, playerBody.position.z);
+
 
     renderer.render(scene, camera);
 
@@ -360,18 +352,6 @@ function init_physics() {
     // 碰撞偵測
     cannon_world.broadphase = new CANNON.NaiveBroadphase()
     cannon_world.solver.iterations = 10;
-
-    // // 設定接觸事件
-    // cannon_world.addEventListener('contact', (event) => {
-    //     console.log('接觸！');
-    //     // 處理接觸事件
-    // });
-
-    // cannon_world.addEventListener('endContact', (event) => {
-    //     console.log('結束接觸！');
-    //     // 處理結束接觸事件
-    // });
-
 }
 
 // 創建剛體(方塊) 大小以模型為準
@@ -396,8 +376,6 @@ function create_physics_body_box(model) {
 
     // 將剛體存儲在模型的 userData 屬性中
     model.userData.physicsBody = body;
-
-    return body;
 
 }
 // 玩家剛體(圓柱體)
@@ -428,6 +406,7 @@ function Player_body(model, radius, height, radialSegments = 16) {
 // 追踪玩家與特定物體的碰撞狀態
 let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
+    // console.log(targetBody, event.body);
     const otherBody = event.body;
     if (otherBody === targetBody) {
         if (!isCollidingWithTarget) {
@@ -468,7 +447,21 @@ async function loadModels() {
                 // console.log(`綁定剛體到物件: ${child.name}`);
             }
         });
-        playerBody.position.set(14, 1, -3.5); // 設定玩家位置
+
+        //從 CANNON 世界中訪問所有剛體
+        const allBodies = cannon_world.bodies;
+        console.log("剛體數量:", allBodies.length);
+        //綁定特定鋼體
+        targetBody = allBodies[19]
+
+        // 調整玩家位置
+        if (currentPlayer) {
+            camera.rotation.set(0, 3, 0);
+            playerBody.position.set(14, 1.5, -3.5); // 設定玩家位置
+        } else {
+            console.log(`玩家角色未初始化`);
+        }
+
         // 處理場景中特定物件
         function processSceneObjects(scene) {
             const objects = {
@@ -540,7 +533,7 @@ async function loadModels() {
                 }
             });
 
-            console.log('找到所有物件:', objects);
+            console.log('找到所有物件:', objects.doors);
 
             // 確保找到所有關鍵物件
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
@@ -551,7 +544,6 @@ async function loadModels() {
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
-
                 // 設定互動物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
@@ -587,31 +579,22 @@ function showSceneOptions() {
         async (sceneName) => {
             const button = document.createElement('button');
             button.textContent = `${sceneName}`;
-            // button.style.margin = '10px';
             button.onclick = async () => {
-
-                document.body.removeChild(menu); // 清除選單
-                console.log(` find the scene: ${sceneName}`);
-
                 // 傳送錨點
-                // 將玩家移動到 (0, 0, 0)
+                document.getElementById('scene_options').style.display = 'none'
                 if (button.textContent == 'Home') { // 家裡
                     playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
-                    console.log(`角色已移動到: ${sceneName}, 位置: `);
-                    console.log(`玩家位置:`, playerBody.position);
+                    console.log(`角色已移動到: ${sceneName} `);
                 } else if (button.textContent == 'Library') { // 圖書館
                     console.log(`角色已移動到: ${sceneName} `);
                     playerBody.position.set(-31.5, 1.5, 4); // 將角色移動到目標位置
-                    console.log(`玩家位置:`, playerBody.position);
                     camera.rotation.set(0, 0, 0);
 
                 } else if (button.textContent == 'School') { // 學校
                     console.log(`角色已移動到: ${sceneName}`);
                     playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
-                    console.log(`玩家位置: `, playerBody.position);
-
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
@@ -622,29 +605,16 @@ function showSceneOptions() {
 
     const closeButton = document.createElement('button');
     closeButton.textContent = '取消';
-    closeButton.onclick = () => document.body.removeChild(menu);
+    closeButton.onclick = () => document.getElementById('scene_options').style.display = 'none' // 隱藏選單;
     menu.appendChild(closeButton);
 
     document.body.appendChild(menu);
+    document.getElementById('scene_options').style.display = 'none' // 隱藏選單
 }
 
 
+showSceneOptions()
 
-
-// 監測：isopen屬性來切換選單
-Object.defineProperty(controller, 'isOpen', {
-    get() {
-        return this._isOpen; // 返回內部屬性值
-    },
-    set(value) {
-        this._isOpen = value; // 設定內部屬性值
-
-        if (value) {
-            // 如果 isOpen 為 true，顯示場景切換選單
-            showSceneOptions();
-        }
-    }
-});
 
 
 
@@ -691,7 +661,7 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-// 選擇HTML元素
-const guessGrid = document.getElementById("guess-grid");
-const keyboard = document.getElementById("keyboard");
-const wordle_game = new wordlegame(guessGrid, keyboard);
+// // 選擇HTML元素
+// const guessGrid = document.getElementById("guess-grid");
+// const keyboard = document.getElementById("keyboard");
+// const wordle_game = new wordlegame(guessGrid, keyboard);

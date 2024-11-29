@@ -28,6 +28,7 @@ class Controller {
         this.doorAnimation = null;
         this.WordleGame = $("#WordleGame");
         this.isClickable = true;
+        // this.isSceneOptionsVisible = false; // 初始狀態為關閉
 
         // 確保頁面加載完成再初始化 guessGrid 和 keyboard
         document.addEventListener("DOMContentLoaded", () => {
@@ -99,12 +100,14 @@ class Controller {
             'KeyD': () => { this.movingRight = true; this.walk_right(); }, // D鍵向右
             'Space': () => { this.velocity.y += this.jumpHight; this.canJump = false; }, // 空白鍵可以跳
             'ShiftLeft': () => { this.run(); this.moveDistance = 40; }, // 左Shift可以奔跑
+            'KeyM': () => {
+                this.__scene_options()
+            },
             'KeyF': () => {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-            }, // F鍵可以開關門
-            'KeyM': () => { this.__toggleGameUI("chatroom", true); }, // M鍵可以開關聊天室
+            }
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -269,7 +272,9 @@ class Controller {
                 document.getElementById('message_input').style.display = powerswitch ? 'block' : 'none';
                 document.getElementById('chat_box').style.display = powerswitch ? 'block' : 'none';
                 document.getElementById('content').style.display = powerswitch ? 'block' : 'none';
-
+                break;
+            case "scene_options":
+                document.getElementById('scene_options').style.display = powerswitch ? 'block' : 'none'; // 菜单
                 break;
         }
 
@@ -299,6 +304,17 @@ class Controller {
             }, 200); // 延遲保證切換狀態後能夠正確鎖定
         }
     }
+
+
+    __scene_options = () => {
+        // 根據當前狀態開啟或關閉 UI
+        if(document.getElementById('scene_options').style.display === 'none'){
+            this.__toggleGameUI("scene_options", true);
+        }else{
+            this.__toggleGameUI("scene_options", false);
+        }
+    }
+
 
     // 開關門的方法（以對應的門對為參數）
     __toggleDoor(doorType) {
@@ -371,21 +387,17 @@ class Controller {
             const originalColor = object.material.emissive.clone();
 
             // 如果點擊的是 Labtop，啟動 WordleGame
-            if (object.name === 'Labtop') {
-                console.log('啟動 WordleGame');
-                // 顯示 WordleGame 元素
-                this.WordleGame.fadeToggle(500); // 顯示或隱藏 WordleGame
-                // 確保已正確初始化 WordleGame
-                if (typeof this.wordle_game !== 'undefined' && this.wordle_game.enableKeyboard) {
-                    this.wordle_game.enableKeyboard(); // 啟用鍵盤
-                }
-            }
+            // if (object.name === 'Labtop') {
+            //     console.log('啟動 WordleGame');
+            //     // 顯示 WordleGame 元素
+            //     this.WordleGame.fadeToggle(500); // 顯示或隱藏 WordleGame
+            //     // 確保已正確初始化 WordleGame
+            //     if (typeof this.wordle_game !== 'undefined' && this.wordle_game.enableKeyboard) {
+            //         this.wordle_game.enableKeyboard(); // 啟用鍵盤
+            //     }
+            // }
 
-            if (object.name === 'Door' || object.name === 'Chair' || object.name === 'Table' || object.name === 'Counter' || object.name === 'Bookshelf' ||
-                object.name === 'Sofa' || object.name === 'Fridge' || object.name === 'Bar' || object.name === 'TV' || object.name === 'Tub' ||
-                object.name === 'Toilet' || object.name === 'Sink' || object.name === 'Bed' || object.name === 'Wardrobe' || object.name === 'Podium' ||
-                object.name === 'Lectern' || object.name === 'Blackboard' || object.name === 'TV Shelf' || object.name === 'Range hood' || object.name === 'Cabinet' ||
-                object.name === 'Gas stove' || object.name === 'Toilet shelf' || object.name === 'Labtop'|| object.name === 'Book') {
+            if (object) {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗
@@ -406,8 +418,6 @@ class Controller {
                 }, 5000);
             } else {
                 console.log('無可互動物件');
-
-
             }
         }
     }
