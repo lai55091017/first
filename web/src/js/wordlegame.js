@@ -92,9 +92,9 @@ class WordleGame {
         this.boxes = guessGrid.querySelectorAll(".letter-box");
         this.submitGuess = this.submitGuess.bind(this);
 
-        // this.initGame(); // 初始化遊戲資料
-        // this.bindEvents(); // 初始化鍵盤事件
-        // this.GameUI(); //初始化UI
+        this.initGame(); // 初始化遊戲資料
+        this.bindEvents(); // 初始化鍵盤事件
+        this.GameUI(); //初始化UI
     }
 
     /*
@@ -318,7 +318,6 @@ class WordleGame {
             if (this.currentAttempt >= this.maxAttempts || this.currentGuess === this.answer) {
                 return;
             }
-    
             switch (key) {
                 case "ENTER":
                     this.submitGuess();
