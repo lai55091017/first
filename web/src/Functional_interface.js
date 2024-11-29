@@ -11,7 +11,6 @@ import Connect from './js/Connect.js';
 import CharacterManager from './js/CharacterManager.js';
 import ICAS from './js/ImportCharacterAndScene.js';
 import * as menu from './js/menu.js';
-import wordlegame from "./js/wordlegame.js";
 
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
@@ -635,7 +634,6 @@ WordleGame.hide();
 
 $('#Game').on('click', async () => {
     WordleGame.fadeToggle(500);
-    wordle_game.enableKeyboard(); // 啟用鍵盤
 })
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
@@ -652,7 +650,6 @@ $(document).ready(function () {
                 break;
             case 'close_wordlegame'://id=close_wordlegame
                 WordleGame.fadeToggle(500);
-                wordle_game.disableKeyboard();// 禁用鍵盤
                 break;
             default:
                 console.log('未知的按鈕 ID');
@@ -660,11 +657,4 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-// 選擇HTML元素
-const guessGrid = document.getElementById("guess-grid");
-const keyboard = document.getElementById("keyboard");
-const wordle_game = new wordlegame(guessGrid, keyboard);
 
-wordle_game.initGame(); // 初始化遊戲資料
-wordle_game.bindEvents(); // 初始化鍵盤事件
-wordle_game.GameUI(); //初始化UI

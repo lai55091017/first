@@ -19,15 +19,14 @@ class Controller {
         this.isGame = false;  // 是否再遊戲中
         camera.position.y = this.playerHight;
         this.scene.add(camera);
+
+        this.isInteractiveObjects = false //檢測是否滑鼠指向互動物件
         this.speed = 0; // 新增速度的變數，用於偵測玩家的速度來播放不同動作
         this.isOpen = false;
-        this.libDoorL = null;
-        this.libDoorR = null;
         this.doors = {}; // 新增用來存放門的物件
         this.doorAnimation = null;
         this.isClickable = true;
-        this.WordleGameUI = $("#WordleGame");
-        // this.WordleGame = new wordlegame
+        this.__setwordlegame()
     }
 
     // 設置門和初始化動畫
@@ -38,6 +37,13 @@ class Controller {
 
         // 可以根據需要為每對門設置動畫
         console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
+    }
+
+    __setwordlegame(){
+        this.WordleGameUI = $("#WordleGame");
+        this.guessGrid = document.getElementById("guess-grid");
+        this.keyboard = document.getElementById("keyboard");
+        this.WordleGame = new wordlegame(this.guessGrid, this.keyboard);
     }
 
     //設置移動參數
@@ -77,6 +83,7 @@ class Controller {
 
     //處理鍵盤按下事件
     __handleKeyDown(event) {
+        // console.log(event.code)
         if (!this.canJump || !this.isGame) return;
         if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) this.moveDistance = 16;
         const actions = {
@@ -93,8 +100,8 @@ class Controller {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
-                this.__wordlegame()
-            }
+            },
+
         }
         if (actions[event.code]) actions[event.code]();
     };
@@ -263,9 +270,6 @@ class Controller {
             case "scene_options":
                 document.getElementById('scene_options').style.display = powerswitch ? 'block' : 'none'; // 菜单
                 break;
-            case "wordlegame":
-                document.getElementById('WordleGame').style.display = powerswitch ? 'block' : 'none';
-                break;
         }
 
 
@@ -275,7 +279,7 @@ class Controller {
     // 聊天室
     __chatroom = (event) => {
         const messageInput = document.querySelector('#message_input');
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !this.isInteractiveObjects) {
             this.isGame = false;
             this.__toggleGameUI("chatroom", true);
             this.controls.unlock();
@@ -305,14 +309,20 @@ class Controller {
         }
     }
 
-    __wordlegame = () => {
-        // 根據當前狀態開啟或關閉 UI
-        if (document.getElementById('WordleGame').style.display === 'none') {
+    __wordlegame = (event) => {
+        if (event.code === 'KeyF' && this.isGame === true) {
+            this.isGame = false;
             this.WordleGameUI.fadeToggle(500);
-            // this.WordleGame.enableKeyboard();
-        } else {
+            this.WordleGame.enableKeyboard();
+            this.controls.unlock();
+        }
+        else if (event.code === 'Escape') {
             this.WordleGameUI.fadeToggle(500);
-            // this.WordleGame.disableKeyboard();
+            this.WordleGame.disableKeyboard();
+            // 確保在適當的時機捕獲滑鼠
+            setTimeout(() => {
+                this.controls.lock(); // 重新鎖定滑鼠
+            }, 200); // 延遲保證切換狀態後能夠正確鎖定
         }
     }
 
@@ -340,27 +350,63 @@ class Controller {
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(0, 0);
         raycaster.setFromCamera(mouse, this.camera);
-        raycaster.layers.set(1);
+        raycaster.layers.set(1); // 將射線設置為檢測特定圖層
         raycaster.precision = 0.00001;
-        raycaster.far = 8;// 調整射線的長度
+        raycaster.far = 8; // 調整射線的長度
+    
+        // 射線檢測是否與場景中的物體相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
-
-
+    
+        // 獲取十字準心和提示元素
         const crosshair = document.getElementById('crosshair');
-
-
-        if (intersects.length > 0) {
-            crosshair.style.borderColor = '#ff0000d4'; // 設置十字準心的顏色
-            crosshair.style.transform = 'scale(1.5)'; // 放大 1.5 倍
-            crosshair.style.transition = 'all 0.3s ease'; // 平滑過渡效果
-            crosshair.classList.add('active');
+        let actionPrompt = document.getElementById('action_prompt');
+    
+        // 如果提示元素不存在，動態創建
+        if (!actionPrompt) {
+            actionPrompt = document.createElement('div');
+            actionPrompt.id = 'action_prompt';
+            actionPrompt.style.position = 'absolute';
+            actionPrompt.style.bottom = '50px';
+            actionPrompt.style.left = '50%';
+            actionPrompt.style.transform = 'translateX(-50%)';
+            actionPrompt.style.padding = '10px 20px';
+            actionPrompt.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            actionPrompt.style.color = 'white';
+            actionPrompt.style.fontSize = '14px';
+            actionPrompt.style.borderRadius = '5px';
+            actionPrompt.style.display = 'none'; // 初始隱藏
+            actionPrompt.textContent = '按 F 鍵進行交互';
+            document.body.appendChild(actionPrompt);
         }
-        else {
-            crosshair.style.borderColor = 'white'; // 回復原始顏色
-            crosshair.style.transform = 'scale(1)'; // 回復原始大小
-            crosshair.classList.remove('active'); // 移除
+    
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+    
+            // 檢測是否為目標物件
+            if (object) { 
+                crosshair.style.borderColor = '#ff0000d4'; // 高亮顯示十字準心
+                crosshair.style.transform = 'scale(1.5)'; // 放大十字準心
+                crosshair.style.transition = 'all 0.3s ease';
+                crosshair.classList.add('active');
+                // 特定的互動物件
+                if(object.name === 'Labtop'){
+                    this.isInteractiveObjects = true;
+                    actionPrompt.style.display = 'block'; // 顯示提示
+                    document.addEventListener('keydown', this.__wordlegame);
+                }
+            } 
+        }
+         else {
+            // 沒有指向物件時，隱藏提示並恢復十字準心
+            crosshair.style.borderColor = 'white';
+            crosshair.style.transform = 'scale(1)';
+            crosshair.classList.remove('active');
+            actionPrompt.style.display = 'none'; // 隱藏提示
+            this.isInteractiveObjects = false;
+            document.removeEventListener('keydown', this.__wordlegame);
         }
     }
+    
 
     __onMouseDown() {
         if (!this.isGame) return;
