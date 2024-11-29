@@ -618,8 +618,6 @@ showSceneOptions()
 
 
 
-
-
 /*-----------------------------------暫停模式menu--------------------------------------------------*/
 
 const instruction = $("#instruction_container");
@@ -632,12 +630,13 @@ $("#instruction").on('click', async () => {
 
 const WordleGame = $("#WordleGame");
 WordleGame.hide();
-
+/*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
 const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
-
+const memorygame_URL = "memorycard.html";
 $('#Game').on('click', async () => {
-
-
+    memorycard();
+});
+function memorycard() {
     fetch(memorygame_URL)
         .then(response => {
             if (!response.ok) {
@@ -647,12 +646,14 @@ $('#Game').on('click', async () => {
         })
         .then(html => {
             memorygame_container.html(html); // 修正為 jQuery 的 html() 方法（全小寫）
+            AppState.setActiveModule("memorycard"); // 激活 memorycard 模組
         })
         .catch(error => {
             console.error('Error loading page:', error);
             memorygame_container.html(`<p>加載頁面失敗，請稍後再試。</p>`);
         });
-});
+}
+
 console.log(memorygame_URL);
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
