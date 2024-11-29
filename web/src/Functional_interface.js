@@ -579,31 +579,22 @@ function showSceneOptions() {
         async (sceneName) => {
             const button = document.createElement('button');
             button.textContent = `${sceneName}`;
-            // button.style.margin = '10px';
             button.onclick = async () => {
-
-                document.body.removeChild(menu); // 清除選單
-                console.log(` find the scene: ${sceneName}`);
-
                 // 傳送錨點
-                // 將玩家移動到 (0, 0, 0)
+                document.getElementById('scene_options').style.display = 'none'
                 if (button.textContent == 'Home') { // 家裡
                     playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
-                    console.log(`角色已移動到: ${sceneName}, 位置: `);
-                    console.log(`玩家位置:`, playerBody.position);
+                    console.log(`角色已移動到: ${sceneName} `);
                 } else if (button.textContent == 'Library') { // 圖書館
                     console.log(`角色已移動到: ${sceneName} `);
                     playerBody.position.set(-31.5, 1.5, 4); // 將角色移動到目標位置
-                    console.log(`玩家位置:`, playerBody.position);
                     camera.rotation.set(0, 0, 0);
 
                 } else if (button.textContent == 'School') { // 學校
                     console.log(`角色已移動到: ${sceneName}`);
                     playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
-                    console.log(`玩家位置: `, playerBody.position);
-
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
@@ -614,29 +605,16 @@ function showSceneOptions() {
 
     const closeButton = document.createElement('button');
     closeButton.textContent = '取消';
-    closeButton.onclick = () => document.body.removeChild(menu);
+    closeButton.onclick = () => document.getElementById('scene_options').style.display = 'none' // 隱藏選單;
     menu.appendChild(closeButton);
 
     document.body.appendChild(menu);
+    document.getElementById('scene_options').style.display = 'none' // 隱藏選單
 }
 
 
+showSceneOptions()
 
-
-// 監測：isopen屬性來切換選單
-Object.defineProperty(controller, 'isOpen', {
-    get() {
-        return this._isOpen; // 返回內部屬性值
-    },
-    set(value) {
-        this._isOpen = value; // 設定內部屬性值
-
-        if (value) {
-            // 如果 isOpen 為 true，顯示場景切換選單
-            showSceneOptions();
-        }
-    }
-});
 
 
 
@@ -683,7 +661,7 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-// 選擇HTML元素
-const guessGrid = document.getElementById("guess-grid");
-const keyboard = document.getElementById("keyboard");
-const wordle_game = new wordlegame(guessGrid, keyboard);
+// // 選擇HTML元素
+// const guessGrid = document.getElementById("guess-grid");
+// const keyboard = document.getElementById("keyboard");
+// const wordle_game = new wordlegame(guessGrid, keyboard);
