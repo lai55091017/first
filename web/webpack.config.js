@@ -11,6 +11,7 @@ module.exports = {
     index: './src/index.js',
     sign_up: './src/sign_up.js',
     information: './src/information.js',
+    memorycard: './src/memorycard.js',
   },
 
   output: {
@@ -85,7 +86,12 @@ module.exports = {
       filename: 'menu.html',  // 指定要生成的文件名稱
       template: './src/menu.html',  // 來源 HTML 模板
       inject: false,  // 不自動注入腳本
-    })
+    }),
+    new HtmlWebpackPlugins({
+      template: './src/memorycard.html',
+      filename: 'memorycard.html',
+      chunks: ['memorycard']
+    }),
 
   ]
 

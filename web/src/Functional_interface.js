@@ -634,7 +634,6 @@ const WordleGame = $("#WordleGame");
 WordleGame.hide();
 
 const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
-const memorygame_URL = '/memorycard.html';
 
 $('#Game').on('click', async () => {
 

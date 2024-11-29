@@ -424,20 +424,25 @@ body {
                 background-color: #d4dbcd;
                 padding: 6px 10px 8px 10px;
                 margin: auto;
-                word-wrap: break-word; /* 自動換行 */
+                word-wrap: break-word;
+                /* 自動換行 */
                 display: inline-block;
                 border-radius: 7px;
-                max-width: 75%; /* 最大寬度 */
+                max-width: 75%;
+                /* 最大寬度 */
                 word-wrap: break-word;
                 overflow-wrap: break-word;
             }
 
             #message_date {
                 padding: 20px 10px;
-                margin-bottom: 10px; /* 設置消息之間的間距 */
-                word-wrap: break-word; /* 自動換行 */
+                margin-bottom: 10px;
+                /* 設置消息之間的間距 */
+                word-wrap: break-word;
+                /* 自動換行 */
                 border-radius: 8px;
-                max-width: 75%; /* 最大寬度 */
+                max-width: 75%;
+                /* 最大寬度 */
                 font-size: 12px;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
@@ -464,9 +469,12 @@ body {
             }
 
             #personal_message_date {
-                padding: 15px 10px; /* 設置消息之間的間距 */
-                word-wrap: break-word; /* 自動換行 */
-                max-width: 75%; /* 最大寬度 */
+                padding: 15px 10px;
+                /* 設置消息之間的間距 */
+                word-wrap: break-word;
+                /* 自動換行 */
+                max-width: 75%;
+                /* 最大寬度 */
                 font-size: 12px;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
@@ -729,7 +737,8 @@ body {
 
 /*---------------猜單字遊戲---------------*/
 #WordleGame {
-    font-family: Arial, sans-serif; /* 這裡是字型 */
+    font-family: Arial, sans-serif;
+    /* 這裡是字型 */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -744,7 +753,8 @@ body {
 
     #guess-grid {
         display: grid;
-        grid-template-columns: repeat(5, 50px); /* 網格大小 */
+        grid-template-columns: repeat(5, 50px);
+        /* 網格大小 */
         gap: 5px;
         margin-top: 20px;
     }
@@ -762,17 +772,20 @@ body {
     }
 
     .correct {
-        background-color: #6aaa64; /* 綠色，字母正確且位置正確 */
+        background-color: #6aaa64;
+        /* 綠色，字母正確且位置正確 */
         color: #fff;
     }
 
     .present {
-        background-color: #c9b458; /* 黃色，字母正確但位置錯誤 */
+        background-color: #c9b458;
+        /* 黃色，字母正確但位置錯誤 */
         color: #fff;
     }
 
     .absent {
-        background-color: #787c7e; /* 灰色，字母錯誤 */
+        background-color: #787c7e;
+        /* 灰色，字母錯誤 */
         color: #fff;
     }
 
