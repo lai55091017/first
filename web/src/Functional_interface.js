@@ -16,6 +16,7 @@ import wordlegame from "./js/wordlegame.js";
 import FirebaseDB from './js/firebase/Realtime Database';
 import Firestore from "./js/firebase/Firestore.js";
 import Auth from './js/firebase/auth';
+
 // import { count } from "firebase/firestore";
 
 
@@ -630,13 +631,30 @@ $("#instruction").on('click', async () => {
 })
 
 const WordleGame = $("#WordleGame");
-
 WordleGame.hide();
 
+const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
+const memorygame_URL = '/memorycard.html';
+
 $('#Game').on('click', async () => {
-    WordleGame.fadeToggle(500);
-    wordle_game.enableKeyboard(); // 啟用鍵盤
-})
+
+
+    fetch(memorygame_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text(); // 獲取 HTML 文本
+        })
+        .then(html => {
+            memorygame_container.html(html); // 修正為 jQuery 的 html() 方法（全小寫）
+        })
+        .catch(error => {
+            console.error('Error loading page:', error);
+            memorygame_container.html(`<p>加載頁面失敗，請稍後再試。</p>`);
+        });
+});
+console.log(memorygame_URL);
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
 //$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
