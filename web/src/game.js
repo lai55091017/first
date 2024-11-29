@@ -1,3 +1,6 @@
+import "./scss/memorycard.scss";
+
+
 // 引入 jQuery
 $(document).ready(function () {
   $.fn.jqmultilang = function (l) {

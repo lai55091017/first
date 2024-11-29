@@ -32,9 +32,9 @@ class PopupWindow {
         $(this.popup)
             .removeClass('animate__zoomIn')  // 確保移除顯示動畫
             .addClass('animate__zoomOut')   // 添加隱藏動畫
-            .setTimeout(() => {
-                this.popup.style.display = 'none';
-            }, 200);
+        setTimeout(() => {
+            this.popup.style.display = 'none';
+        }, 200);
     }
 
     speak(text) {

@@ -298,19 +298,19 @@ class Controller {
 
     __scene_options = () => {
         // 根據當前狀態開啟或關閉 UI
-        if(document.getElementById('scene_options').style.display === 'none'){
+        if (document.getElementById('scene_options').style.display === 'none') {
             this.__toggleGameUI("scene_options", true);
-        }else{
+        } else {
             this.__toggleGameUI("scene_options", false);
         }
     }
 
     __wordlegame = () => {
         // 根據當前狀態開啟或關閉 UI
-        if(document.getElementById('WordleGame').style.display === 'none'){
+        if (document.getElementById('WordleGame').style.display === 'none') {
             this.WordleGameUI.fadeToggle(500);
             // this.WordleGame.enableKeyboard();
-        }else{
+        } else {
             this.WordleGameUI.fadeToggle(500);
             // this.WordleGame.disableKeyboard();
         }
