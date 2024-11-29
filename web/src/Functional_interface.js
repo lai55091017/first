@@ -634,11 +634,10 @@ const WordleGame = $("#WordleGame");
 WordleGame.hide();
 
 $('#Game').on('click', async () => {
-    wordle_game.enableKeyboard(); // 啟用鍵盤
     WordleGame.fadeToggle(500);
+    wordle_game.enableKeyboard(); // 啟用鍵盤
 })
 // 傳送錨點
-
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
 //$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
 $(document).ready(function () {
@@ -652,8 +651,8 @@ $(document).ready(function () {
                 instruction.fadeToggle(500);
                 break;
             case 'close_wordlegame'://id=close_wordlegame
-                wordle_game.disableKeyboard();// 禁用鍵盤
                 WordleGame.fadeToggle(500);
+                wordle_game.disableKeyboard();// 禁用鍵盤
                 break;
             default:
                 console.log('未知的按鈕 ID');
@@ -661,7 +660,11 @@ $(document).ready(function () {
     });
 })
 /*-----------------------------------wordlegame--------------------------------------------------*/
-// // 選擇HTML元素
-// const guessGrid = document.getElementById("guess-grid");
-// const keyboard = document.getElementById("keyboard");
-// const wordle_game = new wordlegame(guessGrid, keyboard);
+// 選擇HTML元素
+const guessGrid = document.getElementById("guess-grid");
+const keyboard = document.getElementById("keyboard");
+const wordle_game = new wordlegame(guessGrid, keyboard);
+
+wordle_game.initGame(); // 初始化遊戲資料
+wordle_game.bindEvents(); // 初始化鍵盤事件
+wordle_game.GameUI(); //初始化UI

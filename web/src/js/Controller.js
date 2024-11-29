@@ -3,8 +3,7 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import DoorAnimation from './DoorAnimation';
 import InteractableObject from './InteractableObject';
 import PopupWindow from './PopupWindow';
-import WordleGame from './wordlegame';
-import { doc } from 'firebase/firestore';
+import wordlegame from "./wordlegame.js";
 
 class Controller {
 
@@ -26,22 +25,9 @@ class Controller {
         this.libDoorR = null;
         this.doors = {}; // 新增用來存放門的物件
         this.doorAnimation = null;
-        this.WordleGame = $("#WordleGame");
         this.isClickable = true;
-        // this.isSceneOptionsVisible = false; // 初始狀態為關閉
-
-        // 確保頁面加載完成再初始化 guessGrid 和 keyboard
-        document.addEventListener("DOMContentLoaded", () => {
-            this.guessGrid = document.getElementById("guess-grid");
-            this.keyboard = document.getElementById("keyboard");
-
-            // 檢查元素是否存在
-            if (this.guessGrid && this.keyboard) {
-                this.wordle_game = new WordleGame(this.guessGrid, this.keyboard); // 傳遞DOM元素到Wordle遊戲類
-            } else {
-                console.error("找不到 guess-grid 或 keyboard 元素！");
-            }
-        });
+        this.WordleGameUI = $("#WordleGame");
+        // this.WordleGame = new wordlegame
     }
 
     // 設置門和初始化動畫
@@ -107,6 +93,7 @@ class Controller {
                 this.__toggleDoor('home');    // 開關家裡的門
                 this.__toggleDoor('library'); // 開關圖書館的門
                 this.__toggleDoor('school');  // 開關學校的門
+                this.__wordlegame()
             }
         }
         if (actions[event.code]) actions[event.code]();
@@ -276,6 +263,9 @@ class Controller {
             case "scene_options":
                 document.getElementById('scene_options').style.display = powerswitch ? 'block' : 'none'; // 菜单
                 break;
+            case "wordlegame":
+                document.getElementById('WordleGame').style.display = powerswitch ? 'block' : 'none';
+                break;
         }
 
 
@@ -312,6 +302,17 @@ class Controller {
             this.__toggleGameUI("scene_options", true);
         }else{
             this.__toggleGameUI("scene_options", false);
+        }
+    }
+
+    __wordlegame = () => {
+        // 根據當前狀態開啟或關閉 UI
+        if(document.getElementById('WordleGame').style.display === 'none'){
+            this.WordleGameUI.fadeToggle(500);
+            // this.WordleGame.enableKeyboard();
+        }else{
+            this.WordleGameUI.fadeToggle(500);
+            // this.WordleGame.disableKeyboard();
         }
     }
 
@@ -376,26 +377,13 @@ class Controller {
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
         if (intersects.length > 0 && this.isClickable) {
-            // console.log(intersects);
             const object = intersects[0].object;// 獲取相交的物件
             console.log(object.name);
 
             this.isClickable = false; // 禁止點擊操作
 
 
-            // console.log(object.name);
             const originalColor = object.material.emissive.clone();
-
-            // 如果點擊的是 Labtop，啟動 WordleGame
-            // if (object.name === 'Labtop') {
-            //     console.log('啟動 WordleGame');
-            //     // 顯示 WordleGame 元素
-            //     this.WordleGame.fadeToggle(500); // 顯示或隱藏 WordleGame
-            //     // 確保已正確初始化 WordleGame
-            //     if (typeof this.wordle_game !== 'undefined' && this.wordle_game.enableKeyboard) {
-            //         this.wordle_game.enableKeyboard(); // 啟用鍵盤
-            //     }
-            // }
 
             if (object) {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
