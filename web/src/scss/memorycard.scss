@@ -6,10 +6,6 @@
   user-select: none;
 }
 
-.html {
-  background: #e6e7e7;
-}
-
 #memorygame_container {
   width: 100%;
   height: 100%;
@@ -27,7 +23,7 @@
   -ms-flex-align: center;
   align-items: center;
   background: #d3e3fd;
-  position: fixed;
+  position: absolute;
   z-index: 1000000;
 }
 
@@ -58,7 +54,7 @@ h1 {
 }
 
 .memory-game-hard {
-  max-width: 1650px;
+  max-width: 640px;
   height: auto;
   margin: 10px;
   display: -webkit-box;
@@ -73,7 +69,7 @@ h1 {
 }
 
 .memory-game-normal {
-  max-width: 1120px;
+  max-width: 640px;
   height: auto;
   margin: 10px;
   display: -webkit-box;
@@ -89,7 +85,7 @@ h1 {
 }
 
 .memory-game-easy {
-  max-width: 640px;
+  max-width: 580px;
   height: auto;
   margin: 10px;
   display: -webkit-box;

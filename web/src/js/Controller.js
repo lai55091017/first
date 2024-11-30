@@ -57,7 +57,7 @@ class Controller {
     _setmemorygame() {
         this.memorygame_container = new MemoryCardGame;
         this.memorygame_container_UI = $("#memorygame_container"); // 確保是 jQuery 對象
-        // this.memorygame_container_UI.hide();
+        this.memorygame_container_UI.hide();
     }
 
     //設置移動參數

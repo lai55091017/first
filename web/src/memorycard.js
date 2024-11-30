@@ -53,84 +53,41 @@ class MemoryCardGame {
 
     // 初始化事件處理器
     this.initEvents();
-    // this.initJQueryPlugin();
   }
-  // $(document).ready(function() {
-  //   $.fn.jqmultilang = function (l) {
-  //     $(this).html($(this).data("lang-" + l));
-  //   };
-  // });
-  // 初始化 jQuery 插件
 
-  // initJQueryPlugin() {
-  //   $.fn.jqmultilang = function (lang) {
-  //     $(this).html($(this).data("lang-" + lang));
-  //   };
-  // }
-  // // 引入語系切換
-  // English_Locale() {
-  //   document.title = "Memory Card Game";
-  //   for (let i = 0; i < 8; i++) {
-  //     $('#LocaleReq' + String(i)).jqmultilang('en');
-  //   }
-  //   if (this.mathedCard === this.cardNum) {
-  //     this.end.innerHTML = "Finish";
-  //   }
-  // };
-  // Chinese_Locale() {
-  //   document.title = "記憶力翻牌小遊戲";
-  //   for (let i = 0; i < 8; i++) {
-  //     $('#LocaleReq' + String(i)).jqmultilang('zh-tw');
-  //   }
-  //   if (this.mathedCard === this.cardNum) {
-  //     this.end.innerHTML = "已過關";
-  //   }
-  // };
-  // Japanese_Locale() {
-  //   document.title = "メモリカードゲーム";
-  //   for (let i = 0; i < 8; i++) {
-  //     $('#LocaleReq' + String(i)).jqmultilang('ja');
-  //   }
-  //   if (this.mathedCard === this.cardNum) {
-  //     this.end.innerHTML = "ゲームクリア";
-  //   }
-  // };
-
-
-  //  // 為每張卡片添加點擊事件
-  //  flip.forEach(card => card.addEventListener('click', flipCard));
-  //  // 難易度的點擊事件
-  //  easy.addEventListener('click', difficultyChoose);
-  //  normal.addEventListener('click', difficultyChoose);
-  //  hard.addEventListener('click', difficultyChoose);
-  //  // 重置的點擊事件
-  //  reset.addEventListener('click', resetGame);
-  //  // 偷看的點擊事件
-  //  look.addEventListener('click', lookCard);
   initEvents() {
     // 為每張卡片添加點擊事件
     this.flip.forEach(card => card.addEventListener('click', this.flipCard));
     // 為難易度按鈕添加點擊事件
-    this.easy.addEventListener('click', this.difficultyChoose);
-    this.normal.addEventListener('click', this.difficultyChoose);
-    this.hard.addEventListener('click', this.difficultyChoose);
+    this.easy.onclick = (event) => this.difficultyChoose(event);
+    this.normal.onclick = (event) => {
+      this.difficultyChoose(event)
+    };
+
+    this.hard.onclick = (event) => this.difficultyChoose(event);
     // 為重置和偷看按鈕添加點擊事件
     this.reset.addEventListener('click', this.resetGame);
     this.look.addEventListener('click', this.lookCard);
   }
-  flipCard() {
+  flipCard(event) {
+    const card = event.currentTarget;
+    if (!card.classList.contains('memory-card')) {
+      console.warn('Clicked element is not a memory card:', card);
+      return;
+    }
+
     // 翻牌
     if (this.lockBoard) return;
-    if (this === this.firstCard) return;
-    this.classList.add('flip');
+    if (card === this.firstCard) return;
+    card.classList.add('flip');
     if (!this.hasFlippedCard) {
       // 第一次點擊
       this.hasFlippedCard = true;
-      this.firstCard = this;
+      this.firstCard = card;
       return;
     }
     // 第二次點擊
-    this.secondCard = this;
+    this.secondCard = card;
     this.checkForMatch();
   }
 
@@ -150,19 +107,12 @@ class MemoryCardGame {
     // 檢查是否完成遊戲
     this.mathedCard += 2;
     if (this.mathedCard === this.cardNum) {
+      console.log('完成遊戲');
       setTimeout(() => {
         this.end.addEventListener('click', this.resetGame);
         const hide = document.querySelectorAll('.hide');
         hide.forEach(card => card.classList = 'none');
-        if (document.title == "記憶力翻牌小遊戲") {
-          this.end.innerHTML = "已通關";
-        }
-        else if (document.title == "Memory Card Game") {
-          this.end.innerHTML = "Finish";
-        }
-        else if (document.title == "メモリカードゲーム") {
-          this.end.innerHTML = "ゲームクリア";
-        }
+        this.end.innerHTML = "已通關 Finish";
         this.end.classList = "text"
       }, 500);
     } else {
@@ -177,7 +127,7 @@ class MemoryCardGame {
     setTimeout(() => {
       this.firstCard.classList.remove('flip');
       this.secondCard.classList.remove('flip');
-      resetBoard();
+      this.resetBoard();
     }, 500);
   }
 
@@ -200,63 +150,54 @@ class MemoryCardGame {
     }, 100);
   };
 
-  difficultyChoose() {
+  difficultyChoose(event) {
     if (this.gamemode === 0) { this.resetEndlook.classList = "ts-wrap is-center-aligned"; }
     // 難易度選擇
     const modes = {
       easy: {
-        id: 'easy',
+        id: 'Easy 簡單',
         class: 'memory-game-easy',
-        cardNum: 9,
+        cardNum: 6,
         message: {
-          '記憶力翻牌小遊戲': '切換為簡單模式。',
-          'Memory Card Game': 'Switch to Easy Mode.',
-          'メモリカードゲーム': '簡単モードに切り替え。'
+          '記憶力翻牌小遊戲': '切換為簡單模式。Switch to Easy Mode.',
         }
       },
       normal: {
-        id: 'normal',
+        id: 'Normal 普通',
         class: 'memory-game-normal',
         cardNum: 12,
         message: {
-          '記憶力翻牌小遊戲': '切換為普通模式。',
-          'Memory Card Game': 'Switch to Normal Mode.',
-          'メモリカードゲーム': '普通モードに切り替え。'
+          '記憶力翻牌小遊戲': '切換為普通模式。Switch to Normal Mode.',
+
         }
       },
       hard: {
-        id: 'hard',
+        id: 'Hard 困難',
         class: 'memory-game-hard',
         cardNum: 16,
         message: {
-          '記憶力翻牌小遊戲': '切換為困難模式。',
-          'Memory Card Game': 'Switch to Hard Mode.',
-          'メモリカードゲーム': '困難モードに切り替え。'
+          '記憶力翻牌小遊戲': '切換為困難模式。Switch to Hard Mode.',
         }
       }
     };
 
-    const mode = modes[this.id];
+    //原本const mode = modes[this.id]無法正常獲取 DOM 元素的 id
+    //因為 this 指的是 class 實例，而不是事件觸發的 DOM 元素。
+    const currentTarget = event.currentTarget; //currentTarget 為當前事件觸發的 DOM 元素
+    const eventid = currentTarget.id;
+    const mode = modes[eventid];
     if (mode) {
       if (this.gamemode !== mode.cardNum) {
         this.gamemode = mode.cardNum;
         document.querySelector("#difficulty").classList = mode.class;
         this.cardNum = mode.cardNum;
         this.mathedCard = 0;
-        resetCard();
-        const title = document.title;
-        if (mode.message[title]) {
-          alert(mode.message[title]);
+        this.resetCard();
+        if (mode.message['記憶力翻牌小遊戲']) {//判斷message句子是否存在
+          alert(mode.message['記憶力翻牌小遊戲']);//輸出為message後面那句
         }
       } else {
-        const title = document.title;
-        if (title === '記憶力翻牌小遊戲') {
-          alert("已經是" + mode.id + "模式了。");
-        } else if (title === 'Memory Card Game') {
-          alert("It was " + mode.id + " Mode.");
-        } else if (title === 'メモリカードゲーム') {
-          alert(mode.id + "モードでした");
-        }
+        alert("已經是" + mode.id + "模式了。");
       }
     }
   };
@@ -284,16 +225,11 @@ class MemoryCardGame {
 
   resetGame() {
     // 重置遊戲
-    if (document.title == "記憶力翻牌小遊戲") {
-      alert("重置遊戲。");
+
+    if (this.mathedCard === this.cardNum) {
+      this.end.removeEventListener('click', this.resetGame);
+      alert("重置遊戲。Game reset");
     }
-    else if (document.title == "Memory Card Game") {
-      alert("Game reset.");
-    }
-    else if (document.title == "メモリカードゲーム") {
-      alert("ゲームリセット。");
-    }
-    if (this.mathedCard === this.cardNum) { this.end.removeEventListener('click', this.resetGame) }
     this.mathedCard = 0;
     this.resetCard();
     this.shuffle();
@@ -310,7 +246,7 @@ class MemoryCardGame {
     const cards = document.querySelectorAll('.show');
     // 洗牌
     cards.forEach(card => {
-      let randomPos = Math.floor(Math.random() * cardNum);
+      let randomPos = Math.floor(Math.random() * this.cardNum);
       card.style.order = randomPos;
     });
   }
