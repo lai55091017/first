@@ -21,12 +21,14 @@ class Controller {
         this.scene.add(camera);
 
         this.isInteractiveObjects = false //檢測是否滑鼠指向互動物件
+        this.Other_functions = false //其他功能是否開啟
         this.speed = 0; // 新增速度的變數，用於偵測玩家的速度來播放不同動作
         this.isOpen = false;
         this.doors = {}; // 新增用來存放門的物件
         this.doorAnimation = null;
         this.isClickable = true;
         this.__setwordlegame()
+        this.scene_options_Index = 0; // 初始聚焦索引
     }
 
     // 設置門和初始化動畫
@@ -193,8 +195,6 @@ class Controller {
 
         // 同步相機位置
         playerPosition.copy(playerBody.position);
-        // playerPosition.x = playerBody.position.x;
-        // playerPosition.z = playerBody.position.z;
 
         // // 跳躍
         // playerPosition.y += this.velocity.y * delta;
@@ -224,14 +224,14 @@ class Controller {
         blocker.addEventListener('click', () => { this.controls.lock(); });
         this.controls.addEventListener('lock', () => {
             this.__toggleGameUI("blocker", false);
-            document.addEventListener('keydown', this.__chatroom);
+            document.addEventListener('keydown',(event) => {this.__chatroom(event);});
             this.isGame = true;
         });
         this.controls.addEventListener('unlock', () => {
             this.__resetState();
             if (this.isGame) {
                 this.__toggleGameUI("blocker", true);
-                document.removeEventListener('keydown', this.__chatroom);
+                document.removeEventListener('keydown',(event) => {this.__chatroom(event);});
                 this.isGame = false;
             }
         });
@@ -280,7 +280,7 @@ class Controller {
     // 聊天室
     __chatroom = (event) => {
         const messageInput = document.querySelector('#message_input');
-        if (event.key === 'Enter' && !this.isInteractiveObjects) {
+        if (event.key === 'Enter' && !this.isInteractiveObjects && !this.Other_functions) {
             this.isGame = false;
             this.__toggleGameUI("chatroom", true);
             this.controls.unlock();
@@ -300,15 +300,55 @@ class Controller {
         }
     }
 
-
     __scene_options = () => {
-        // 根據當前狀態開啟或關閉 UI
-        if (document.getElementById('scene_options').style.display === 'none') {
+        const menu = document.getElementById('scene_options');
+
+        if (menu.style.display === 'none') {
+            this.scene_options_Index = 0; // 初始聚焦索引
             this.__toggleGameUI("scene_options", true);
-        } else {
-            this.__toggleGameUI("scene_options", false);
+            this.isGame = false;
+            this.Other_functions = true;
+            
+            // 確保場景選單內的按鈕存在
+            const buttons = menu.querySelectorAll('button');
+            if (buttons.length > 0) {
+                buttons[0].focus(); // 預設聚焦到按鈕 id=0
+            }
+    
+            // 添加鍵盤事件處理
+            document.addEventListener('keydown', this.__Scene_option_controls);
         }
-    }
+    };
+    
+    // 處理場景選單控制鍵
+    __Scene_option_controls = (event) => {
+
+        const menu = document.getElementById('scene_options');
+        if (!menu || menu.style.display === 'none') return;
+    
+        const buttons = menu.querySelectorAll('button');
+        if (buttons.length === 0) return;
+        // 根據按鍵處理左右切換
+        if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
+            console.log(event.code);
+            this.scene_options_Index = (this.scene_options_Index - 1 + buttons.length) % buttons.length;
+            buttons[this.scene_options_Index].focus();
+        } else if (event.code === 'ArrowRight' || event.code === 'KeyD') {
+            this.scene_options_Index = (this.scene_options_Index + 1) % buttons.length;
+            buttons[this.scene_options_Index].focus();
+        } else if (event.code === 'Enter') {
+            buttons[this.scene_options_Index].click(); // 執行當前按鈕點擊事件
+            this.isGame = true;
+            this.Other_functions = false;
+            console.log(this.Other_functions);
+            document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
+        } else if (event.code === 'Escape') {
+            this.isGame = true;
+            this.Other_functions = false;
+            document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
+        }
+    };
+    
 
     CloseButton = () => {
         $('#close_wordlegame').on('click', () => {
@@ -377,7 +417,7 @@ class Controller {
             actionPrompt = document.createElement('div');
             actionPrompt.id = 'action_prompt';
             actionPrompt.style.position = 'absolute';
-            actionPrompt.style.bottom = '50px';
+            actionPrompt.style.bottom = '40%';
             actionPrompt.style.left = '50%';
             actionPrompt.style.transform = 'translateX(-50%)';
             actionPrompt.style.padding = '10px 20px';

@@ -334,7 +334,7 @@ function animate() {
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
     // 顯示鋼體
-    // cannonDebugger.update()
+    cannonDebugger.update()
 
     checkCollisionEnd()
 
@@ -573,6 +573,7 @@ async function loadModels() {
 // 顯示場景切換選單
 function showSceneOptions() {
     const menu = document.createElement('div');
+    let count = 0;
     menu.id = 'scene_options';
     const scenes = [
         'Library',
@@ -584,7 +585,9 @@ function showSceneOptions() {
     scenes.forEach(
         async (sceneName) => {
             const button = document.createElement('button');
+            button.id = count;
             button.textContent = `${sceneName}`;
+            count++;
             button.onclick = async () => {
                 // 傳送錨點
                 document.getElementById('scene_options').style.display = 'none'
