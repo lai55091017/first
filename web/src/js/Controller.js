@@ -39,11 +39,12 @@ class Controller {
         console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
     }
 
-    __setwordlegame(){
+    __setwordlegame() {
         this.WordleGameUI = $("#WordleGame");
         this.guessGrid = document.getElementById("guess-grid");
         this.keyboard = document.getElementById("keyboard");
         this.WordleGame = new wordlegame(this.guessGrid, this.keyboard);
+        this.WordleGameUI.hide();
     }
 
     //設置移動參數
@@ -309,15 +310,25 @@ class Controller {
         }
     }
 
+    CloseButton = () => {
+        $('#close_wordlegame').on('click', () => {
+            this.WordleGameUI.fadeOut(500);
+            this.WordleGame.disableKeyboard();
+            // 確保在適當的時機捕獲滑鼠
+            setTimeout(() => {
+                this.controls.lock(); // 重新鎖定滑鼠
+            }, 200); // 延遲保證切換狀態後能夠正確鎖定
+        });
+    };
     __wordlegame = (event) => {
         if (event.code === 'KeyF' && this.isGame === true) {
             this.isGame = false;
-            this.WordleGameUI.fadeToggle(500);
+            this.WordleGameUI.fadeIn(500);
             this.WordleGame.enableKeyboard();
             this.controls.unlock();
         }
         else if (event.code === 'Escape') {
-            this.WordleGameUI.fadeToggle(500);
+            this.WordleGameUI.fadeOut(500);
             this.WordleGame.disableKeyboard();
             // 確保在適當的時機捕獲滑鼠
             setTimeout(() => {
@@ -353,14 +364,14 @@ class Controller {
         raycaster.layers.set(1); // 將射線設置為檢測特定圖層
         raycaster.precision = 0.00001;
         raycaster.far = 8; // 調整射線的長度
-    
+
         // 射線檢測是否與場景中的物體相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
-    
+
         // 獲取十字準心和提示元素
         const crosshair = document.getElementById('crosshair');
         let actionPrompt = document.getElementById('action_prompt');
-    
+
         // 如果提示元素不存在，動態創建
         if (!actionPrompt) {
             actionPrompt = document.createElement('div');
@@ -378,25 +389,30 @@ class Controller {
             actionPrompt.textContent = '按 F 鍵進行交互';
             document.body.appendChild(actionPrompt);
         }
-    
+
         if (intersects.length > 0) {
             const object = intersects[0].object;
-    
+
             // 檢測是否為目標物件
-            if (object) { 
+            if (object) {
                 crosshair.style.borderColor = '#ff0000d4'; // 高亮顯示十字準心
                 crosshair.style.transform = 'scale(1.5)'; // 放大十字準心
                 crosshair.style.transition = 'all 0.3s ease';
                 crosshair.classList.add('active');
                 // 特定的互動物件
-                if(object.name === 'Labtop'){
+                if (object.name === 'Wordle Game') {
                     this.isInteractiveObjects = true;
                     actionPrompt.style.display = 'block'; // 顯示提示
                     document.addEventListener('keydown', this.__wordlegame);
+                    this.CloseButton()
+                } else if (object.name === 'Memory Game') {
+                    // this.isInteractiveObjects = true;
+                    actionPrompt.style.display = 'block'; // 顯示提示
+                    // document.addEventListener('keydown', this.__wordlegame);
                 }
-            } 
+            }
         }
-         else {
+        else {
             // 沒有指向物件時，隱藏提示並恢復十字準心
             crosshair.style.borderColor = 'white';
             crosshair.style.transform = 'scale(1)';
@@ -406,7 +422,7 @@ class Controller {
             document.removeEventListener('keydown', this.__wordlegame);
         }
     }
-    
+
 
     __onMouseDown() {
         if (!this.isGame) return;
@@ -449,7 +465,7 @@ class Controller {
                     this.isClickable = true;
                     this.popupWindow.hide();
                     object.material.emissive = originalColor;
-                }, 5000);
+                }, 3000);
             } else {
                 console.log('無可互動物件');
             }

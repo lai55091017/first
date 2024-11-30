@@ -344,6 +344,7 @@ function animate() {
 
 }
 
+// 傳送錨點
 /*********************************** Physics *********************************************/
 // 初始化物理引擎
 function init_physics() {
@@ -488,7 +489,9 @@ async function loadModels() {
                 gasstoves: [],
                 shelf: [],
                 labtop: [],
-                books: []
+                books: [],
+                wordle: [],
+                memory: [],
             };
 
             // 定義物件類型與對應正則表達式的映射
@@ -500,23 +503,25 @@ async function loadModels() {
                 { type: 'bookshelves', regex: /^.*Bookshelf\d+(_\d+)*$/, newName: 'Bookshelf' },
                 { type: 'sofas', regex: /^Sofa_\d+$/, newName: 'Sofa' },
                 { type: 'fridge', regex: /^Kitchen_fridge$/, newName: 'Fridge' },
-                { type: 'bar', regex: /^Kitchen_bar_\d+$/, newName: 'Bar' },
-                { type: 'tv', regex: /^TV_\d+$/, newName: 'TV' },
+                { type: 'bar', regex: /^Kitchen_bar.*/, newName: 'Bar' },
+                { type: 'tv', regex: /^TV0.*/, newName: 'TV' },
                 { type: 'tub', regex: /^Toilet_Tub$/, newName: 'Tub' },
                 { type: 'toilet', regex: /^Toilet_toilet$/, newName: 'Toilet' },
                 { type: 'sink', regex: /^.*sink.*$/, newName: 'Sink' },
-                { type: 'bed', regex: /^Bedroom_Bed_.*$/, newName: 'Bed' },
-                { type: 'wardrobe', regex: /^Bedroom_wardrobe_.*$/, newName: 'Wardrobe' },
+                { type: 'bed', regex: /^Bedroom_Bed.*$/, newName: 'Bed' },
+                { type: 'wardrobe', regex: /^Bedroom_wardrobe.*/, newName: 'Wardrobe' },
                 { type: 'podium', regex: /^Podium$/, newName: 'Podium' },
                 { type: 'lectern', regex: /^Lectern$/, newName: 'Lectern' },
-                { type: 'blackboard', regex: /^School_Blackboard_\d+$/, newName: 'Blackboard' },
+                { type: 'blackboard', regex: /^School_Blackboard.*/, newName: 'Blackboard' },
                 { type: 'tvshelves', regex: /^TV_shelf_\d+$/, newName: 'TV Shelf' },
                 { type: 'rangehood', regex: /^Kitchen_range_hood/, newName: 'Range hood' },
                 { type: 'cabinets', regex: /^Kitchen_cabinet_.*/, newName: 'Cabinet' },
-                { type: 'gasstoves', regex: /^Kitchen_gas_stove_\d+$/, newName: 'Gas stove' },
+                { type: 'gasstoves', regex: /^Kitchen_gas_stove.*/, newName: 'Gas stove' },
                 { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
                 { type: 'labtop', regex: /^Office_Labtop.*/, newName: 'Labtop' },
-                { type: 'books', regex: /^Book_.*/, newName: 'Book' }
+                { type: 'books', regex: /^Book_.*/, newName: 'Book' },
+                { type: 'wordle', regex: /^wordle/, newName: 'Wordle Game' },
+                { type: 'memory', regex: /^gamebook/, newName: 'Memory Game' }
             ];
 
 
@@ -544,7 +549,7 @@ async function loadModels() {
                 Object.values(objects).forEach((list) =>
                     list.forEach((item) => item.layers.set(1))
                 );
-                // 設定互動物件(傳遞控制器和物件列表給控制器)
+                // 設定動畫物件(傳遞控制器和物件列表給控制器)
                 controller.setDoors(objects.doors[0], objects.doors[1], 'home'); // 家裡的門
                 controller.setDoors(objects.doors[2], objects.doors[3], 'library'); // 圖書館的門
                 controller.setDoors(objects.doors[4], objects.doors[5], 'school'); // 學校的門
@@ -573,6 +578,7 @@ function showSceneOptions() {
         'Library',
         'Home',
         'School',
+        'Park'
     ];
 
     scenes.forEach(
@@ -595,6 +601,10 @@ function showSceneOptions() {
                     console.log(`角色已移動到: ${sceneName}`);
                     playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
+                } else if (button.textContent == 'Park') { // 遊樂園
+                    console.log(`角色已移動到: ${sceneName}`);
+                    playerBody.position.set(43, 5, -3.5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 3.5, 0);
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
@@ -627,8 +637,7 @@ $("#instruction").on('click', async () => {
     instruction.fadeToggle(500);
 })
 
-const WordleGame = $("#WordleGame");
-WordleGame.hide();
+
 /*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
 const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
 const memorygame_URL = "memorycard.html";
@@ -645,7 +654,7 @@ function memorycard() {
         })
         .then(html => {
             memorygame_container.html(html); // 修正為 jQuery 的 html() 方法（全小寫）
-            AppState.setActiveModule("memorycard"); // 激活 memorycard 模組
+
         })
         .catch(error => {
             console.error('Error loading page:', error);
@@ -656,7 +665,10 @@ function memorycard() {
 console.log(memorygame_URL);
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
-//$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼。
+//$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼
+
+// const WordleGame = $("#WordleGame");
+// WordleGame.hide();
 $(document).ready(function () {
 
     $(".close").click(function () {
@@ -667,9 +679,9 @@ $(document).ready(function () {
             case 'close_instruction'://id=close_instruction
                 instruction.fadeToggle(500);
                 break;
-            case 'close_wordlegame'://id=close_wordlegame
-                WordleGame.fadeToggle(500);
-                break;
+            // case 'close_wordlegame'://id=close_wordlegame
+            //     WordleGame.fadeToggle(500);
+            //     break;
             default:
                 console.log('未知的按鈕 ID');
         }
