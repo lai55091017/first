@@ -27,12 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 調用註冊函數並等待其完成
             auth.register(email, password).then((result) => {
-                if (result == "Firebase: Password should be at least 6 characters (auth/weak-password).") {
-                    error_message.innerHTML = "密碼不足六個字"
+                if (username == "") {
+                    
+                    error_message.innerHTML = "請輸入名稱"
                 } else if (result == "Firebase: Error (auth/email-already-in-use).") {
                     error_message.innerHTML = "Emall已被使用"
                 } else if (result == "Firebase: Error (auth/invalid-email).") {
                     error_message.innerHTML = "Emall格式不正確"
+                } else if (result == "Firebase: Error (auth/missing-password).") {
+                    error_message.innerHTML = "請輸入密碼"
+                } else if (result == "Firebase: Password should be at least 6 characters (auth/weak-password).") {
+                    error_message.innerHTML = "密碼不足六個字"
                 }
             })
 
