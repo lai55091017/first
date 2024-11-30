@@ -71,6 +71,7 @@ class Auth{
             window.location.href = "Functional_interface.html";
         } catch (error) {
             console.error("登入時出錯:", error.message);
+            return error.message;
         }
     }
 

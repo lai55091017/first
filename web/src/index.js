@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const error_message = document.getElementById('error_message');
 
-        auth.login(email, password);
+        auth.login(email, password).then((result) => {
+            console.log(result);
+            if (result == "Firebase: Error (auth/invalid-email).") {
+                error_message.innerHTML = "Emall格式不正確"
+            } else if (result == "Firebase: Error (auth/missing-password).") {
+                error_message.innerHTML = "請輸入密碼"
+            }
+        })
     });
 })

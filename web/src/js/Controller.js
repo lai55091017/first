@@ -341,7 +341,6 @@ class Controller {
         if (buttons.length === 0) return;
         // 根據按鍵處理左右切換
         if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
-            console.log(event.code);
             this.scene_options_Index = (this.scene_options_Index - 1 + buttons.length) % buttons.length;
             buttons[this.scene_options_Index].focus();
         } else if (event.code === 'ArrowRight' || event.code === 'KeyD') {
@@ -351,7 +350,6 @@ class Controller {
             buttons[this.scene_options_Index].click(); // 執行當前按鈕點擊事件
             this.isGame = true;
             this.Other_functions = false;
-            console.log(this.Other_functions);
             document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
         } else if (event.code === 'Escape') {
             this.isGame = true;
