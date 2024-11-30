@@ -50,6 +50,8 @@ class WordleGame {
                 tv: "電視",
                 wardrobe: "衣櫃",
                 fridge: "冰箱",
+                labtop: "筆電",
+                cabinet: "櫥櫃",
                 library: "圖書館",
                 table: "桌子",
                 chair: "椅子",
@@ -80,7 +82,7 @@ class WordleGame {
                 "工具": ["tool", "pencil", "eraser", "ruler", "fork", "spoon"],
                 "國家": ["nation", "america", "china", "taiwan", "japan", "korea"],
                 "食物": ["food", "rice", "noodle", "soup", "meat", "bread"],
-                "家裡": ["home", "bed", "bedroom", "kitchen", "livingroom", "toilet", "tub", "sink", "sofa", "tv", "wardrobe", "fridge"],
+                "家裡": ["home", "bed", "bedroom", "kitchen", "livingroom", "toilet", "tub", "sink", "sofa", "tv", "wardrobe", "fridge", "labtop", "cabinet"],
                 "圖書館": ["library", "table", "chair", "bookshelf", "counter", "book"],
                 "學校": ["blackboard", "door", "school", "classroom", "teacher", "student", "class", "podium", "lectern"],
                 "公園": ["park", "seesaw", "fence", "tree", "playground", "swing", "bench", "slide"]
