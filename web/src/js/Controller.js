@@ -301,12 +301,13 @@ class Controller {
 
     __scene_options = () => {
         const menu = document.getElementById('scene_options');
+
         if (menu.style.display === 'none') {
             this.scene_options_Index = 0; // 初始聚焦索引
             this.__toggleGameUI("scene_options", true);
             this.isGame = false;
             this.Other_functions = true;
-    
+            
             // 確保場景選單內的按鈕存在
             const buttons = menu.querySelectorAll('button');
             if (buttons.length > 0) {
@@ -320,7 +321,7 @@ class Controller {
     
     // 處理場景選單控制鍵
     __Scene_option_controls = (event) => {
-        
+
         const menu = document.getElementById('scene_options');
         if (!menu || menu.style.display === 'none') return;
     
@@ -339,6 +340,10 @@ class Controller {
             this.isGame = true;
             this.Other_functions = false;
             console.log(this.Other_functions);
+            document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
+        } else if (event.code === 'Escape') {
+            this.isGame = true;
+            this.Other_functions = false;
             document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
         }
     };
