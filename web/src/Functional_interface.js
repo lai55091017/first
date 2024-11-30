@@ -665,7 +665,7 @@ $("#instruction").on('click', async () => {
 
 /*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
 const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
-const memorygame_URL = "memorycard.html";
+
 
 $('#Game').on('click', async () => {
     memorygame_container.fadeToggle(500);
@@ -688,7 +688,6 @@ $('#Game').on('click', async () => {
 //         });
 // }
 
-console.log(memorygame_URL);
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/
 //$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼

@@ -10,7 +10,7 @@
   background: #e6e7e7;
 }
 
-body {
+#memorygame_container {
   width: 100%;
   height: 100%;
   display: -webkit-box;
@@ -27,6 +27,8 @@ body {
   -ms-flex-align: center;
   align-items: center;
   background: #d3e3fd;
+  position: fixed;
+  z-index: 1000000;
 }
 
 

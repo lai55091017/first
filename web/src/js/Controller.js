@@ -57,7 +57,7 @@ class Controller {
     _setmemorygame() {
         this.memorygame_container = new MemoryCardGame;
         this.memorygame_container_UI = $("#memorygame_container"); // 確保是 jQuery 對象
-        this.memorygame_container_UI.hide();
+        // this.memorygame_container_UI.hide();
     }
 
     //設置移動參數
@@ -396,13 +396,12 @@ class Controller {
     __memorycardgame = (event) => {
         if (event.code === 'KeyF' && this.isGame === true) {
             this.isGame = false;
-            this.memorygame_container.fadeIn(500);
-            this.memorygame_container.enablemouse();
+            this.memorygame_container_UI.fadeIn(500);
             this.controls.unlock();
         }
         else if (event.code === 'Escape') {
-            this.memorygame_container.fadeOut(500);
-            this.memorygame_container.disablemouse();
+            this.memorygame_container_UI.fadeOut(500);
+
             // 確保在適當的時機捕獲滑鼠
             setTimeout(() => {
                 this.controls.lock(); // 重新鎖定滑鼠
