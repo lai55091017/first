@@ -568,17 +568,21 @@ async function loadModels() {
 // 顯示場景切換選單
 function showSceneOptions() {
     const menu = document.createElement('div');
+    let count = 0;
     menu.id = 'scene_options';
     const scenes = [
         'Library',
         'Home',
         'School',
+        'garden',
     ];
 
     scenes.forEach(
         async (sceneName) => {
             const button = document.createElement('button');
+            button.id = count;
             button.textContent = `${sceneName}`;
+            count++;
             button.onclick = async () => {
                 // 傳送錨點
                 document.getElementById('scene_options').style.display = 'none'
@@ -594,6 +598,10 @@ function showSceneOptions() {
                 } else if (button.textContent == 'School') { // 學校
                     console.log(`角色已移動到: ${sceneName}`);
                     playerBody.position.set(-62, 1.5, 5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
+                } else if (button.textContent == 'garden') { // 學校
+                    console.log(`角色已移動到: ${sceneName}`);
+                    playerBody.position.set(30, 1.5, 5); // 將角色移動到目標位置
                     camera.rotation.set(0, 0, 0);
                 } else {
                     console.log(`玩家角色未初始化`);

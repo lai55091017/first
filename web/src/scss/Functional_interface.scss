@@ -732,6 +732,11 @@ body {
             background-color: var(--hover_color);
             box-shadow: 0 0 15px #fffffd;
         }
+        &:focus {
+            transition: .2s;
+            background-color: var(--hover_color);
+            box-shadow: 0 0 15px #fffffd;
+        }
     }
 }
 
