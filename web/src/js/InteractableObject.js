@@ -120,6 +120,61 @@ const InteractableObject = [
         id: 'Book',
         chineseName: '書籍',
         englishName: 'Book'
+    },
+    {
+        id: 'Slide',
+        chineseName: '滑梯',
+        englishName: 'Slide'
+    },
+    {
+        id: 'Bench',
+        chineseName: '長椅',
+        englishName: 'Bench'
+    },
+    {
+        id: 'Ball',
+        chineseName: '球',
+        englishName: 'Ball'
+    },
+    {
+        id: 'Seesaw',
+        chineseName: '翹翹板',
+        englishName: 'Seesaw'
+    },
+    {
+        id: 'Plant',
+        chineseName: '植物',
+        englishName: 'Plant'
+    },
+    {
+        id: 'Trash can',
+        chineseName: '垃圾桶',
+        englishName: 'Trash can'
+    },
+    {
+        id: 'Swing',
+        chineseName: '鞦韆',
+        englishName: 'Swing'
+    },
+    {
+        id: 'Monkey bar',
+        chineseName: '單槓',
+        englishName: 'Monkey bar'
+    },
+    {
+        id: 'Fence',
+        chineseName: '柵欄',
+        englishName: 'Fence'
+    },
+    {
+        id: 'Playground',
+        chineseName: '操場',
+        englishName: 'Playground'
+    },
+    {
+        id: 'Tree',
+        chineseName: '樹',
+        englishName: 'Tree'
     }
 ];
 

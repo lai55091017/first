@@ -438,7 +438,7 @@ async function loadModels() {
     try {
         init_scene();
         // 加載新場景
-        let library = await icas.loadGLTF('./mesh/glb/Three_SCENE_10.glb');
+        let library = await icas.loadGLTF('./mesh/glb/Four_Scene_3.glb');
         scene.add(library.scene);
 
         // 綁定物理引擎
@@ -492,6 +492,17 @@ async function loadModels() {
                 books: [],
                 wordle: [],
                 memory: [],
+                slide: [],
+                bench: [],
+                ball: [],
+                seesaw: [],
+                plant: [],
+                trashcan: [],
+                swing: [],
+                monkeybars: [],
+                fence: [],
+                trees: [],
+                playground: []
             };
 
             // 定義物件類型與對應正則表達式的映射
@@ -520,8 +531,19 @@ async function loadModels() {
                 { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
                 { type: 'labtop', regex: /^Office_Labtop.*/, newName: 'Labtop' },
                 { type: 'books', regex: /^Book_.*/, newName: 'Book' },
-                { type: 'wordle', regex: /^wordle/, newName: 'Wordle Game' },
-                { type: 'memory', regex: /^gamebook/, newName: 'Memory Game' }
+                { type: 'wordle', regex: /^wordle.*/, newName: 'Wordle Game' },
+                { type: 'memory', regex: /^The_Choosen_Book/, newName: 'Memory Game' },
+                { type: 'slide', regex: /^Park_Slide.*/, newName: 'Slide' },
+                { type: 'bench', regex: /^Park_Bench.*/, newName: 'Bench' },
+                { type: 'ball', regex: /^Park_Ball.*/, newName: 'Ball' },
+                { type: 'seesaw', regex: /^Park_Seesaw.*/, newName: 'Seesaw' },
+                { type: 'plant', regex: /^Park_plant.*/, newName: 'Plant' },
+                { type: 'trashcan', regex: /^Park_Trash_Can/, newName: 'Trash can' },
+                { type: 'swing', regex: /^Park_Swing.*/, newName: 'Swing' },
+                { type: 'monkeybars', regex: /^Park_Monkey_bars.*/, newName: 'Monkey bar' },
+                { type: 'fence', regex: /^Park_Fence.*/, newName: 'Fence' },
+                { type: 'trees', regex: /^Park_triangle_tree.*/, newName: 'Tree' },
+                { type: 'playground', regex: /^Park_Playground.*/, newName: 'Playground' }
             ];
 
 
