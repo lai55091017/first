@@ -262,7 +262,6 @@ class WordleGame {
                 }
             }
         });
-    
         // 判斷結果
         if (this.currentGuess === this.answer) {
             alert(`恭喜！你猜對了！答案是：${this.answer} (${this.chineseAnswer})`);
@@ -315,7 +314,7 @@ class WordleGame {
     
             const key = event.key.toUpperCase();
     
-            if (this.currentAttempt >= this.maxAttempts || this.currentGuess === this.answer) {
+            if (this.currentAttempt >= this.maxAttempts) {
                 return;
             }
             switch (key) {
