@@ -4,6 +4,7 @@ import DoorAnimation from './DoorAnimation';
 import InteractableObject from './InteractableObject';
 import PopupWindow from './PopupWindow';
 import wordlegame from "./wordlegame.js";
+import MemoryCardGame from "../memorycard.js";
 
 class Controller {
 
@@ -29,6 +30,9 @@ class Controller {
         this.isClickable = true;
         this.__setwordlegame()
         this.scene_options_Index = 0; // 初始聚焦索引
+        this._setmemorygame();
+
+
     }
 
     // 設置門和初始化動畫
@@ -47,6 +51,13 @@ class Controller {
         this.keyboard = document.getElementById("keyboard");
         this.WordleGame = new wordlegame(this.guessGrid, this.keyboard);
         this.WordleGameUI.hide();
+    }
+
+    //設置記憶遊戲
+    _setmemorygame() {
+        this.memorygame_container = new MemoryCardGame;
+        this.memorygame_container_UI = $("#memorygame_container"); // 確保是 jQuery 對象
+        this.memorygame_container_UI.hide();
     }
 
     //設置移動參數
@@ -224,14 +235,14 @@ class Controller {
         blocker.addEventListener('click', () => { this.controls.lock(); });
         this.controls.addEventListener('lock', () => {
             this.__toggleGameUI("blocker", false);
-            document.addEventListener('keydown',(event) => {this.__chatroom(event);});
+            document.addEventListener('keydown', (event) => { this.__chatroom(event); });
             this.isGame = true;
         });
         this.controls.addEventListener('unlock', () => {
             this.__resetState();
             if (this.isGame) {
                 this.__toggleGameUI("blocker", true);
-                document.removeEventListener('keydown',(event) => {this.__chatroom(event);});
+                document.removeEventListener('keydown', (event) => { this.__chatroom(event); });
                 this.isGame = false;
             }
         });
@@ -308,24 +319,24 @@ class Controller {
             this.__toggleGameUI("scene_options", true);
             this.isGame = false;
             this.Other_functions = true;
-            
+
             // 確保場景選單內的按鈕存在
             const buttons = menu.querySelectorAll('button');
             if (buttons.length > 0) {
                 buttons[0].focus(); // 預設聚焦到按鈕 id=0
             }
-    
+
             // 添加鍵盤事件處理
             document.addEventListener('keydown', this.__Scene_option_controls);
         }
     };
-    
+
     // 處理場景選單控制鍵
     __Scene_option_controls = (event) => {
 
         const menu = document.getElementById('scene_options');
         if (!menu || menu.style.display === 'none') return;
-    
+
         const buttons = menu.querySelectorAll('button');
         if (buttons.length === 0) return;
         // 根據按鍵處理左右切換
@@ -348,12 +359,20 @@ class Controller {
             document.removeEventListener('keydown', this.__Scene_option_controls); // 移除事件處理
         }
     };
-    
+
 
     CloseButton = () => {
         $('#close_wordlegame').on('click', () => {
             this.WordleGameUI.fadeOut(500);
             this.WordleGame.disableKeyboard();
+            // 確保在適當的時機捕獲滑鼠
+            setTimeout(() => {
+                this.controls.lock(); // 重新鎖定滑鼠
+            }, 200); // 延遲保證切換狀態後能夠正確鎖定
+        });
+        $('#close_memorygame').on('click', () => {
+            this.memorygame_container_UI.fadeOut(500);
+
             // 確保在適當的時機捕獲滑鼠
             setTimeout(() => {
                 this.controls.lock(); // 重新鎖定滑鼠
@@ -376,7 +395,22 @@ class Controller {
             }, 200); // 延遲保證切換狀態後能夠正確鎖定
         }
     }
-
+    __memorycardgame = (event) => {
+        if (event.code === 'KeyF' && this.isGame === true) {
+            this.isGame = false;
+            this.memorygame_container.fadeIn(500);
+            this.memorygame_container.enablemouse();
+            this.controls.unlock();
+        }
+        else if (event.code === 'Escape') {
+            this.memorygame_container.fadeOut(500);
+            this.memorygame_container.disablemouse();
+            // 確保在適當的時機捕獲滑鼠
+            setTimeout(() => {
+                this.controls.lock(); // 重新鎖定滑鼠
+            }, 200); // 延遲保證切換狀態後能夠正確鎖定
+        }
+    }
 
     // 開關門的方法（以對應的門對為參數）
     __toggleDoor(doorType) {
@@ -446,9 +480,10 @@ class Controller {
                     document.addEventListener('keydown', this.__wordlegame);
                     this.CloseButton()
                 } else if (object.name === 'Memory Game') {
-                    // this.isInteractiveObjects = true;
+                    this.isInteractiveObjects = true;
                     actionPrompt.style.display = 'block'; // 顯示提示
-                    // document.addEventListener('keydown', this.__wordlegame);
+                    document.addEventListener('keydown', this.__memorycardgame);
+                    this.CloseButton()
                 }
             }
         }
@@ -478,26 +513,27 @@ class Controller {
         // 檢查是否與門物件相交
         const intersects = raycaster.intersectObjects(this.scene.children, true);
 
-        if (intersects.length > 0 && this.isClickable) {
+        if (intersects.length > 0) {
             const object = intersects[0].object;// 獲取相交的物件
             console.log(object.name);
 
-            this.isClickable = false; // 禁止點擊操作
-
-
             const originalColor = object.material.emissive.clone();
 
-            if (object) {
+            if (object.name === 'Wordle Game' || object.name === 'Memory Game') {
+                return;
+            } else if (object && this.isClickable) {
+                this.isClickable = false; // 禁止點擊操作
+
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
+
                 this.popupWindow.show(
                     ITO.chineseName,
                     ITO.englishName,
                     // { x: event.clientX, y: event.clientY }
                 );
-
                 const englishName = InteractableObject.find(item => item.id === object.name).englishName;
                 this.popupWindow.speak(englishName);
 
@@ -505,7 +541,7 @@ class Controller {
                     this.isClickable = true;
                     this.popupWindow.hide();
                     object.material.emissive = originalColor;
-                }, 3000);
+                }, 1000);
             } else {
                 console.log('無可互動物件');
             }

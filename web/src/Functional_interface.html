@@ -188,7 +188,154 @@
     </div>
     <!-- 遊戲區域 -->
     <div id="memorygame_container">
-        <!-- 內容將插入到這裡 -->
+        <div>
+            <!-- 標題 -->
+            <div class="ts-header">
+                <h1>
+                    <div id="LocaleReq1" data-lang-zh-tw="記憶力翻牌小遊戲" data-lang-ja="メモリカードゲーム"
+                        data-lang-en="Memory Card Game">
+                        記憶力翻牌小遊戲</div>
+                </h1>
+            </div>
+            <!-- 難度選擇-->
+            <div class="ts-wrap is-center-aligned" style="font-family: Pixel;">
+                <div class="ts-wrap">
+                    <button class="ts-button is-large" id="easy">
+                        <div id="LocaleReq2" data-lang-zh-tw="簡單" data-lang-ja="簡単" data-lang-en="EASY">簡單</div>
+                    </button>
+                    <button class="ts-button is-large" id="normal">
+                        <div id="LocaleReq3" data-lang-zh-tw="普通" data-lang-ja="普通" data-lang-en="NORMAL">普通</div>
+                    </button>
+                    <button class="ts-button is-large" id="hard">
+                        <div id="LocaleReq4" data-lang-zh-tw="困難" data-lang-ja="困難" data-lang-en="HARD">困難</div>
+                    </button>
+                </div>
+            </div>
+            <!-- 卡片 -->
+            <div class="div">
+                <section class="memory-game-normal" id="difficulty">
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Desk.svg" alt="card01" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card01">Desk</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Chair.svg" alt="card02" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card02">Chair</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Door.svg" alt="card03" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card03">Door</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Window.svg" alt="card04" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card04">Window</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Bookshelf.svg" alt="card05" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card05">Bookshelf</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Counter.svg" alt="card06" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card06">Counter</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Book.svg" alt="card07" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card07">book</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <img class="front-face" src="img/memorycard_img/Pen.svg" alt="card08" />
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                    </div>
+                    <div class="none">
+                        <div class="memory-card">
+                            <div class="front-face" cardID="card08">Pen</div>
+                            <img class="back-face" src="img/memorycard_img/12.png" alt="Memory Card" />
+                        </div>
+                        <a class="text" id="end">
+                            <div id="LocaleReq5" data-lang-zh-tw="選擇難度" data-lang-ja="難易度選択"
+                                data-lang-en="Difficulty Select">選擇難度
+                            </div>
+                        </a>
+                </section>
+            </div>
+            <!-- 重置和偷看 -->
+            <div class="none" id="reset_look">
+                <div class="ts-wrap" style="font-family: Pixel;">
+                    <button class="ts-button is-large" id="reset">
+                        <div id="LocaleReq6" data-lang-zh-tw="重置" data-lang-ja="リセット" data-lang-en="Reset">重置</div>
+                    </button>
+                    <div>
+                        <button class="ts-button is-large" id="look">
+                            <div id="LocaleReq7" data-lang-zh-tw="偷看" data-lang-ja="覗う" data-lang-en="Peep">偷看</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="ts-wrap is-center-aligned" style="font-family: Pixel;">
+                <button class="ts-button is-large" onclick="English_Locale();">English</button>
+                <button class="ts-button is-large" onclick="Chinese_Locale();">正體中文(臺灣)</button>
+                <button class="ts-button is-large" onclick="Japanese_Locale();">日本語</button>
+            </div>
+        </div>
     </div>
 </body>
 

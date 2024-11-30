@@ -122,33 +122,33 @@ class WordleGame {
         // 重置遊戲狀態
         this.currentAttempt = 0;
         this.currentGuess = "";
-    
+
         // 隨機選擇主題和單字庫
         const themeNames = Object.keys(this.themes); // 獲取所有主題名稱
         const randomTheme = themeNames[Math.floor(Math.random() * themeNames.length)];
         this.wordList = this.themes[randomTheme];
         this.answer = this.wordList[Math.floor(Math.random() * this.wordList.length)].toUpperCase();
         this.chineseAnswer = this.getChineseMeaning(this.answer);
-    
+
         // 測試用：顯示隨機主題和答案
         console.log(`主題: ${randomTheme}, 答案: ${this.answer}`);
-    
+
         // 更新標題顯示選定的主題名稱
         document.querySelector("h1").textContent = `本次的主題是：${randomTheme}`;
-    
+
         // 清空猜測格和虛擬鍵盤內容
         this.guessGrid.innerHTML = "";
         this.keyboard.innerHTML = "";
-    
+
         // 重新初始化遊戲界面
         this.GameUI();
-    
+
         // 清除先前的格子內容與樣式
         this.boxes.forEach(box => {
             box.textContent = "";
             box.classList.remove("correct", "present", "absent");
         });
-    
+
         // 重置虛擬鍵盤的顏色與狀態
         const keys = document.querySelectorAll(".key");
         keys.forEach(key => {
@@ -173,7 +173,7 @@ class WordleGame {
         // 讓一行的格子數和答案長度相同
         const columns = this.answer.length; // 行=答案長度
         this.guessGrid.style.gridTemplateColumns = `repeat(${columns}, 50px)`;
-    
+
         // 創建格子
         for (let i = 0; i < this.maxAttempts; i++) {
             for (let j = 0; j < this.answer.length; j++) {
@@ -182,11 +182,11 @@ class WordleGame {
                 this.guessGrid.appendChild(box);
             }
         }
-    
+
         // 創建虛擬鍵盤
         const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         let count = 0;
-    
+
         keys.forEach(letter => {
             const key = document.createElement("div");
             key.classList.add("key");
@@ -194,21 +194,21 @@ class WordleGame {
             key.onclick = () => this.handleKeyPress(letter);
             key.setAttribute("data-key", letter);
             this.keyboard.appendChild(key);
-    
+
             // 虛擬鍵盤每7個字母就換行，7*4 (26個英文字母+退回鍵+提交鍵)
             count++;
             if (count % 7 === 0) {
                 this.keyboard.appendChild(document.createElement("br"));
             }
         });
-    
+
         // 加入退回鍵和提交鍵
         const backspaceKey = document.createElement("div");
         backspaceKey.classList.add("key");
         backspaceKey.textContent = "退回";
         backspaceKey.onclick = () => this.handleKeyPress("BACKSPACE");
         this.keyboard.appendChild(backspaceKey);
-    
+
         const submitKey = document.createElement("div");
         submitKey.classList.add("key");
         submitKey.textContent = "提交";
@@ -232,11 +232,11 @@ class WordleGame {
             alert("請輸入一個長度正確的單字");
             return;
         }
-    
+
         const offset = this.currentAttempt * this.answer.length;
         const answerLetters = [...this.answer];
         const guessLetters = [...this.currentGuess];
-    
+
         // 檢查綠色標記（字母正確且位置正確）
         guessLetters.forEach((letter, i) => {
             const box = this.boxes[offset + i];
@@ -246,7 +246,7 @@ class WordleGame {
                 this.updateKeyboardStatus(letter, "correct");
             }
         });
-    
+
         // 檢查黃色標記（字母正確但位置錯誤）
         guessLetters.forEach((letter, i) => {
             const box = this.boxes[offset + i];
@@ -262,7 +262,7 @@ class WordleGame {
                 }
             }
         });
-    
+
         // 判斷結果
         if (this.currentGuess === this.answer) {
             alert(`恭喜！你猜對了！答案是：${this.answer} (${this.chineseAnswer})`);
@@ -271,20 +271,20 @@ class WordleGame {
             alert(`遊戲結束！答案是：${this.answer} (${this.chineseAnswer})`);
             setTimeout(() => this.resetGame(), 1000);
         }
-    
+
         this.currentGuess = ""; // 清空當前猜測
     }
-    
+
     updateKeyboardStatus(letter, status) {
         const key = document.querySelector(`.key[data-key="${letter}"]`);
         if (!key) return;
-    
+
         const colors = {
             correct: "#6aaa64", // 綠色
             present: "#c9b458", // 黃色
             absent: "#787c7e",  // 灰色
         };
-    
+
         // 只有當狀態比目前高時才更新顏色
         if (
             (status === "correct") ||
@@ -312,9 +312,9 @@ class WordleGame {
         document.addEventListener("keydown", (event) => {
             // 檢查鍵盤是否啟用
             if (!this.isKeyboardEnabled) return;
-    
+
             const key = event.key.toUpperCase();
-    
+
             if (this.currentAttempt >= this.maxAttempts || this.currentGuess === this.answer) {
                 return;
             }
@@ -333,8 +333,8 @@ class WordleGame {
             }
         });
     }
-    
-    
+
+
 }
 
 export default WordleGame;
