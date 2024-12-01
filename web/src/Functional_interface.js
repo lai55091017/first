@@ -622,4 +622,8 @@ $(document).ready(function () {
         }
     });
 })
-
+const card_container = $("#card_container");
+card_container.hide();
+$("#card").on('click', async () => {
+    card_container.fadeToggle(500);
+})  

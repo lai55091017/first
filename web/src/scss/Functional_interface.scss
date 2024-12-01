@@ -891,3 +891,57 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
         cursor: pointer;
     }
 }
+
+/*--------------------單字卡練習--------------------*/
+#card_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Responsive columns
+    gap: 20px; // Space between items
+    padding: 20px;
+    background: #f9f9f9; // Light background
+}
+
+.feature-item {
+    text-align: center;
+    padding: 20px;
+    background: #ffffff; // White background for each item
+    border: 1px solid #e0e0e0; // Light gray border
+    border-radius: 10px; // Rounded corners
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Subtle shadow
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px); // Hover effect
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); // Deeper shadow on hover
+    }
+}
+
+.icon {
+    font-size: 40px; // Large icon size
+    color: #007bff; // Blue color for icons
+    margin-bottom: 10px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; // Dark text color
+    margin-bottom: 5px;
+}
+
+.description {
+    font-size: 14px;
+    color: #666; // Light text color
+}
