@@ -585,29 +585,12 @@ $("#instruction").on('click', async () => {
 
 
 /*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
-const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
+// const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
 
 
-$('#Game').on('click', async () => {
-    memorygame_container.fadeToggle(500);
-});
-// function memorycard() {
-//     fetch(memorygame_URL)
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! status: ${response.status}`);
-//             }
-//             return response.text(); // 獲取 HTML 文本
-//         })
-//         .then(html => {
-//             memorygame_container.html(html); // 修正為 jQuery 的 html() 方法（全小寫）
-
-//         })
-//         .catch(error => {
-//             console.error('Error loading page:', error);
-//             memorygame_container.html(`<p>加載頁面失敗，請稍後再試。</p>`);
-//         });
-// }
+// $('#Game').on('click', async () => {
+//     memorygame_container.fadeToggle(500);
+// });
 
 // 傳送錨點
 /*-----------------------------------關閉按鈕--------------------------------------------------*/

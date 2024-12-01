@@ -602,14 +602,14 @@ body {
     /*列表樣式為空*/
     transition: .2s;
     /*上右下左邊距 */
-    bottom: 10vh;
+    bottom: 25vh;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     align-self: center;
     background-color: #3b3a3a94;
-    padding: 20px 40px;
+    padding: 20px 20px 40px 20px;
     border: var(--background-color)3px solid;
     border-radius: 20px;
 
