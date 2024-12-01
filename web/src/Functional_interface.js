@@ -466,7 +466,7 @@ async function loadModels() {
         function processSceneObjects(scene) {
 
             const objects = {};
-            
+
             // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
