@@ -664,8 +664,33 @@ function renderPage() {
         card.innerHTML = `
        <h3 class="title">${object.englishName}</h3>
         <p class="description">${object.chineseName}</p>
+         <button class="save-btn" data-english="${object.englishName}" data-chinese="${object.chineseName}">
+                    存入單字卡
+                </button>
     `;
         card_container.append(card);//jquery是用append
+    });
+
+    // 為每個儲存按鈕綁定點擊事件
+    $('.save-btn').off('click').on('click', async function () {
+        const englishText = $(this).data('english');
+        const chineseText = $(this).data('chinese');
+        try {
+            // 呼叫資料庫方法，將卡片寫入資料庫
+            await fs.add_user_card({
+                "card": [{ words: englishText, translate: chineseText }]
+                // 將卡片寫入資料庫
+            });
+
+
+            await fs.commit_data();
+
+            speak(englishText);
+
+            alert(`已儲存卡片：${englishText} (${chineseText})`);
+        } catch (error) {
+            console.error('儲存卡片失敗:', error);
+        }
     });
 
     // 更新頁碼顯示
@@ -694,3 +719,9 @@ nextPageBtn.addEventListener('click', () => {
     }
 });
 
+// 語音合成函數
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US'; // 設定語言，根據需要可更改
+    speechSynthesis.speak(utterance);
+}
