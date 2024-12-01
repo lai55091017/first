@@ -334,7 +334,7 @@ function animate() {
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
     // 顯示鋼體
-    cannonDebugger.update()
+    // cannonDebugger.update()
 
     checkCollisionEnd()
 
@@ -443,7 +443,7 @@ async function loadModels() {
 
         // 綁定物理引擎
         library.scene.traverse((child) => {
-            if (child.isMesh) {
+            if (child.isMesh && !(/^Park_Playground.*/).test(child.name)) {
                 create_physics_body_box(child); // 為每個模型綁定剛體
                 // console.log(`綁定剛體到物件: ${child.name}`);
             }

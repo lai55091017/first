@@ -538,7 +538,7 @@ class Controller {
                     this.isClickable = true;
                     this.popupWindow.hide();
                     object.material.emissive = originalColor;
-                }, 1000);
+                }, 3000);
             } else {
                 console.log('無可互動物件');
             }

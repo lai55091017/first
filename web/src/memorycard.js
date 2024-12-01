@@ -112,8 +112,9 @@ class MemoryCardGame {
         this.end.addEventListener('click', this.resetGame);
         const hide = document.querySelectorAll('.hide');
         hide.forEach(card => card.classList = 'none');
-        this.end.innerHTML = "已通關 Finish";
-        this.end.classList = "text"
+        console.log('this.end', this.end);
+        this.end.classList = "text";
+        this.end.innerHTML = "已通關 Finish!";
       }, 500);
     } else {
       this.resetBoard();
@@ -225,7 +226,6 @@ class MemoryCardGame {
 
   resetGame() {
     // 重置遊戲
-
     if (this.mathedCard === this.cardNum) {
       this.end.removeEventListener('click', this.resetGame);
       alert("重置遊戲。Game reset");
