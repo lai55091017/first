@@ -74,6 +74,85 @@ class Firestore {
         }
     }
 
+    // 保存場景InteractableObject
+    async save_scene_InteractableObject(data) {
+        try {
+
+            // 保存至 Firestore
+            const docRef = doc(this.db, "configurations", "scene_InteractableObject");
+            await setDoc(docRef, {data});
+            console.log("InteractableObject 保存成功");
+        } catch (error) {
+            console.error("保存 InteractableObject 失敗:", error);
+        }
+    }
+
+    // 讀取場景InteractableObject
+    async load_scene_InteractableObject() {
+        try {
+            const docRef = doc(this.db, "configurations", "scene_InteractableObject");
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                const data = docSnap.data().data;
+                return data; // 返回讀取到的數據
+            } else {
+                console.log("InteractableObject 不存在");
+                return null; // 返回 null 表示不存在
+            }
+        } catch (error) {
+            console.error("讀取 InteractableObject 失敗:", error);
+            return null;
+        }
+    }
+
+    // 保存場景regexMapping
+    async save_scene_regexmapping(data) {
+        try {
+            // 將正則表達式轉換為字串
+            const serializedMapping = data.map(({ type, regex, newName }) => ({
+                type,
+                regex: regex.toString(), // 將正則表達式轉為字串
+                newName,
+            }));
+    
+            // 保存至 Firestore
+            const docRef = doc(this.db, "configurations", "scene_regexmapping");
+            await setDoc(docRef, { mapping: serializedMapping });
+            console.log("regexMapping 保存成功");
+        } catch (error) {
+            console.error("保存 regexMapping 失敗:", error);
+        }
+    }
+    
+    // 讀取場景regexMapping
+    async load_scene_regexmapping() {
+        try {
+            const docRef = doc(this.db, "configurations", "scene_regexmapping");
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                const serializedMapping = docSnap.data().mapping;
+    
+                // 將字串轉回正則表達式
+                const regexMapping = serializedMapping.map(({ type, regex, newName }) => ({
+                    type,
+                    regex: new RegExp(regex.slice(1, regex.lastIndexOf('/')), regex.slice(regex.lastIndexOf('/') + 1)), // 還原正則表達式
+                    newName,
+                }));
+    
+                // console.log("regexMapping 還原成功:", regexMapping);
+                return regexMapping;
+            } else {
+                console.error("無法找到 regexMapping 文檔");
+                return null;
+            }
+        } catch (error) {
+            console.error("讀取 regexMapping 失敗:", error);
+        }
+    }
+    
+
     // 增加卡片資料
     async add_user_card(card_data) {
         try {
@@ -134,6 +213,8 @@ class Firestore {
             console.error("取得用戶數據失敗:", error);
         }
     }
+
+
 
     //提交批次
     async commit_data() {

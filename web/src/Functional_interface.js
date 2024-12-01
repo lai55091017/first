@@ -35,8 +35,7 @@ const cannonDebugger = new CannonDebugger(scene, cannon_world, {
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
 const connect = new Connect('ws://localhost:8080');
-// const connect = new Connect( 'https://my-websocket-server-ci74yzkzzq-as.a.run.app' );
-// const connect = new Connect('https://my-websocke-server3-485354531854.asia-east1.run.app');
+// const connect = new Connect('https://my-websocke-server-1-485354531854.asia-east1.run.app');
 
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
@@ -397,9 +396,6 @@ function Player_body(model, radius, height, radialSegments = 16) {
     // 添加到物理世界
     cannon_world.addBody(body);
 
-    // 將剛體存儲在模型的 userData 屬性中
-    model.userData.physicsBody = body;
-
     return body;
 
 }
@@ -463,104 +459,29 @@ async function loadModels() {
             console.log(`玩家角色未初始化`);
         }
 
+        // 讀取調整場景資料
+        const regexMapping = await fs.load_scene_regexmapping()
+
         // 處理場景中特定物件
         function processSceneObjects(scene) {
-            const objects = {
-                doors: [],
-                chairs: [],
-                tables: [],
-                counters: [],
-                bookshelves: [],
-                sofas: [],
-                fridge: [],
-                bar: [],
-                tv: [],
-                tub: [],
-                toilet: [],
-                sink: [],
-                bed: [],
-                wardrobe: [],
-                podium: [],
-                lectern: [],
-                blackboard: [],
-                tvshelves: [],
-                rangehood: [],
-                cabinets: [],
-                gasstoves: [],
-                shelf: [],
-                labtop: [],
-                books: [],
-                wordle: [],
-                memory: [],
-                slide: [],
-                bench: [],
-                ball: [],
-                seesaw: [],
-                plant: [],
-                trashcan: [],
-                swing: [],
-                monkeybars: [],
-                fence: [],
-                trees: [],
-                playground: []
-            };
 
-            // 定義物件類型與對應正則表達式的映射
-            const regexMapping = [
-                { type: 'doors', regex: /^(Door_(L|R)_Home|LIB_Door_(Left|Right)|Door_School_(Left|Right))$/, newName: 'Door' },
-                { type: 'chairs', regex: /^.*Chair.*/, newName: 'Chair' },
-                { type: 'tables', regex: /^(LIB_Table_\d+|.*_table|Table_.*|Bedroom_Desk)$/, newName: 'Table' },
-                { type: 'counters', regex: /^counter\d+$/, newName: 'Counter' },
-                { type: 'bookshelves', regex: /^.*Bookshelf\d+(_\d+)*$/, newName: 'Bookshelf' },
-                { type: 'sofas', regex: /^Sofa_\d+$/, newName: 'Sofa' },
-                { type: 'fridge', regex: /^Kitchen_fridge$/, newName: 'Fridge' },
-                { type: 'bar', regex: /^Kitchen_bar.*/, newName: 'Bar' },
-                { type: 'tv', regex: /^TV0.*/, newName: 'TV' },
-                { type: 'tub', regex: /^Toilet_Tub$/, newName: 'Tub' },
-                { type: 'toilet', regex: /^Toilet_toilet$/, newName: 'Toilet' },
-                { type: 'sink', regex: /^.*sink.*$/, newName: 'Sink' },
-                { type: 'bed', regex: /^Bedroom_Bed.*$/, newName: 'Bed' },
-                { type: 'wardrobe', regex: /^Bedroom_wardrobe.*/, newName: 'Wardrobe' },
-                { type: 'podium', regex: /^Podium$/, newName: 'Podium' },
-                { type: 'lectern', regex: /^Lectern$/, newName: 'Lectern' },
-                { type: 'blackboard', regex: /^School_Blackboard.*/, newName: 'Blackboard' },
-                { type: 'tvshelves', regex: /^TV_shelf_\d+$/, newName: 'TV Shelf' },
-                { type: 'rangehood', regex: /^Kitchen_range_hood/, newName: 'Range hood' },
-                { type: 'cabinets', regex: /^Kitchen_cabinet_.*/, newName: 'Cabinet' },
-                { type: 'gasstoves', regex: /^Kitchen_gas_stove.*/, newName: 'Gas stove' },
-                { type: 'shelf', regex: /^Toilet_shelf/, newName: 'Toilet shelf' },
-                { type: 'labtop', regex: /^Office_Labtop.*/, newName: 'Labtop' },
-                { type: 'books', regex: /^Book_.*/, newName: 'Book' },
-                { type: 'wordle', regex: /^wordle.*/, newName: 'Wordle Game' },
-                { type: 'memory', regex: /^The_Choosen_Book/, newName: 'Memory Game' },
-                { type: 'slide', regex: /^Park_Slide.*/, newName: 'Slide' },
-                { type: 'bench', regex: /^Park_Bench.*/, newName: 'Bench' },
-                { type: 'ball', regex: /^Park_Ball.*/, newName: 'Ball' },
-                { type: 'seesaw', regex: /^Park_Seesaw.*/, newName: 'Seesaw' },
-                { type: 'plant', regex: /^Park_plant.*/, newName: 'Plant' },
-                { type: 'trashcan', regex: /^Park_Trash_Can/, newName: 'Trash can' },
-                { type: 'swing', regex: /^Park_Swing.*/, newName: 'Swing' },
-                { type: 'monkeybars', regex: /^Park_Monkey_bars.*/, newName: 'Monkey bar' },
-                { type: 'fence', regex: /^Park_Fence.*/, newName: 'Fence' },
-                { type: 'trees', regex: /^Park_triangle_tree.*/, newName: 'Tree' },
-                { type: 'playground', regex: /^Park_Playground.*/, newName: 'Playground' }
-            ];
-
-
+            const objects = {};
+            
             // 遍歷場景中的物件
             scene.traverse((child) => {
                 if (child.isMesh && child.name) {
                     for (const { type, regex, newName } of regexMapping) {
                         if (regex.test(child.name)) {
-                            child.name = newName; // 更新名稱
-                            objects[type].push(child); // 添加到對應類型
+                            child.name = newName;
+                            if (!objects[type]) objects[type] = [];
+                            objects[type].push(child); // 根據類型分類
                             break;
                         }
                     }
                 }
             });
 
-            console.log('找到所有物件:', objects.doors);
+            console.log('找到所有物件:', objects);
 
             // 確保找到所有關鍵物件
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
@@ -628,8 +549,8 @@ function showSceneOptions() {
                     camera.rotation.set(0, 0, 0);
                 } else if (button.textContent == 'Park') { // 遊樂園
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(43, 5, -3.5); // 將角色移動到目標位置
-                    camera.rotation.set(0, 3.5, 0);
+                    playerBody.position.set(42, 1, 5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
