@@ -151,26 +151,6 @@ class Controller {
         return new THREE.Euler(0, euler.y, 0, 'ZXY');
     }
 
-    //處理碰撞事件
-    __handleCollisions(playerBody) {
-        // 如果玩家碰撞到牆壁，將速度設置為 0
-        playerBody.addEventListener('collision', (event) => {
-            console.log("碰撞到牆壁");
-            const contact = event.contact;
-            const normal = contact.normal; // 碰撞法線
-
-            // 如果撞到牆壁，停止移動
-            if (Math.abs(normal.x) > 0.5) {
-                this.velocity.x = 0;
-                playerBody.velocity.x = 0;
-            }
-            if (Math.abs(normal.z) > 0.5) {
-                this.velocity.z = 0;
-                playerBody.velocity.z = 0;
-            }
-        });
-    }
-
     update(delta) {
         const player = this.camera;
         const playerPosition = player.position;

@@ -323,7 +323,7 @@ function animate() {
     // console.log(playerBody.position);
 
     // 玩家旋轉值
-    // console.log(camera.rotation);
+    console.log(camera.rotation);
 
     const playerData = controller.update(delta);
 
@@ -395,9 +395,6 @@ function Player_body(model, radius, height, radialSegments = 16) {
 
     // 添加到物理世界
     cannon_world.addBody(body);
-
-    // 將剛體存儲在模型的 userData 屬性中
-    model.userData.physicsBody = body;
 
     return body;
 
@@ -552,8 +549,8 @@ function showSceneOptions() {
                     camera.rotation.set(0, 0, 0);
                 } else if (button.textContent == 'Park') { // 遊樂園
                     console.log(`角色已移動到: ${sceneName}`);
-                    playerBody.position.set(43, 5, -3.5); // 將角色移動到目標位置
-                    camera.rotation.set(0, 3.5, 0);
+                    playerBody.position.set(42, 1, 5); // 將角色移動到目標位置
+                    camera.rotation.set(0, 0, 0);
                 } else {
                     console.log(`玩家角色未初始化`);
                 }
