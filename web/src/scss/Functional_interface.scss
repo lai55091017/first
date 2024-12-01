@@ -680,7 +680,7 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
     /*列表樣式為空*/
     transition: .2s;
     /*上右下左邊距 */
-    bottom: 25vh;
+    bottom: 10vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -731,11 +731,9 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
             // background-color: #8d8c8c;
             font-size: 110%;
             transform: translate(-10px, -10px);
-
         }
     }
 }
-
 
 /*---------------------------點擊模型出現跳窗---------------------------*/
 .model_info {
