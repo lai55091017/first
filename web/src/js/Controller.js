@@ -525,7 +525,7 @@ class Controller {
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
                 
-                const InteractableObject = await this.fs.load_InteractableObject();
+                const InteractableObject = await this.fs.load_scene_InteractableObject();
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
 

@@ -219,5 +219,5 @@ const InteractableObject = [
     }
 ];
 
-fs.save_scene_regex_mapping(Regexmapping);
-fs.save_InteractableObject(InteractableObject);
+fs.save_scene_regexmapping(Regexmapping);
+fs.save_scene_InteractableObject(InteractableObject);

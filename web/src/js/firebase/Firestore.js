@@ -75,11 +75,11 @@ class Firestore {
     }
 
     // 保存場景InteractableObject
-    async save_InteractableObject(data) {
+    async save_scene_InteractableObject(data) {
         try {
 
             // 保存至 Firestore
-            const docRef = doc(this.db, "configurations", "InteractableObject");
+            const docRef = doc(this.db, "configurations", "scene_InteractableObject");
             await setDoc(docRef, {data});
             console.log("InteractableObject 保存成功");
         } catch (error) {
@@ -88,9 +88,9 @@ class Firestore {
     }
 
     // 讀取場景InteractableObject
-    async load_InteractableObject() {
+    async load_scene_InteractableObject() {
         try {
-            const docRef = doc(this.db, "configurations", "InteractableObject");
+            const docRef = doc(this.db, "configurations", "scene_InteractableObject");
             const docSnap = await getDoc(docRef);
     
             if (docSnap.exists()) {
@@ -107,7 +107,7 @@ class Firestore {
     }
 
     // 保存場景regexMapping
-    async save_scene_regex_mapping(data) {
+    async save_scene_regexmapping(data) {
         try {
             // 將正則表達式轉換為字串
             const serializedMapping = data.map(({ type, regex, newName }) => ({
@@ -117,7 +117,7 @@ class Firestore {
             }));
     
             // 保存至 Firestore
-            const docRef = doc(this.db, "configurations", "scene_regex_mapping");
+            const docRef = doc(this.db, "configurations", "scene_regexmapping");
             await setDoc(docRef, { mapping: serializedMapping });
             console.log("regexMapping 保存成功");
         } catch (error) {
@@ -126,9 +126,9 @@ class Firestore {
     }
     
     // 讀取場景regexMapping
-    async load_scene_regex_mapping() {
+    async load_scene_regexmapping() {
         try {
-            const docRef = doc(this.db, "configurations", "scene_regex_mapping");
+            const docRef = doc(this.db, "configurations", "scene_regexmapping");
             const docSnap = await getDoc(docRef);
     
             if (docSnap.exists()) {

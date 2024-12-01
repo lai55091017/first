@@ -464,7 +464,7 @@ async function loadModels() {
         }
 
         // 讀取調整場景資料
-        const regexMapping = await fs.load_scene_regex_mapping()
+        const regexMapping = await fs.load_scene_regexmapping()
 
         // 處理場景中特定物件
         function processSceneObjects(scene) {
