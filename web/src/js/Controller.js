@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import DoorAnimation from './DoorAnimation';
-import InteractableObject from './InteractableObject';
 import PopupWindow from './PopupWindow';
 import wordlegame from "./wordlegame.js";
 import MemoryCardGame from "../memorycard.js";
+import Firestore from "./firebase/Firestore.js";
 
 class Controller {
 
@@ -31,9 +31,10 @@ class Controller {
         this.__setwordlegame()
         this.scene_options_Index = 0; // 初始聚焦索引
         this._setmemorygame();
-
+        this.fs = new Firestore;
 
     }
+
 
     // 設置門和初始化動畫
     // 設置門
@@ -496,7 +497,7 @@ class Controller {
     }
 
 
-    __onMouseDown() {
+    async __onMouseDown() {
         if (!this.isGame) return;
         // 使用Raycaster檢測玩家點擊了啥物件
         const raycaster = new THREE.Raycaster();
@@ -523,6 +524,8 @@ class Controller {
 
                 object.material.emissive.set(1, 1, 1); //選擇顏色發光
                 object.material.emissiveIntensity = 0.1; // 發光強度
+                
+                const InteractableObject = await this.fs.load_InteractableObject();
                 // 顯示彈窗
                 const ITO = InteractableObject.find(item => item.id === object.name);
 

@@ -74,11 +74,43 @@ class Firestore {
         }
     }
 
-    // 保存 regexMapping 到 Firestore
-    async save_scene_regex_mapping(regexMapping) {
+    // 保存場景InteractableObject
+    async save_InteractableObject(data) {
+        try {
+
+            // 保存至 Firestore
+            const docRef = doc(this.db, "configurations", "InteractableObject");
+            await setDoc(docRef, {data});
+            console.log("InteractableObject 保存成功");
+        } catch (error) {
+            console.error("保存 InteractableObject 失敗:", error);
+        }
+    }
+
+    // 讀取場景InteractableObject
+    async load_InteractableObject() {
+        try {
+            const docRef = doc(this.db, "configurations", "InteractableObject");
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                const data = docSnap.data().data;
+                return data; // 返回讀取到的數據
+            } else {
+                console.log("InteractableObject 不存在");
+                return null; // 返回 null 表示不存在
+            }
+        } catch (error) {
+            console.error("讀取 InteractableObject 失敗:", error);
+            return null;
+        }
+    }
+
+    // 保存場景regexMapping
+    async save_scene_regex_mapping(data) {
         try {
             // 將正則表達式轉換為字串
-            const serializedMapping = regexMapping.map(({ type, regex, newName }) => ({
+            const serializedMapping = data.map(({ type, regex, newName }) => ({
                 type,
                 regex: regex.toString(), // 將正則表達式轉為字串
                 newName,
@@ -93,8 +125,8 @@ class Firestore {
         }
     }
     
-    // 讀取 regexMapping
-    async loadRegexMapping() {
+    // 讀取場景regexMapping
+    async load_scene_regex_mapping() {
         try {
             const docRef = doc(this.db, "configurations", "scene_regex_mapping");
             const docSnap = await getDoc(docRef);
