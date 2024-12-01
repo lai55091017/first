@@ -25,7 +25,7 @@ export function menu() {
     document.getElementById('logout').addEventListener('click', async () => {
         auth.Sign_out()
     })
-    
+
 }
 
 

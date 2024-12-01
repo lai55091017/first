@@ -251,8 +251,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("english_text").addEventListener("change", simulateChange);
     document.querySelector(".contair").addEventListener("change", simulateChange);
 
-    
-    
+
+
     // 示例：模擬單字卡操作時的變動
     // document.querySelector(".save_btn").addEventListener("click", simulateChange);
 

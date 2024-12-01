@@ -513,7 +513,7 @@ body {
 
 #instruction_container {
     padding: 30px;
-    width: 100vh;
+    width: 70vw;
     height: 90vh;
     margin: 10px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -527,6 +527,8 @@ body {
     flex-direction: column;
     border-radius: 10px;
     z-index: 1000;
+    top: 5vh;
+    box-shadow: 0 0 10px 5px #737373;
 
     .instruction {
         margin: 10px;
@@ -680,7 +682,7 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
     /*列表樣式為空*/
     transition: .2s;
     /*上右下左邊距 */
-    bottom: 10vh;
+    bottom: 5vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -692,13 +694,13 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
     border-radius: 20px;
 
     .btn {
-        width: 20vw;
+        width: 25vw;
         height: 10vh;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 40px;
+        margin-top: 30px;
         /*上右下左邊距 */
         transition: .2s;
         background-color: var(--background-color);
@@ -893,55 +895,87 @@ $secondary-blue: #0056b3; // 深藍色（hover 狀態）
 }
 
 /*--------------------單字卡練習--------------------*/
-#card_container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#card_box {
+    position: fixed;
+    width: 80vw;
+    height: 90vh;
+    z-index: 1000;
+    background-color: var(--hover_color);
+    display: none;
+    align-content: center;
+    justify-items: center;
+    align-self: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 30px;
+    border: #f9f9f9 3px solid;
+}
+
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
     padding: 20px;
     background: #f9f9f9;
     border-radius: 10px;
-    width: 100%;
-    height: 100vh;
-    z-index: 999;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 70vh;
+    width: 70vw;
 }
 
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Responsive columns
-    gap: 20px; // Space between items
-    padding: 20px;
-    background: #f9f9f9; // Light background
-}
-
-.feature-item {
+.card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    padding: 20px;
-    background: #ffffff; // White background for each item
-    border: 1px solid #e0e0e0; // Light gray border
-    border-radius: 10px; // Rounded corners
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Subtle shadow
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    align-content: center;
 
     &:hover {
-        transform: translateY(-5px); // Hover effect
-        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); // Deeper shadow on hover
+        transform: translateY(-5px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     }
 }
 
-.icon {
-    font-size: 40px; // Large icon size
-    color: #007bff; // Blue color for icons
-    margin-bottom: 10px;
-}
 
 .title {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
-    color: #333; // Dark text color
+    color: var(--btn_color);
     margin-bottom: 5px;
 }
 
 .description {
-    font-size: 14px;
-    color: #666; // Light text color
+    font-size: 18px;
+    color: #666;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.page-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.page-btn:hover {
+    background-color: #0056b3;
+}
+
+#page-info {
+    font-size: 16px;
+    font-weight: bold;
 }

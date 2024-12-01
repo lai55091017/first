@@ -80,7 +80,7 @@ class Firestore {
 
             // 保存至 Firestore
             const docRef = doc(this.db, "configurations", "scene_InteractableObject");
-            await setDoc(docRef, {data});
+            await setDoc(docRef, { data });
             console.log("InteractableObject 保存成功");
         } catch (error) {
             console.error("保存 InteractableObject 失敗:", error);
@@ -92,7 +92,7 @@ class Firestore {
         try {
             const docRef = doc(this.db, "configurations", "scene_InteractableObject");
             const docSnap = await getDoc(docRef);
-    
+
             if (docSnap.exists()) {
                 const data = docSnap.data().data;
                 return data; // 返回讀取到的數據
@@ -115,7 +115,7 @@ class Firestore {
                 regex: regex.toString(), // 將正則表達式轉為字串
                 newName,
             }));
-    
+
             // 保存至 Firestore
             const docRef = doc(this.db, "configurations", "scene_regexmapping");
             await setDoc(docRef, { mapping: serializedMapping });
@@ -124,23 +124,23 @@ class Firestore {
             console.error("保存 regexMapping 失敗:", error);
         }
     }
-    
+
     // 讀取場景regexMapping
     async load_scene_regexmapping() {
         try {
             const docRef = doc(this.db, "configurations", "scene_regexmapping");
             const docSnap = await getDoc(docRef);
-    
+
             if (docSnap.exists()) {
                 const serializedMapping = docSnap.data().mapping;
-    
+
                 // 將字串轉回正則表達式
                 const regexMapping = serializedMapping.map(({ type, regex, newName }) => ({
                     type,
                     regex: new RegExp(regex.slice(1, regex.lastIndexOf('/')), regex.slice(regex.lastIndexOf('/') + 1)), // 還原正則表達式
                     newName,
                 }));
-    
+
                 // console.log("regexMapping 還原成功:", regexMapping);
                 return regexMapping;
             } else {
@@ -151,7 +151,7 @@ class Firestore {
             console.error("讀取 regexMapping 失敗:", error);
         }
     }
-    
+
 
     // 增加卡片資料
     async add_user_card(card_data) {
@@ -226,7 +226,7 @@ class Firestore {
             this.batch = writeBatch(this.db);
         }
     }
-    
+
 
 }
 

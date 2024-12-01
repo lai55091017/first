@@ -617,13 +617,80 @@ $(document).ready(function () {
             case 'close_sound':// id = close_sound
                 sound.fadeToggle(500);
                 break;
+            case 'close_card':// id = close_card
+                card_box.fadeOut(500);
+                break;
             default:
                 console.log('未知的按鈕 ID');
         }
     });
 })
+/*-----------------------------------card區域--------------------------------------------------*/
 const card_container = $("#card_container");
-card_container.hide();
+const card_box = $("#card_box");
+// 從 Firestore 中抓取資料
+const interactableObjects = await fs.load_scene_InteractableObject();
+
 $("#card").on('click', async () => {
-    card_container.fadeToggle(500);
-})  
+    card_box.fadeIn(500);
+    // 首次渲染
+    renderPage();
+})
+
+/*-----------------------------------分頁器--------------------------------------------------*/
+// 分頁設定
+const itemsPerPage = 12; // 每頁顯示的卡片數量
+let currentPage = 1; // 當前頁面
+// DOM 元素
+
+const prevPageBtn = document.getElementById('prev-page');
+const nextPageBtn = document.getElementById('next-page');
+const pageInfo = document.getElementById('page-info');
+
+// 渲染當前頁面的卡片
+function renderPage() {
+    // 計算分頁資料
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageItems = interactableObjects.slice(startIndex, endIndex);
+
+    // 清空舊的卡片
+    card_container.empty();
+
+    // 渲染當前頁面的卡片
+    pageItems.forEach((object) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+       <h3 class="title">${object.englishName}</h3>
+        <p class="description">${object.chineseName}</p>
+    `;
+        card_container.append(card);//jquery是用append
+    });
+
+    // 更新頁碼顯示
+    pageInfo.textContent = `第 ${currentPage} 頁，共 ${Math.ceil(
+        interactableObjects.length / itemsPerPage
+    )} 頁`;
+
+    // 控制按鈕狀態
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled =
+        currentPage === Math.ceil(interactableObjects.length / itemsPerPage);
+}
+
+// 初始化分頁功能
+prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+    }
+});
+
+nextPageBtn.addEventListener('click', () => {
+    if (currentPage < Math.ceil(interactableObjects.length / itemsPerPage)) {
+        currentPage++;
+        renderPage();
+    }
+});
+
