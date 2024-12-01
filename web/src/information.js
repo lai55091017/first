@@ -4,7 +4,7 @@ import * as menu from './js/menu.js';
 import Firestore from "./js/firebase/Firestore.js";
 // import "./js/firebase/Search";
 
-
+let hasUnsavedChanges = false; // 標記是否有未保存的變動
 const fs = new Firestore;
 //----------------------loading動畫--------------
 $(window).on("load", function () {
@@ -164,6 +164,7 @@ function newCard(englishText, chineseText) {
     deleteButton.addEventListener('click', function (event) {
         event.stopPropagation();  // 阻止事件冒泡，避免觸發 dialog 顯示
         newCard.remove();  // 删除卡片
+        hasUnsavedChanges = true;
         // 刪除卡片資料
         fs.delete_user_card({
             "card": [{ words: englishText, translate: chineseText }]
@@ -228,28 +229,8 @@ fs.get_user_data().then(data => {
     }
 })
 
-// // 監聽頁面可見性變化時觸發
-// document.addEventListener("visibilitychange", function () {
-//     if (document.visibilityState === "hidden") {
-//         fs.commit_data();
-//     }
-// });
-
-
-// // 使用監聽頁面切換作為額外保險(有問題無法存資料)
-// window.addEventListener("beforeunload", function () {
-//     fs.commit_data();
-// });
-
-// //滑鼠移到menu_container上面就執行
-// document.getElementById('menu_container').addEventListener('mouseover', function () {
-//     fs.commit_data();
-// });
-
 //---------------儲存按鈕-----------------------------
 document.addEventListener("DOMContentLoaded", function () {
-    let hasUnsavedChanges = false; // 標記是否有未保存的變動
-
     // 綁定「儲存」按鈕事件
     document.getElementById("save_button").addEventListener("click", function () {
         // 模擬保存邏輯，例如更新資料庫
@@ -269,6 +250,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // 示例：監控輸入框的變動
     document.getElementById("english_text").addEventListener("change", simulateChange);
     document.querySelector(".contair").addEventListener("change", simulateChange);
+
+    
+    
     // 示例：模擬單字卡操作時的變動
     // document.querySelector(".save_btn").addEventListener("click", simulateChange);
 
