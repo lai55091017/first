@@ -13,6 +13,7 @@
     --title: #009688;
 }
 
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px
@@ -420,7 +421,7 @@ body {
             }
 
             #message {
-                background-color: #d4dbcd;
+                background-color: #c9fb96;
                 padding: 6px 10px 8px 10px;
                 margin: auto;
                 word-wrap: break-word;
@@ -431,6 +432,7 @@ body {
                 /* 最大寬度 */
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                font-size: 18px;
             }
 
             #message_date {
@@ -455,7 +457,6 @@ body {
                 padding: 15px 15px;
                 min-width: 20px;
                 min-height: 30px;
-                width: -moz-fit-content;
                 width: fit-content;
                 border-radius: 0 15px 15px;
                 background: #dbf1ff;
@@ -463,7 +464,6 @@ body {
                 color: var(--text-color);
                 word-break: break-word;
                 font-size: 18px;
-                font-family: "Microsoft YaHei";
 
             }
 
@@ -595,6 +595,84 @@ body {
     }
 }
 
+/*------------聲音------------*/
+// 設定全局藍色主題
+$primary-blue: #007bff; // 主藍色
+$secondary-blue: #0056b3; // 深藍色（hover 狀態）
+
+#sound_container {
+    position: fixed;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    border: none;
+
+    // 標籤樣式
+    label {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--btn_color);
+    }
+
+    // 滑動條樣式
+    input[type="range"] {
+        width: 100%;
+        height: 10px;
+        background: $secondary-blue;
+        border-radius: 10px;
+        outline: none;
+        transition: background-color 0.3s ease;
+
+        //要自定義滑動條的滑塊（thumb），可以使用 ::-webkit-slider-thumb 這個 CSS 選擇器。以下是一個簡單的範例：
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: $primary-blue;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: $secondary-blue;
+            }
+        }
+
+        &::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: $primary-blue;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: $secondary-blue;
+            }
+        }
+    }
+
+    // 滑動條容器
+    .slider-container {
+        margin-bottom: 20px;
+
+        .slider-label {
+            font-size: 14px;
+            color: var(--btn_color);
+            margin-bottom: 5px;
+        }
+    }
+}
+
 /*------------主選單------------*/
 #main_menu {
     z-index: 100;
@@ -695,8 +773,6 @@ body {
         font-weight: bold;
         color: var(--btn_color);
     }
-
-    ;
 
 }
 

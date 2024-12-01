@@ -45,6 +45,7 @@
     </div>
     <div id="blocker">
     </div>
+    <!-- 操作介紹 -->
     <dialog id="instruction_container">
         <div class="instruction">
             <a>[WASD] 控制方向:</a>
@@ -54,12 +55,6 @@
                     fill="#ccf401" />
             </svg>
         </div>
-        <!-- SPACE 跳躍:
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="60px" height="60px">
-            <path
-                d="M 6 12 C 2.6983746 12 0 14.698375 0 18 L 0 24.599609 L 0 28 L 0 33 C 0 36.301625 2.6983746 39 6 39 L 44 39 C 47.301625 39 50 36.301625 50 33 L 50 28 L 50 24.599609 L 50 18 C 50 14.698375 47.301625 12 44 12 L 6 12 z M 2 32.455078 C 3.0637883 33.411613 4.4644955 34 6 34 L 44 34 C 45.535504 34 46.936212 33.411613 48 32.455078 L 48 33 C 48 35.220375 46.220375 37 44 37 L 6 37 C 3.7796254 37 2 35.220375 2 33 L 2 32.455078 z"
-                fill="#ccf401" />
-        </svg> -->
         <div class="instruction">
             <a>按住 [Shif] 加速:</a>
             <?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
@@ -106,6 +101,24 @@
             </svg>
         </button>
     </dialog>
+    <dialog id="sound_container">
+        <div class="slider-container">
+            <label for="rate">語速：</label>
+            <input type="range" id="rate" min="0.1" max="2" step="0.1" value="1">
+        </div>
+        <div class="slider-container">
+            <label for="volume">音量：</label>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+        </div>
+        <button class="close" id="close_sound">
+            <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24"
+                viewBox="0 0 30 30">
+                <path
+                    d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
+                </path>
+            </svg>
+        </button>
+    </dialog>
     <ul id="main_menu" class="animate__animated">
         <button class="btn" id="continue">
             <a>繼續 </br>
@@ -118,12 +131,12 @@
         <button class="btn" id="instruction">
             <a>操作 </br> Instruction</a>
         </button>
-        <!-- <button class="btn" id="Game">
-            <a>遊戲 </br> Game</a>
-        </button> -->
+        <button class="btn" id="sound">
+            <a>聲音 </br> Sound</a>
+        </button>
     </ul>
     <div id="crosshair"></div>
-
+    <!-- 猜單字遊戲 -->
     <dialog id="WordleGame">
         <h1>猜單字 Guess Word</h1>
 
@@ -186,7 +199,7 @@
             <a>Esc</a>
         </div>
     </div>
-    <!-- 遊戲區域 -->
+    <!-- 翻牌遊戲區域 -->
     <div id="memorygame_container">
         <!-- 標題 -->
         <div class="ts-header">

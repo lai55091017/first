@@ -25,7 +25,7 @@ body {
     .box {
         display: flex;
         position: fixed;
-        width: 65vw;
+        width: 60vw;
         height: 70vh;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, .8);
         border-radius: 20px;
@@ -62,8 +62,8 @@ body {
                 text-align: center;
                 color: #ffffff;
                 margin-top: 0;
-                padding-top: 50px;
-                padding-bottom: 30px;
+                padding-top: 10vh;
+                padding-bottom: 5vh;
                 letter-spacing: 0.1em;
             }
 
@@ -73,6 +73,7 @@ body {
                 justify-content: center;
                 align-items: start;
                 padding: 10px;
+                width: 18vw;
 
                 label {
                     margin-bottom: 5px;
@@ -83,9 +84,9 @@ body {
 
                 input {
                     box-sizing: border-box;
-                    padding: 10 10px;
+                    padding: 10px 10px;
                     color: #1b1b1b;
-                    height: 6.5vh;
+                    height: 6vh;
                     width: 17vw;
                     font-size: 14px;
                     transition: 0.2s;

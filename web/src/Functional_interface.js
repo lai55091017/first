@@ -583,7 +583,13 @@ $("#instruction").on('click', async () => {
     instruction.fadeToggle(500);
 })
 
+const sound = $("#sound_container");
 
+sound.hide();
+
+$("#sound").on('click', async () => {
+    sound.fadeToggle(500);
+})
 /*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
 // const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
 
@@ -608,13 +614,12 @@ $(document).ready(function () {
             case 'close_instruction'://id=close_instruction
                 instruction.fadeToggle(500);
                 break;
-            // case 'close_wordlegame'://id=close_wordlegame
-            //     WordleGame.fadeToggle(500);
-            //     break;
+            case 'close_sound':// id = close_sound
+                sound.fadeToggle(500);
+                break;
             default:
                 console.log('未知的按鈕 ID');
         }
     });
 })
-
 
