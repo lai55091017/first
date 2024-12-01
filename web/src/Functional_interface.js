@@ -323,7 +323,7 @@ function animate() {
     // console.log(playerBody.position);
 
     // 玩家旋轉值
-    console.log(camera.rotation);
+    // console.log(camera.rotation);
 
     const playerData = controller.update(delta);
 
