@@ -219,9 +219,11 @@ class savedata {
                 englishName: 'Tree'
             }
         ];
-        this.fs.save_scene_regexmapping(Regexmapping);
-        this.fs.save_scene_InteractableObject(InteractableObject);
+        this.fs.save_scene_regexmapping(this.Regexmapping);
+        this.fs.save_scene_InteractableObject(this.InteractableObject);
     }
 }
 export default savedata;
 
+// import savedata from './js/savedata';
+// new savedata;
