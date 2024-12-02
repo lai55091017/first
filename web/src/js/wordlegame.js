@@ -5,13 +5,11 @@ class WordleGame {
             初始化遊戲資料，包括單字對應中文意思、主題及其他變數。
          */
             this.wordMeanings = {
-                fruit: "水果",
                 apple: "蘋果",
                 banana: "香蕉",
                 grape: "葡萄",
                 orange: "橘子",
                 guava: "芭樂",
-                animal: "動物",
                 dog: "狗",
                 cat: "貓",
                 cow: "牛",
@@ -20,13 +18,6 @@ class WordleGame {
                 sheep: "羊",
                 chicken: "雞",
                 monkey: "猴子",
-                tool: "工具",
-                pencil: "鉛筆",
-                eraser: "橡皮擦",
-                ruler: "尺",
-                fork: "叉子",
-                spoon: "湯匙",
-                nation: "國家",
                 america: "美國",
                 china: "中國",
                 taiwan: "台灣",
@@ -37,7 +28,6 @@ class WordleGame {
                 noodle: "麵",
                 soup: "湯",
                 meat: "肉",
-                home: "家",
                 bed: "床",
                 bread: "麵包",
                 bedroom: "臥室",
@@ -52,7 +42,6 @@ class WordleGame {
                 fridge: "冰箱",
                 labtop: "筆電",
                 cabinet: "櫥櫃",
-                library: "圖書館",
                 table: "桌子",
                 chair: "椅子",
                 bookshelf: "書架",
@@ -60,14 +49,12 @@ class WordleGame {
                 book: "書",
                 blackboard: "黑板",
                 door: "門",
-                school: "學校",
                 classroom: "教室",
                 teacher: "老師",
                 student: "同學",
                 class: "班級",
                 podium: "講台",
                 lectern: "講桌",
-                park: "公園",
                 seesaw: "翹翹板",
                 fence: "柵欄",
                 tree: "樹",
@@ -77,15 +64,14 @@ class WordleGame {
                 slide: "滑梯"
             };
             this.themes = {
-                "水果": ["fruit", "apple", "banana", "grape", "orange", "guava"],
-                "動物": ["animal", "dog", "cat", "cow", "pig", "bird", "sheep", "chicken", "monkey"],
-                "工具": ["tool", "pencil", "eraser", "ruler", "fork", "spoon"],
-                "國家": ["nation", "america", "china", "taiwan", "japan", "korea"],
-                "食物": ["food", "rice", "noodle", "soup", "meat", "bread"],
-                "家裡": ["home", "bed", "bedroom", "kitchen", "livingroom", "toilet", "tub", "sink", "sofa", "tv", "wardrobe", "fridge", "labtop", "cabinet"],
-                "圖書館": ["library", "table", "chair", "bookshelf", "counter", "book"],
-                "學校": ["blackboard", "door", "school", "classroom", "teacher", "student", "class", "podium", "lectern"],
-                "公園": ["park", "seesaw", "fence", "tree", "playground", "swing", "bench", "slide"]
+                "水果": ["apple", "banana", "grape", "orange", "guava"],
+                "動物": ["dog", "cat", "cow", "pig", "bird", "sheep", "chicken", "monkey"],
+                "國家": ["america", "china", "taiwan", "japan", "korea"],
+                "食物": ["rice", "noodle", "soup", "meat", "bread"],
+                "家裡": ["bed", "bedroom", "kitchen", "livingroom", "toilet", "tub", "sink", "sofa", "tv", "wardrobe", "fridge", "labtop", "cabinet"],
+                "圖書館": ["table", "chair", "bookshelf", "counter", "book"],
+                "學校": ["blackboard", "door", "classroom", "teacher", "student", "class", "podium", "lectern"],
+                "公園": ["seesaw", "fence", "tree", "playground", "swing", "bench", "slide"]
             };
 
         this.maxAttempts = 6; // 最大嘗試次數
