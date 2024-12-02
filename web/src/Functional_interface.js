@@ -434,7 +434,7 @@ async function loadModels() {
     try {
         init_scene();
         // 加載新場景
-        let library = await icas.loadGLTF('./mesh/glb/Four_Scene_4.glb');
+        let library = await icas.loadGLTF('./mesh/glb/Four_Scene_5.glb');
         scene.add(library.scene);
 
         // 綁定物理引擎
