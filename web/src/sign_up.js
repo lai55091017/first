@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     error_message.innerHTML = "Emall格式不正確"
                 } else if (result == "Firebase: Error (auth/missing-password).") {
                     error_message.innerHTML = "請輸入密碼"
-                } else if (result == "Firebase: Password should be at least 6 characters (auth/weak-password).") {
+                } else if (result == "Firebase: Error (auth/invalid-credential).") {
+                    error_message.innerHTML = "無效Eamll"
+                }else if (result == "Firebase: Password should be at least 6 characters (auth/weak-password).") {
                     error_message.innerHTML = "密碼不足六個字"
                 }
             })

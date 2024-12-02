@@ -276,7 +276,6 @@ function init_scene() {
     scene.background = new THREE.Color(0xa0a0a0);
     scene.fog = new THREE.Fog(0xa0a0a0, 5, 50);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 3));
-    // scene.add(new THREE.DirectionalLight(0xffffff, 3));
 }
 // 初始化相機
 function init_camera() {
@@ -301,6 +300,7 @@ function init_renderer() {
 }
 // 初始化其他
 function init_other() {
+    // 監聽視窗大小
     window.addEventListener('resize', resize);
     window.addEventListener('fullscreenchange', resize);
     function resize() {
@@ -317,14 +317,6 @@ function animate() {
     const delta = (time - prevTime) / 1000;
     prevTime = time;
 
-    // 傳送錨點
-
-    // 玩家移動值
-    // console.log(playerBody.position);
-
-    // 玩家旋轉值
-    // console.log(camera.rotation);
-
     const playerData = controller.update(delta);
 
     characterManager.updateCharactersAnimation(delta, connect.playerList);
@@ -337,13 +329,10 @@ function animate() {
 
     checkCollisionEnd()
 
-
-
     renderer.render(scene, camera);
 
 }
 
-// 傳送錨點
 /*********************************** Physics *********************************************/
 // 初始化物理引擎
 function init_physics() {
@@ -362,7 +351,6 @@ function create_physics_body_box(model) {
 
     // 獲取模型的尺寸或使用自定義尺寸
     const size = boundingBox.getSize(new THREE.Vector3());
-
 
     // 創建剛體
     const body = new CANNON.Body({

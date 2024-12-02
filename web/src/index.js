@@ -20,10 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         auth.login(email, password).then((result) => {
             console.log(result);
-            if (result == "Firebase: Error (auth/invalid-email).") {
+            if (result == "Firebase: Error (auth/email-already-in-use).") {
+                error_message.innerHTML = "Emall已被使用"
+            } else if (result == "Firebase: Error (auth/invalid-email).") {
                 error_message.innerHTML = "Emall格式不正確"
             } else if (result == "Firebase: Error (auth/missing-password).") {
                 error_message.innerHTML = "請輸入密碼"
+            } else if (result == "Firebase: Error (auth/invalid-credential).") {
+                error_message.innerHTML = "無效Eamll"
             }
         })
     });
