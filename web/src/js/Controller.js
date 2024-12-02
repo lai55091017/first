@@ -340,7 +340,7 @@ class Controller {
     };
 
 
-    CloseButton = () => {
+    __CloseButton = () => {
         $('#close_wordlegame').on('click', () => {
             this.WordleGameUI.fadeOut(500);
             this.WordleGame.disableKeyboard();
@@ -456,12 +456,12 @@ class Controller {
                     this.isInteractiveObjects = true;
                     actionPrompt.style.display = 'block'; // 顯示提示
                     document.addEventListener('keydown', this.__wordlegame);
-                    this.CloseButton()
+                    this.__CloseButton()
                 } else if (object.name === 'Memory Game') {
                     this.isInteractiveObjects = true;
                     actionPrompt.style.display = 'block'; // 顯示提示
                     document.addEventListener('keydown', this.__memorycardgame);
-                    this.CloseButton()
+                    this.__CloseButton()
                 }
             }
         }
