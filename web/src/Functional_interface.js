@@ -34,8 +34,8 @@ const cannonDebugger = new CannonDebugger(scene, cannon_world, {
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
-// const connect = new Connect('ws://localhost:8080');
-const connect = new Connect('https://my-websocke-server-1-485354531854.asia-east1.run.app');
+const connect = new Connect('ws://localhost:8080');
+// const connect = new Connect('https://my-websocke-server-1-485354531854.asia-east1.run.app');
 
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
@@ -422,7 +422,7 @@ async function loadModels() {
     try {
         init_scene();
         // 加載新場景
-        let library = await icas.loadGLTF('./mesh/glb/Four_Scene_3.glb');
+        let library = await icas.loadGLTF('./mesh/glb/Four_Scene_4.glb');
         scene.add(library.scene);
 
         // 綁定物理引擎
