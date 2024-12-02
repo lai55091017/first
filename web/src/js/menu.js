@@ -17,9 +17,9 @@ export function menu() {
     })
 
     //刪除帳號
-    document.getElementById('delete').addEventListener('click', async () => {
-        auth.delete_account();
-    })
+    // document.getElementById('delete').addEventListener('click', async () => {
+    //     auth.delete_account();
+    // })
 
     //登出帳號
     document.getElementById('logout').addEventListener('click', async () => {
