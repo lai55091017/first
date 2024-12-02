@@ -473,6 +473,7 @@ class Controller {
             actionPrompt.style.display = 'none'; // 隱藏提示
             this.isInteractiveObjects = false;
             document.removeEventListener('keydown', this.__wordlegame);
+            document.removeEventListener('keydown', this.__memorycardgame);
         }
     }
 
