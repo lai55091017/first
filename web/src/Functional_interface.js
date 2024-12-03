@@ -650,23 +650,41 @@ function renderPage() {
 
     // 清空舊的卡片
     card_container.empty();
-
     // 渲染當前頁面的卡片
-    pageItems.forEach((object) => {
+    pageItems.forEach(async (object) => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-       <h3 class="title">${object.englishName}</h3>
-        <p class="description">${object.chineseName}</p>
-         <button class="save-btn" data-english="${object.englishName}" data-chinese="${object.chineseName}">
-                    存入單字卡
-                </button>
-    `;
-        card_container.append(card);//jquery是用append
+            <h3 class="title">${object.englishName}</h3>
+            <p class="description">${object.chineseName}</p>
+            <button class="save-btn" data-english="${object.englishName}" data-chinese="${object.chineseName}">
+                存入單字卡
+            </button>
+        `;
+        card_container.append(card); // jQuery 是用 append
+    
+        try {
+            // 獲取用戶數據
+            const data = await fs.get_user_data();
+    
+            // 檢查是否已儲存
+            const isSaved = data.card.some(savedCard => savedCard.words === object.englishName);
+    
+            if (isSaved) {
+                const saveBtn = card.querySelector('.save-btn');
+                saveBtn.textContent = '已儲存'; // 更新按鈕文字
+                saveBtn.style.backgroundColor = '#d3d3d3'; // 背景改為灰色
+                saveBtn.disabled = true; // 禁用按鈕
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // 可以在這裡添加錯誤處理邏輯
+        }
     });
-
+    
+    const saveBtn = $('.save-btn');
     // 為每個儲存按鈕綁定點擊事件
-    $('.save-btn').off('click').on('click', async function () {
+    saveBtn.off('click').on('click', async function () {
         const englishText = $(this).data('english');
         const chineseText = $(this).data('chinese');
         try {
@@ -675,13 +693,13 @@ function renderPage() {
                 "card": [{ words: englishText, translate: chineseText }]
                 // 將卡片寫入資料庫
             });
-
-
             await fs.commit_data();
 
             speak(englishText);
+            $(this).text('已儲存');
+            $(this).css('background-color', '#d3d3d3'); // 背景改為灰色
+            $(this).prop('disabled', true); // 禁用按鈕
 
-            alert(`已儲存卡片：${englishText} (${chineseText})`);
         } catch (error) {
             console.error('儲存卡片失敗:', error);
         }

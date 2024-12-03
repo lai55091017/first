@@ -221,7 +221,15 @@ class WordleGame {
     // 送出答案
     submitGuess() {
         if (this.currentGuess.length !== this.answer.length) {
-            alert("請輸入一個長度正確的單字");
+            let theme = document.querySelector("h1");
+            let restoretheme = theme.textContent
+            theme.style.color = "red";
+            theme.textContent = `請輸入正確長度的單字`;
+
+            setTimeout(() => {
+                document.querySelector("h1").textContent = restoretheme
+                theme.style.color = "#009688";
+            }, 1500);
             return;
         }
 

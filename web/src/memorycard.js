@@ -194,11 +194,11 @@ class MemoryCardGame {
         this.cardNum = mode.cardNum;
         this.mathedCard = 0;
         this.resetCard();
-        if (mode.message['記憶力翻牌小遊戲']) {//判斷message句子是否存在
-          alert(mode.message['記憶力翻牌小遊戲']);//輸出為message後面那句
-        }
+        // if (mode.message['記憶力翻牌小遊戲']) {//判斷message句子是否存在
+        //   // alert(mode.message['記憶力翻牌小遊戲']);//輸出為message後面那句
+        // }
       } else {
-        alert("已經是" + mode.id + "模式了。");
+        // alert("已經是" + mode.id + "模式了。");
       }
     }
   };
@@ -228,7 +228,7 @@ class MemoryCardGame {
     // 重置遊戲
     if (this.mathedCard === this.cardNum) {
       this.end.removeEventListener('click', this.resetGame);
-      alert("重置遊戲。Game reset");
+      // alert("重置遊戲。Game reset");
     }
     this.mathedCard = 0;
     this.resetCard();
