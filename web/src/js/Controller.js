@@ -42,8 +42,8 @@ class Controller {
         // 存儲每對門物件，以 doorType 作為鍵名
         this.doors[doorType] = { left: leftDoor, right: rightDoor };
 
-        // 可以根據需要為每對門設置動畫
-        console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
+        // 調適用，可以根據需要為每對門設置動畫
+        // console.log(`設定了 ${doorType} 的門：`, this.doors[doorType]);
     }
 
     __setwordlegame() {

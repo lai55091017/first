@@ -325,7 +325,8 @@ function animate() {
 
     // 更新物理世界
     cannon_world.step(1 / 60); // 固定步長為 1/60 秒
-    // 顯示鋼體
+    
+    // 調適用，顯示鋼體
     // cannonDebugger.update()
 
     checkCollisionEnd()
@@ -470,7 +471,8 @@ async function loadModels() {
                 }
             });
 
-            console.log('找到所有物件:', objects);
+            // 調適用
+            // console.log('找到所有物件:', objects); 
 
             // 確保找到所有關鍵物件
             const hasAllObjects = Object.values(objects).some((list) => list.length > 0);
@@ -521,7 +523,7 @@ function showSceneOptions() {
             button.textContent = `${sceneName}`;
             count++;
             button.onclick = async () => {
-                // 傳送錨點
+                // 調適用，場景切換的位置
                 document.getElementById('scene_options').style.display = 'none'
                 if (button.textContent == 'Home') { // 家裡
                     playerBody.position.set(-2.5, 1.5, 3.5); // 將角色移動到目標位置
