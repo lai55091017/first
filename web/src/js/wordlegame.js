@@ -256,11 +256,11 @@ class WordleGame {
         });
         // 判斷結果
         if (this.currentGuess === this.answer) {
-            alert(`恭喜！你猜對了！答案是：${this.answer} (${this.chineseAnswer})`);
-            setTimeout(() => this.resetGame(), 1000);
+            document.querySelector("h1").textContent = `恭喜答對！答案是：${this.answer} (${this.chineseAnswer})`;
+            setTimeout(() => this.resetGame(), 3000);
         } else if (++this.currentAttempt >= this.maxAttempts) {
-            alert(`遊戲結束！答案是：${this.answer} (${this.chineseAnswer})`);
-            setTimeout(() => this.resetGame(), 1000);
+            document.querySelector("h1").textContent = `遊戲結束！答案是：${this.answer} (${this.chineseAnswer})`;
+            setTimeout(() => this.resetGame(), 3000);
         }
 
         this.currentGuess = ""; // 清空當前猜測
