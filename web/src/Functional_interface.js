@@ -34,12 +34,11 @@ const cannonDebugger = new CannonDebugger(scene, cannon_world, {
 
 const controller = new Controller(scene, camera, renderer.domElement);
 const characterManager = new CharacterManager(scene, camera);
-// const connect = new Connect('ws://localhost:8080');
-const connect = new Connect('https://my-websocke-server-1-485354531854.asia-east1.run.app');
+const connect = new Connect('ws://localhost:8080');
+// const connect = new Connect('https://my-websocke-server-1-485354531854.asia-east1.run.app');
 
 const icas = new ICAS(scene, camera);
 const auth = new Auth;
-auth.onAuthStateChanged();
 //----------------------loading動畫--------------
 $(window).on("load", function () {
     $(".loading_wrapper").fadeOut("slow");
@@ -140,12 +139,14 @@ function init() {
 
     // 導入(載入)模型
     loadModels();
+
+    // 新增場景選項UI
+    showSceneOptions()
 }
 
 /*********************************** Websocket Event *********************************************/
-let playerBody;
-let targetBody;
-let currentPlayer = false; // 定義全域變數來存儲當前玩家角色
+let playerBody; //玩家鋼體
+let Player_loading = false; // 定義全域變數來存儲當前玩家角色
 //玩家加入
 async function onPlayerJoin(data) {
     const players = new Set(connect.playerList.map(player => player.uuid));
@@ -171,7 +172,7 @@ async function onPlayerJoin(data) {
 
             // 為玩家添加角色
             camera.add(character);
-            currentPlayer = true; // 保存玩家角色到全域變數
+            Player_loading = true; // 保存玩家角色到全域變數
             animate();
 
         } else {
@@ -334,6 +335,11 @@ function animate() {
 }
 
 /*********************************** Physics *********************************************/
+
+let isCollidingWithTarget = false; // 追踪玩家與特定物體的碰撞狀態
+let targetBody; //可以與玩家碰撞的鋼體
+
+
 // 初始化物理引擎
 function init_physics() {
 
@@ -388,15 +394,17 @@ function Player_body(model, radius, height, radialSegments = 16) {
 
 }
 
-// 追踪玩家與特定物體的碰撞狀態
-let isCollidingWithTarget = false;
 function handlePlayerCollision(event) {
-    // console.log(targetBody, event.body);
+    //從 CANNON 世界中訪問所有剛體
+    const allBodies = cannon_world.bodies;
+    //綁定特定鋼體
+    targetBody = allBodies[19]
+
     const otherBody = event.body;
     if (otherBody === targetBody) {
         if (!isCollidingWithTarget) {
             isCollidingWithTarget = true;
-            console.log('玩家和目標之間開始碰撞');
+            console.log('玩家和目標鋼體之間開始碰撞');
         }
     }
 }
@@ -429,18 +437,11 @@ async function loadModels() {
         library.scene.traverse((child) => {
             if (child.isMesh && !(/^Park_Playground.*/).test(child.name)) {
                 create_physics_body_box(child); // 為每個模型綁定剛體
-                // console.log(`綁定剛體到物件: ${child.name}`);
             }
         });
 
-        //從 CANNON 世界中訪問所有剛體
-        const allBodies = cannon_world.bodies;
-        console.log("剛體數量:", allBodies.length);
-        //綁定特定鋼體
-        targetBody = allBodies[19]
-
         // 調整玩家位置
-        if (currentPlayer) {
+        if (Player_loading) {
             camera.rotation.set(0, 3, 0);
             playerBody.position.set(14, 1.5, -3.5); // 設定玩家位置
         } else {
@@ -500,7 +501,7 @@ async function loadModels() {
 }
 
 
-/*-----------------------------------場景切換--------------------------------------------------*/
+/*-----------------------------------其他UI--------------------------------------------------*/
 // 顯示場景切換選單
 function showSceneOptions() {
     const menu = document.createElement('div');
@@ -557,7 +558,7 @@ function showSceneOptions() {
 }
 
 
-showSceneOptions()
+
 
 
 
@@ -578,20 +579,17 @@ sound.hide();
 $("#sound").on('click', async () => {
     sound.fadeToggle(500);
 })
-/*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
-// const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
 
+const card_container = $("#card_container");
+const card_box = $("#card_box");
 
-// $('#Game').on('click', async () => {
-//     memorygame_container.fadeToggle(500);
-// });
+$("#card").on('click', async () => {
+    card_box.fadeIn(500);
+    // 首次渲染
+    renderPage();
+})
 
-// 傳送錨點
-/*-----------------------------------關閉按鈕--------------------------------------------------*/
-//$(document).ready() 是 jQuery 提供的一個事件，主要用於確保 DOM 完全加載後執行 JavaScript 代碼
-
-// const WordleGame = $("#WordleGame");
-// WordleGame.hide();
+//關閉按鈕
 $(document).ready(function () {
 
     $(".close").click(function () {
@@ -613,17 +611,23 @@ $(document).ready(function () {
         }
     });
 })
+/*-----------------------------------memorycard遊戲區域--------------------------------------------------*/
+// const memorygame_container = $("#memorygame_container"); // 確保是 jQuery 對象
+
+
+// $('#Game').on('click', async () => {
+//     memorygame_container.fadeToggle(500);
+// });
+
+// const WordleGame = $("#WordleGame");
+// WordleGame.hide();
+
 /*-----------------------------------card區域--------------------------------------------------*/
-const card_container = $("#card_container");
-const card_box = $("#card_box");
+
 // 從 Firestore 中抓取資料
 const interactableObjects = await fs.load_scene_InteractableObject();
 
-$("#card").on('click', async () => {
-    card_box.fadeIn(500);
-    // 首次渲染
-    renderPage();
-})
+
 
 /*-----------------------------------分頁器--------------------------------------------------*/
 // 分頁設定
