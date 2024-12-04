@@ -230,10 +230,13 @@ body {
             cursor: pointer;
             transition: .2s;
             background-color: rgb(255, 255, 255);
-
             h1 {
                 color: var(--btn_color);
                 margin: 15px;
+            }
+
+            p {
+                font-size: 25px;
             }
 
             &:hover {
